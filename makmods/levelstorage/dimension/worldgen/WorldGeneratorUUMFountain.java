@@ -5,7 +5,7 @@ import java.util.Random;
 import makmods.levelstorage.LevelStorage;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
-import cpw.mods.fml.common.IWorldGenerator;
+import net.minecraftforge.fml.common.IWorldGenerator;
 
 public class WorldGeneratorUUMFountain implements IWorldGenerator {
 

@@ -4,7 +4,7 @@ import makmods.levelstorage.LSBlockItemList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
-import cpw.mods.fml.common.registry.LanguageRegistry;
+import net.minecraftforge.fml.common.registry.LanguageRegistry;
 
 public class ModAchievements {
 

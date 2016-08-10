@@ -3,7 +3,7 @@ package makmods.levelstorage.init;
 import makmods.levelstorage.fluid.BlockFluidIV;
 import makmods.levelstorage.fluid.FluidIV;
 import net.minecraftforge.fluids.FluidRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class LSFluids {
 

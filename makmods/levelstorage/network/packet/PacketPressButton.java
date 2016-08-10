@@ -11,8 +11,8 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
+import net.minecraftforge.fml.common.network.PacketDispatcher;
+import net.minecraftforge.fml.common.network.Player;
 
 public class PacketPressButton extends PacketLS {
 

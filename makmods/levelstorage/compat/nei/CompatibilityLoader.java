@@ -1,7 +1,7 @@
 package makmods.levelstorage.compat.nei;
 
 import makmods.levelstorage.logic.util.LogHelper;
-import cpw.mods.fml.common.Loader;
+import net.minecraftforge.fml.common.Loader;
 
 public class CompatibilityLoader {
 

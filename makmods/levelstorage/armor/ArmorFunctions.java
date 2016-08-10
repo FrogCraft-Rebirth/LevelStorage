@@ -33,7 +33,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.common.network.PacketDispatcher;
+import net.minecraftforge.fml.common.network.PacketDispatcher;
 
 /**
  * Refactored armor functions

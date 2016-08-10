@@ -7,7 +7,7 @@ import makmods.levelstorage.logic.util.LogHelper;
 
 import com.google.common.collect.Lists;
 
-import cpw.mods.fml.common.registry.LanguageRegistry;
+import net.minecraftforge.fml.common.registry.LanguageRegistry;
 
 /**
  * Localization support

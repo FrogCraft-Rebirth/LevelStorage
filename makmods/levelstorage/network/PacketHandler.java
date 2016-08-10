@@ -10,8 +10,8 @@ import makmods.levelstorage.proxy.LSKeyboard;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
+import net.minecraftforge.fml.common.network.IPacketHandler;
+import net.minecraftforge.fml.common.network.Player;
 
 public class PacketHandler implements IPacketHandler {
 

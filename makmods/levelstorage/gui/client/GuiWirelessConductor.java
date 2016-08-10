@@ -13,7 +13,7 @@ import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.common.network.PacketDispatcher;
+import net.minecraftforge.fml.common.network.PacketDispatcher;
 
 public class GuiWirelessConductor extends GuiContainer {
 

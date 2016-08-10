@@ -11,9 +11,9 @@ import net.minecraft.network.INetworkManager;
 
 import com.google.common.collect.Lists;
 
-import cpw.mods.fml.common.network.Player;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.network.Player;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class PacketParticles extends PacketLS {
 

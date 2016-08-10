@@ -17,7 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 
 import com.google.common.collect.Maps;
 
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
  * Initialization methods for LevelStorage's TileEntities. Currently everything

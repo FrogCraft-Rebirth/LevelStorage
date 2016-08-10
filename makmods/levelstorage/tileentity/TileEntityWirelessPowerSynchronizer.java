@@ -27,10 +27,10 @@ import net.minecraftforge.common.MinecraftForge;
 
 import com.google.common.collect.Lists;
 
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
-import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.ITickHandler;
+import net.minecraftforge.fml.common.TickType;
+import net.minecraftforge.fml.common.registry.TickRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 		IHasTextBoxes, IHasButtons, IEnergyTile, IEnergySink, IWrenchable,

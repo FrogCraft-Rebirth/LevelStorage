@@ -24,7 +24,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
+import net.minecraftforge.fml.common.network.PacketDispatcher;
 
 public abstract class TileEntityAdvanced extends TileEntity implements
 		IEnergySource, IEnergyStorage, IEnergySink, IWrenchable, IInventory,

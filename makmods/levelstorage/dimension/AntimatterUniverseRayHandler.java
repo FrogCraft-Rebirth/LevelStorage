@@ -12,9 +12,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
-import cpw.mods.fml.common.network.PacketDispatcher;
+import net.minecraftforge.fml.common.ITickHandler;
+import net.minecraftforge.fml.common.TickType;
+import net.minecraftforge.fml.common.network.PacketDispatcher;
 
 public class AntimatterUniverseRayHandler implements ITickHandler {
 

@@ -6,7 +6,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.network.FMLNetworkHandler;
+import net.minecraftforge.fml.common.network.FMLNetworkHandler;
 
 public class RemotePlayer extends EntityPlayer {
 

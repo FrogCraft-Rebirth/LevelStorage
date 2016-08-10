@@ -7,7 +7,7 @@ import java.io.IOException;
 import makmods.levelstorage.network.packet.PacketTypeHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
-import cpw.mods.fml.common.network.Player;
+import net.minecraftforge.fml.common.network.Player;
 
 public class PacketFlightUpdate extends PacketLS {
 
