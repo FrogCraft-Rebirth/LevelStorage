@@ -1,7 +1,7 @@
 package makmods.levelstorage;
 
 import java.util.List;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Logger;
 
 import makmods.levelstorage.armor.ArmorFunctions;
 import makmods.levelstorage.command.CommandChargeItems;
@@ -15,8 +15,8 @@ import makmods.levelstorage.proxy.LSKeyboard;
 import makmods.levelstorage.registry.FlightRegistry;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -35,13 +35,14 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import net.minecraftforge.fml.common.network.NetworkMod;
+//import net.minecraftforge.fml.common.network.NetworkMod;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.server.FMLServerHandler;
 
 //@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, dependencies = "Forge@[9.10.0.804,);required-after:IC2")
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, dependencies = "required-after:IC2@[2.0,)")
-@NetworkMod(channels = { Reference.MOD_ID, LSKeyboard.PACKET_KEYBOARD_CHANNEL,
-		Reference.CUSTOM_PACKET_CHANNEL }, clientSideRequired = true, serverSideRequired = false, packetHandler = PacketHandler.class)
+//@NetworkMod(channels = { Reference.MOD_ID, LSKeyboard.PACKET_KEYBOARD_CHANNEL,
+//		Reference.CUSTOM_PACKET_CHANNEL }, clientSideRequired = true, serverSideRequired = false, packetHandler = PacketHandler.class)
 public class LevelStorage {
 
 	@Instance(Reference.MOD_ID)
@@ -91,21 +92,21 @@ public class LevelStorage {
 				.getInt();
 		Property p = config.get(LevelStorage.BALANCE_CATEGORY,
 				"chargerOnlyUsesUUM", true);
-		p.comment = "If set to true, chargers will consume UUM and only UUM (they will refuse to receive any energy), if set to false, chargers will receive energy and only energy (no UUM)";
+		p.setComment("If set to true, chargers will consume UUM and only UUM (they will refuse to receive any energy), if set to false, chargers will receive energy and only energy (no UUM)");
 		LevelStorage.chargerOnlyUUM = p.getBoolean(true);
 
 		Property p2 = config.get(LevelStorage.BALANCE_CATEGORY,
 				"experienceRecipesEnabled", true);
-		p2.comment = "Whether or not experience recipes are enabled";
+		p2.setComment("Whether or not experience recipes are enabled");
 		LevelStorage.experienceRecipesOn = p2.getBoolean(true);
 		Property p4 = config.get(LevelStorage.BALANCE_CATEGORY, "hardRecipes",
 				false);
-		p4.comment = "If set to true, armors (and other) will require hard-to-get materials (f.e. full set of armor will require 72 stacks of UUM)";
+		p4.setComment("If set to true, armors (and other) will require hard-to-get materials (f.e. full set of armor will require 72 stacks of UUM)");
 		LevelStorage.recipesHardmode = p4.getBoolean(false);
 
 		Property p5 = config.get(LevelStorage.BALANCE_CATEGORY,
 				"explosionPowerAntimatterBomb", false);
-		p5.comment = "Explosion power of Antimatter Bomb, where TNT is 4";
+		p5.setComment("Explosion power of Antimatter Bomb, where TNT is 4");
 		LevelStorage.powerExplosionAntimatterBomb = p5.getInt(100);
 		proxy.preInit();
 	}
@@ -127,7 +128,7 @@ public class LevelStorage {
 		ArmorFunctions.speedTickerMap.clear();
 		ArmorFunctions.onGroundMap.clear();
 		FlightRegistry.instance.modEnabledFlights.clear();
-		((ServerCommandManager) MinecraftServer.getServer().getCommandManager())
+		((ServerCommandManager) FMLServerHandler.instance().getServer().getCommandManager())
 				.registerCommand(new CommandChargeItems());
 	}
 
