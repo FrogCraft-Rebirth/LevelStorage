@@ -22,7 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.google.common.collect.Lists;
@@ -77,12 +77,12 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter,
-			ForgeDirection direction) {
+			EnumFacing direction) {
 		return true;
 	}
 
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
+	public boolean emitsEnergyTo(TileEntity receiver, EnumFacing direction) {
 		return true;
 	}
 
@@ -162,7 +162,7 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 	}
 
 	@Override
-	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+	public double injectEnergyUnits(EnumFacing directionFrom, double amount) {
 		if (this.deviceType.equals(SyncType.RECEIVER))
 			return amount;
 		List<Object> mutableRightSyncList = Lists.newArrayList();
@@ -255,7 +255,7 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 	}
 
 	@Override
-	public boolean isTeleporterCompatible(ForgeDirection side) {
+	public boolean isTeleporterCompatible(EnumFacing side) {
 		return false;
 	}
 

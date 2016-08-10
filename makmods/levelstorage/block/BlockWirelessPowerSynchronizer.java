@@ -23,7 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -129,15 +129,15 @@ public class BlockWirelessPowerSynchronizer extends BlockContainer implements IH
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int side, int par2) {
-		ForgeDirection orientation = ForgeDirection.VALID_DIRECTIONS[side];
-		if (orientation == ForgeDirection.DOWN)
+		EnumFacing orientation = EnumFacing.VALID_DIRECTIONS[side];
+		if (orientation == EnumFacing.DOWN)
 			return this.down;
-		if (orientation == ForgeDirection.UP)
+		if (orientation == EnumFacing.UP)
 			return this.up;
-		if (orientation == ForgeDirection.NORTH
-		        || orientation == ForgeDirection.WEST
-		        || orientation == ForgeDirection.SOUTH
-		        || orientation == ForgeDirection.EAST)
+		if (orientation == EnumFacing.NORTH
+		        || orientation == EnumFacing.WEST
+		        || orientation == EnumFacing.SOUTH
+		        || orientation == EnumFacing.EAST)
 			return this.side;
 		return null;
 	}

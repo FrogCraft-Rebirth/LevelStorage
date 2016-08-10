@@ -26,7 +26,7 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.PacketDispatcher;
 import net.minecraftforge.fml.relauncher.Side;
@@ -169,13 +169,13 @@ public class TileEntityASU extends TileEntityInventory implements IWrenchable,
 	}
 
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
+	public boolean emitsEnergyTo(TileEntity receiver, EnumFacing direction) {
 		return direction.ordinal() == facing;
 	}
 
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter,
-			ForgeDirection direction) {
+			EnumFacing direction) {
 		return direction.ordinal() != facing;
 	}
 
@@ -211,7 +211,7 @@ public class TileEntityASU extends TileEntityInventory implements IWrenchable,
 	}
 
 	@Override
-	public boolean isTeleporterCompatible(ForgeDirection side) {
+	public boolean isTeleporterCompatible(EnumFacing side) {
 		return side.ordinal() == facing;
 	}
 
@@ -229,7 +229,7 @@ public class TileEntityASU extends TileEntityInventory implements IWrenchable,
 	}
 
 	@Override
-	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+	public double injectEnergyUnits(EnumFacing directionFrom, double amount) {
 		if (this.stored > EU_STORAGE)
 			return amount;
 		this.stored += (long) amount;

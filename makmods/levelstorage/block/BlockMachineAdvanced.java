@@ -11,7 +11,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.network.PacketDispatcher;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -42,7 +42,7 @@ public abstract class BlockMachineAdvanced extends BlockMachineStandart {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int side, int par2) {
-		return side != ForgeDirection.SOUTH.ordinal() ? icons[side] : facing;
+		return side != EnumFacing.SOUTH.ordinal() ? icons[side] : facing;
 	}
 
 	public void onBlockPlacedBy(World world, int i, int j, int k,

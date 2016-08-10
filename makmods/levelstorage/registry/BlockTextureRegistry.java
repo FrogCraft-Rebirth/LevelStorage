@@ -5,7 +5,7 @@ import java.util.Map;
 import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import com.google.common.collect.Maps;
 
@@ -45,7 +45,7 @@ public class BlockTextureRegistry {
 	public Icon getIcon(int side, String name) {
 		if (!textures.containsKey(name))
 			return null;
-		ForgeDirection orientation = ForgeDirection.VALID_DIRECTIONS[side];
+		EnumFacing orientation = EnumFacing.VALID_DIRECTIONS[side];
 		SimpleBlockTexture t = textures.get(name);
 		switch (orientation) {
 			case UP:

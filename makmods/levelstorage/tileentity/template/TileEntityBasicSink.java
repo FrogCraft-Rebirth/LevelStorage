@@ -15,7 +15,7 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
@@ -81,7 +81,7 @@ public abstract class TileEntityBasicSink extends TileEntity implements
 	}
 
 	public short getFacing() {
-		return (short) ForgeDirection.UNKNOWN.flag;
+		return (short) EnumFacing.UNKNOWN.flag;
 	}
 
 	public void setFacing(short facing) {
@@ -182,7 +182,7 @@ public abstract class TileEntityBasicSink extends TileEntity implements
 	}
 
 	@Override
-	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+	public double injectEnergyUnits(EnumFacing directionFrom, double amount) {
 		if (amount > getMaxInput() && explodes()) {
 			this.invalidate();
 			this.worldObj.setBlockToAir(this.xCoord, this.yCoord, this.zCoord);
@@ -206,7 +206,7 @@ public abstract class TileEntityBasicSink extends TileEntity implements
 	}
 
 	@Override
-	public boolean isTeleporterCompatible(ForgeDirection side) {
+	public boolean isTeleporterCompatible(EnumFacing side) {
 		return false;
 	}
 

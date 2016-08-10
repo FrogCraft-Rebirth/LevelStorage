@@ -25,7 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 
@@ -91,7 +91,7 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	}
 
 	@Override
-	public boolean emitsEnergyTo(TileEntity te, ForgeDirection dir) {
+	public boolean emitsEnergyTo(TileEntity te, EnumFacing dir) {
 		return true;
 	}
 
@@ -101,7 +101,7 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	}
 
 	@Override
-	public boolean acceptsEnergyFrom(TileEntity te, ForgeDirection dir) {
+	public boolean acceptsEnergyFrom(TileEntity te, EnumFacing dir) {
 		return true;
 	}
 
@@ -112,7 +112,7 @@ public class TileEntityWirelessConductor extends TileEntity implements
 
 	@Override
 	public short getFacing() {
-		return (short) ForgeDirection.NORTH.ordinal();
+		return (short) EnumFacing.NORTH.ordinal();
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	}
 
 	@Override
-	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+	public double injectEnergyUnits(EnumFacing directionFrom, double amount) {
 		if (this.type == ConductorType.SOURCE) {
 			if (this.safePair != null) {
 				BlockLocation thisTe = new BlockLocation(this.getDimId(),

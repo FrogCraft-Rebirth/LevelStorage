@@ -37,7 +37,7 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import com.google.common.collect.Lists;
 
@@ -152,7 +152,7 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 		// TODO: check this, if everything goes the way it should,
 		// leave it as is, if not then fallback to !world.isRemote
 		if (LevelStorage.isSimulating()) {
-			ForgeDirection hitFrom = ForgeDirection.VALID_DIRECTIONS[side];
+			EnumFacing hitFrom = EnumFacing.VALID_DIRECTIONS[side];
 			int length = (int) Math.pow(2, getChargeFor(stack));
 			int maxDamage = (int) (length / 4 * 1.5);
 			int damage = player.worldObj.rand.nextInt(maxDamage + 1);
@@ -184,139 +184,139 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 		bulkItemsToDelete.add(Block.gravel.blockID);
 	}
 
-	public void mineThreeByThree(ItemStack device, ForgeDirection hitFrom,
+	public void mineThreeByThree(ItemStack device, EnumFacing hitFrom,
 			BlockLocation currBlock, World par2World, EntityPlayer player,
 			List<ParticleInternal> particles) {
 		BlockLocation[] removeBlocks = new BlockLocation[13];
 		int fortune = 0;
 		switch (hitFrom) {
 		case DOWN: {
-			removeBlocks[0] = currBlock.move(ForgeDirection.NORTH, 1);
-			removeBlocks[1] = currBlock.move(ForgeDirection.WEST, 1);
-			removeBlocks[2] = currBlock.move(ForgeDirection.SOUTH, 1);
-			removeBlocks[3] = currBlock.move(ForgeDirection.EAST, 1);
+			removeBlocks[0] = currBlock.move(EnumFacing.NORTH, 1);
+			removeBlocks[1] = currBlock.move(EnumFacing.WEST, 1);
+			removeBlocks[2] = currBlock.move(EnumFacing.SOUTH, 1);
+			removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
 
-			removeBlocks[4] = currBlock.move(ForgeDirection.NORTH, 1).move(
-					ForgeDirection.EAST, 1);
-			removeBlocks[5] = currBlock.move(ForgeDirection.WEST, 1).move(
-					ForgeDirection.NORTH, 1);
-			removeBlocks[6] = currBlock.move(ForgeDirection.NORTH, 1).move(
-					ForgeDirection.WEST, 1);
-			removeBlocks[7] = currBlock.move(ForgeDirection.WEST, 1).move(
-					ForgeDirection.SOUTH, 1);
-			removeBlocks[8] = currBlock.move(ForgeDirection.SOUTH, 1).move(
-					ForgeDirection.EAST, 1);
+			removeBlocks[4] = currBlock.move(EnumFacing.NORTH, 1).move(
+					EnumFacing.EAST, 1);
+			removeBlocks[5] = currBlock.move(EnumFacing.WEST, 1).move(
+					EnumFacing.NORTH, 1);
+			removeBlocks[6] = currBlock.move(EnumFacing.NORTH, 1).move(
+					EnumFacing.WEST, 1);
+			removeBlocks[7] = currBlock.move(EnumFacing.WEST, 1).move(
+					EnumFacing.SOUTH, 1);
+			removeBlocks[8] = currBlock.move(EnumFacing.SOUTH, 1).move(
+					EnumFacing.EAST, 1);
 			break;
 		}
 		case UP: {
-			removeBlocks[0] = currBlock.move(ForgeDirection.NORTH, 1);
-			removeBlocks[1] = currBlock.move(ForgeDirection.WEST, 1);
-			removeBlocks[2] = currBlock.move(ForgeDirection.SOUTH, 1);
-			removeBlocks[3] = currBlock.move(ForgeDirection.EAST, 1);
+			removeBlocks[0] = currBlock.move(EnumFacing.NORTH, 1);
+			removeBlocks[1] = currBlock.move(EnumFacing.WEST, 1);
+			removeBlocks[2] = currBlock.move(EnumFacing.SOUTH, 1);
+			removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
 
-			removeBlocks[4] = currBlock.move(ForgeDirection.NORTH, 1).move(
-					ForgeDirection.EAST, 1);
-			removeBlocks[5] = currBlock.move(ForgeDirection.WEST, 1).move(
-					ForgeDirection.NORTH, 1);
-			removeBlocks[6] = currBlock.move(ForgeDirection.NORTH, 1).move(
-					ForgeDirection.WEST, 1);
-			removeBlocks[7] = currBlock.move(ForgeDirection.WEST, 1).move(
-					ForgeDirection.SOUTH, 1);
-			removeBlocks[8] = currBlock.move(ForgeDirection.SOUTH, 1).move(
-					ForgeDirection.EAST, 1);
+			removeBlocks[4] = currBlock.move(EnumFacing.NORTH, 1).move(
+					EnumFacing.EAST, 1);
+			removeBlocks[5] = currBlock.move(EnumFacing.WEST, 1).move(
+					EnumFacing.NORTH, 1);
+			removeBlocks[6] = currBlock.move(EnumFacing.NORTH, 1).move(
+					EnumFacing.WEST, 1);
+			removeBlocks[7] = currBlock.move(EnumFacing.WEST, 1).move(
+					EnumFacing.SOUTH, 1);
+			removeBlocks[8] = currBlock.move(EnumFacing.SOUTH, 1).move(
+					EnumFacing.EAST, 1);
 			break;
 		}
 		case NORTH: {
 			// Up & down
-			removeBlocks[0] = currBlock.move(ForgeDirection.UP, 1);
-			removeBlocks[1] = currBlock.move(ForgeDirection.DOWN, 1);
+			removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
+			removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
 			// West & east
-			removeBlocks[2] = currBlock.move(ForgeDirection.WEST, 1);
-			removeBlocks[3] = currBlock.move(ForgeDirection.EAST, 1);
+			removeBlocks[2] = currBlock.move(EnumFacing.WEST, 1);
+			removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
 			// Up-west & Down-west
-			removeBlocks[4] = currBlock.move(ForgeDirection.DOWN, 1).move(
-					ForgeDirection.WEST, 1);
-			removeBlocks[5] = currBlock.move(ForgeDirection.UP, 1).move(
-					ForgeDirection.EAST, 1);
+			removeBlocks[4] = currBlock.move(EnumFacing.DOWN, 1).move(
+					EnumFacing.WEST, 1);
+			removeBlocks[5] = currBlock.move(EnumFacing.UP, 1).move(
+					EnumFacing.EAST, 1);
 
-			removeBlocks[6] = currBlock.move(ForgeDirection.UP, 1).move(
-					ForgeDirection.WEST, 1);
-			removeBlocks[7] = currBlock.move(ForgeDirection.DOWN, 1).move(
-					ForgeDirection.EAST, 1);
+			removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(
+					EnumFacing.WEST, 1);
+			removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(
+					EnumFacing.EAST, 1);
 
-			removeBlocks[8] = currBlock.move(ForgeDirection.UP, 1).move(
-					ForgeDirection.EAST, 1);
-			removeBlocks[9] = currBlock.move(ForgeDirection.DOWN, 1).move(
-					ForgeDirection.WEST, 1);
+			removeBlocks[8] = currBlock.move(EnumFacing.UP, 1).move(
+					EnumFacing.EAST, 1);
+			removeBlocks[9] = currBlock.move(EnumFacing.DOWN, 1).move(
+					EnumFacing.WEST, 1);
 
 			break;
 			// South up & north down
 		}
 		case WEST: {
-			removeBlocks[0] = currBlock.move(ForgeDirection.UP, 1);
-			removeBlocks[1] = currBlock.move(ForgeDirection.DOWN, 1);
+			removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
+			removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
 			// West & east
-			removeBlocks[2] = currBlock.move(ForgeDirection.NORTH, 1);
-			removeBlocks[3] = currBlock.move(ForgeDirection.SOUTH, 1);
+			removeBlocks[2] = currBlock.move(EnumFacing.NORTH, 1);
+			removeBlocks[3] = currBlock.move(EnumFacing.SOUTH, 1);
 
-			removeBlocks[4] = currBlock.move(ForgeDirection.UP, 1).move(
-					ForgeDirection.NORTH, 1);
-			removeBlocks[5] = currBlock.move(ForgeDirection.DOWN, 1).move(
-					ForgeDirection.SOUTH, 1);
+			removeBlocks[4] = currBlock.move(EnumFacing.UP, 1).move(
+					EnumFacing.NORTH, 1);
+			removeBlocks[5] = currBlock.move(EnumFacing.DOWN, 1).move(
+					EnumFacing.SOUTH, 1);
 
-			removeBlocks[6] = currBlock.move(ForgeDirection.UP, 1).move(
-					ForgeDirection.NORTH, 1);
-			removeBlocks[7] = currBlock.move(ForgeDirection.DOWN, 1).move(
-					ForgeDirection.SOUTH, 1);
-			removeBlocks[10] = currBlock.move(ForgeDirection.SOUTH, 1).move(
-					ForgeDirection.UP, 1);
-			removeBlocks[11] = currBlock.move(ForgeDirection.NORTH, 1).move(
-					ForgeDirection.DOWN, 1);
+			removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(
+					EnumFacing.NORTH, 1);
+			removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(
+					EnumFacing.SOUTH, 1);
+			removeBlocks[10] = currBlock.move(EnumFacing.SOUTH, 1).move(
+					EnumFacing.UP, 1);
+			removeBlocks[11] = currBlock.move(EnumFacing.NORTH, 1).move(
+					EnumFacing.DOWN, 1);
 			break;
 		}
 		case EAST: {
-			removeBlocks[0] = currBlock.move(ForgeDirection.UP, 1);
-			removeBlocks[1] = currBlock.move(ForgeDirection.DOWN, 1);
+			removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
+			removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
 			// West & east
-			removeBlocks[2] = currBlock.move(ForgeDirection.NORTH, 1);
-			removeBlocks[3] = currBlock.move(ForgeDirection.SOUTH, 1);
+			removeBlocks[2] = currBlock.move(EnumFacing.NORTH, 1);
+			removeBlocks[3] = currBlock.move(EnumFacing.SOUTH, 1);
 
-			removeBlocks[4] = currBlock.move(ForgeDirection.UP, 1).move(
-					ForgeDirection.NORTH, 1);
-			removeBlocks[5] = currBlock.move(ForgeDirection.DOWN, 1).move(
-					ForgeDirection.SOUTH, 1);
+			removeBlocks[4] = currBlock.move(EnumFacing.UP, 1).move(
+					EnumFacing.NORTH, 1);
+			removeBlocks[5] = currBlock.move(EnumFacing.DOWN, 1).move(
+					EnumFacing.SOUTH, 1);
 
-			removeBlocks[6] = currBlock.move(ForgeDirection.UP, 1).move(
-					ForgeDirection.NORTH, 1);
-			removeBlocks[7] = currBlock.move(ForgeDirection.DOWN, 1).move(
-					ForgeDirection.SOUTH, 1);
-			removeBlocks[10] = currBlock.move(ForgeDirection.SOUTH, 1).move(
-					ForgeDirection.UP, 1);
-			removeBlocks[11] = currBlock.move(ForgeDirection.NORTH, 1).move(
-					ForgeDirection.DOWN, 1);
+			removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(
+					EnumFacing.NORTH, 1);
+			removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(
+					EnumFacing.SOUTH, 1);
+			removeBlocks[10] = currBlock.move(EnumFacing.SOUTH, 1).move(
+					EnumFacing.UP, 1);
+			removeBlocks[11] = currBlock.move(EnumFacing.NORTH, 1).move(
+					EnumFacing.DOWN, 1);
 			break;
 		}
 		case SOUTH: {
-			removeBlocks[0] = currBlock.move(ForgeDirection.UP, 1);
-			removeBlocks[1] = currBlock.move(ForgeDirection.DOWN, 1);
+			removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
+			removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
 			// West & east
-			removeBlocks[2] = currBlock.move(ForgeDirection.WEST, 1);
-			removeBlocks[3] = currBlock.move(ForgeDirection.EAST, 1);
+			removeBlocks[2] = currBlock.move(EnumFacing.WEST, 1);
+			removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
 			// Up-west & Down-west
-			removeBlocks[4] = currBlock.move(ForgeDirection.DOWN, 1).move(
-					ForgeDirection.WEST, 1);
-			removeBlocks[5] = currBlock.move(ForgeDirection.UP, 1).move(
-					ForgeDirection.EAST, 1);
+			removeBlocks[4] = currBlock.move(EnumFacing.DOWN, 1).move(
+					EnumFacing.WEST, 1);
+			removeBlocks[5] = currBlock.move(EnumFacing.UP, 1).move(
+					EnumFacing.EAST, 1);
 
-			removeBlocks[6] = currBlock.move(ForgeDirection.UP, 1).move(
-					ForgeDirection.WEST, 1);
-			removeBlocks[7] = currBlock.move(ForgeDirection.DOWN, 1).move(
-					ForgeDirection.EAST, 1);
+			removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(
+					EnumFacing.WEST, 1);
+			removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(
+					EnumFacing.EAST, 1);
 
-			removeBlocks[8] = currBlock.move(ForgeDirection.UP, 1).move(
-					ForgeDirection.EAST, 1);
-			removeBlocks[9] = currBlock.move(ForgeDirection.DOWN, 1).move(
-					ForgeDirection.WEST, 1);
+			removeBlocks[8] = currBlock.move(EnumFacing.UP, 1).move(
+					EnumFacing.EAST, 1);
+			removeBlocks[9] = currBlock.move(EnumFacing.DOWN, 1).move(
+					EnumFacing.WEST, 1);
 			break;
 		}
 		case UNKNOWN:

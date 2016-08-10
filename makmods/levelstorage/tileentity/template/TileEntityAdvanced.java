@@ -18,7 +18,7 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -77,12 +77,12 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		return tank.drain(maxDrain, doDrain);
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource,
+	public FluidStack drain(EnumFacing from, FluidStack resource,
 			boolean doDrain) {
 		if (resource == null || !resource.isFluidEqual(tank.getFluid())) {
 			return null;
@@ -256,18 +256,18 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 	}
 
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
+	public boolean emitsEnergyTo(TileEntity receiver, EnumFacing direction) {
 		return emitsEnergy;
 	}
 
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter,
-			ForgeDirection direction) {
+			EnumFacing direction) {
 		return acceptsEnergy;
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		return 0;
 	}
 
@@ -284,7 +284,7 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		if (!fluidTE)
 			return null;
 		else
@@ -328,7 +328,7 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 	}
 
 	@Override
-	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+	public double injectEnergyUnits(EnumFacing directionFrom, double amount) {
 		if (stored + amount > maxStorage)
 			return amount;
 		this.stored += (int) amount;
@@ -372,7 +372,7 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 	}
 
 	@Override
-	public boolean isTeleporterCompatible(ForgeDirection side) {
+	public boolean isTeleporterCompatible(EnumFacing side) {
 		return false;
 	}
 

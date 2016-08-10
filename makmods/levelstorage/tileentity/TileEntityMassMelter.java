@@ -15,7 +15,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
@@ -84,7 +84,7 @@ public class TileEntityMassMelter extends TileEntityInventorySinkWithFluid
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		return false;
 	}
 
@@ -159,7 +159,7 @@ public class TileEntityMassMelter extends TileEntityInventorySinkWithFluid
 				int freeSpaceInTank = this.getFluidTank().getCapacity()
 						- this.getFluidTank().getFluidAmount();
 				if (freeSpaceInTank >= 0) {
-					if (this.fill(ForgeDirection.UNKNOWN, new FluidStack(
+					if (this.fill(EnumFacing.UNKNOWN, new FluidStack(
 							LSFluids.instance.fluidIV,
 							IVRegistry.IV_TO_FLUID_CONVERSION.getValue()), true) != 0) {
 						use(EU_PER_IV);
@@ -187,15 +187,15 @@ public class TileEntityMassMelter extends TileEntityInventorySinkWithFluid
 
 	@Override
 	public boolean canInsertItem(int slot, ItemStack itemstack, int side) {
-		ForgeDirection dir = ForgeDirection.getOrientation(side);
-		if (dir == ForgeDirection.UP)
+		EnumFacing dir = EnumFacing.getOrientation(side);
+		if (dir == EnumFacing.UP)
 			return isItemValidForSlot(slot, itemstack);
 		return false;
 	}
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack itemstack, int side) {
-		return slot == 2 && side != ForgeDirection.UP.ordinal();
+		return slot == 2 && side != EnumFacing.UP.ordinal();
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.google.common.collect.Lists;
@@ -85,7 +85,7 @@ public class AdvBlockFinder {
 		}
 		if (!found) {
 			for (int dir = 0; dir < 6; dir++) {
-				BlockLocation newTh = loc.move(ForgeDirection.values()[dir], 1);
+				BlockLocation newTh = loc.move(EnumFacing.values()[dir], 1);
 				int currX = newTh.getX();
 				int currY = newTh.getY();
 				int currZ = newTh.getZ();

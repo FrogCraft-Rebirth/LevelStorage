@@ -18,7 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -97,7 +97,7 @@ public abstract class BlockMachineStandart extends BlockContainer {
 	public void registerIcons(IconRegister iconRegister) {
 		String blockName = this.getUnlocalizedName().replace("tile.", "");
 		for (int i = 0; i < 6; i++) {
-			String sname = ForgeDirection.VALID_DIRECTIONS[i].name()
+			String sname = EnumFacing.VALID_DIRECTIONS[i].name()
 					.toLowerCase();
 			icons[i] = iconRegister.registerIcon(ClientProxy
 					.getTexturePathFor(blockName + "/" + sname));

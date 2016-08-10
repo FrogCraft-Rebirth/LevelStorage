@@ -14,7 +14,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -28,7 +28,7 @@ public class ItemElectricLighter extends ItemBasicElectric implements IHasRecipe
 		boolean addedFire = false;
 		BlockLocation currBlockLocation = new BlockLocation(x, y, z);
 		BlockLocation shifted = currBlockLocation.move(
-				ForgeDirection.getOrientation(sideHit), 1);
+				EnumFacing.getOrientation(sideHit), 1);
 		if (!world.isAirBlock(shifted.getX(), shifted.getY(), shifted.getZ())) {
 			return false;
 		}

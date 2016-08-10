@@ -7,7 +7,7 @@ import ic2.api.energy.tile.IEnergyConductor;
 import ic2.api.energy.tile.IEnergyEmitter;
 import makmods.levelstorage.logic.util.BlockLocation;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 
 public class TileEntitySuperconductorCable extends TileEntity implements
@@ -96,7 +96,7 @@ public class TileEntitySuperconductorCable extends TileEntity implements
 
 		int mask = 1;
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
 			// TileEntity neighbor = EnergyNet.getForWorld(this.worldObj)
 			// .getNeighbor(this, direction);
 			BlockLocation currLocation = new BlockLocation(
@@ -166,12 +166,12 @@ public class TileEntitySuperconductorCable extends TileEntity implements
 
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter,
-	        ForgeDirection direction) {
+	        EnumFacing direction) {
 		return true;
 	}
 
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
+	public boolean emitsEnergyTo(TileEntity receiver, EnumFacing direction) {
 		return true;
 	}
 }

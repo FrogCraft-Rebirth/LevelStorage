@@ -31,7 +31,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.PacketDispatcher;
 
@@ -153,7 +153,7 @@ public class ArmorFunctions {
 				z = mop.blockZ;
 				int sideHit = mop.sideHit;
 				BlockLocation bl = new BlockLocation(x, y, z);
-				bl = bl.move(ForgeDirection.getOrientation(sideHit), 1);
+				bl = bl.move(EnumFacing.getOrientation(sideHit), 1);
 				player.setPositionAndUpdate(bl.getX(), bl.getY(), bl.getZ());
 			}
 		}
