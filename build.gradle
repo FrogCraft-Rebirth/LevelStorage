@@ -51,17 +51,6 @@ dependencies {
     runtime "mezz.jei:jei_${Minecraft_Ver}:${JEI_Ver}"
 }
 
-sourceSets {
-    main {
-        java {
-            srcDir "makmods"
-        }
-        resources {
-            srcDir "assets"
-        }
-    }
-}
-
 processResources {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
