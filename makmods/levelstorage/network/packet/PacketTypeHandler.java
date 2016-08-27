@@ -6,8 +6,8 @@ import java.io.DataInputStream;
 import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.network.PacketFlightUpdate;
 import makmods.levelstorage.network.PacketLS;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.CPacketCustomPayload;
 
 /**
  * @author pahimar
@@ -59,11 +59,11 @@ public enum PacketTypeHandler {
 		return packet;
 	}
 
-	public static Packet populatePacket(PacketLS packetLV) {
+	public static Packet<?> populatePacket(PacketLS packetLV) {
 
 		byte[] data = packetLV.populate();
 
-		Packet250CustomPayload packet250 = new Packet250CustomPayload();
+		CPacketCustomPayload packet250 = new CPacketCustomPayload();
 		packet250.channel = Reference.MOD_ID;
 		packet250.data = data;
 		packet250.length = data.length;

@@ -1,6 +1,6 @@
 package makmods.levelstorage.logic.util;
 
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import makmods.levelstorage.LevelStorage;
 
@@ -9,20 +9,20 @@ import makmods.levelstorage.LevelStorage;
  */
 public class LogHelper {
 
-	public static void severe(String message) {
-		LevelStorage.logger.log(Level.SEVERE, message);
+	public static void severe(String message) { //Used to be Level.SEVERE
+		LevelStorage.logger.log(Level.TRACE, message);
 	}
 
-	public static void fine(String message) {
-		LevelStorage.logger.log(Level.FINE, message);
+	public static void fine(String message) { //Used to be Level.FINE
+		LevelStorage.logger.log(Level.TRACE, message);
 	}
 
-	public static void finer(String message) {
-		LevelStorage.logger.log(Level.FINER, message);
+	public static void finer(String message) { //Used to be Level.FINER
+		LevelStorage.logger.log(Level.TRACE, message);
 	}
 
-	public static void finest(String message) {
-		LevelStorage.logger.log(Level.FINEST, message);
+	public static void finest(String message) { //Used to be Level.FINEST
+		LevelStorage.logger.log(Level.TRACE, message);
 	}
 
 	public static void info(String message) {
@@ -30,7 +30,7 @@ public class LogHelper {
 	}
 
 	public static void warning(String message) {
-		LevelStorage.logger.log(Level.WARNING, message);
+		LevelStorage.logger.log(Level.WARN, message);
 	}
 
 }

@@ -5,10 +5,8 @@ import makmods.levelstorage.logic.util.RenderHelper;
 import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.tileentity.TileEntityASU;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.Icon;
-import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
@@ -25,22 +23,22 @@ public class GUIASU extends GuiContainer {
 	}
 
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		this.fontRenderer.drawString(this.name,
-				(this.xSize - this.fontRenderer.getStringWidth(this.name)) / 2,
+		this.fontRendererObj.drawString(this.name,
+				(this.xSize - this.fontRendererObj.getStringWidth(this.name)) / 2,
 				6, 4210752);
-		this.fontRenderer.drawString(this.armorInv, 8, this.ySize - 126 + 3,
+		this.fontRendererObj.drawString(this.armorInv, 8, this.ySize - 126 + 3,
 				4210752);
-		this.fontRenderer.drawString(StatCollector.translateToLocal("container.inventory"), 8, this.ySize - 96 + 3, 4210752);
+		this.fontRendererObj.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 3, 4210752);
 
-		this.fontRenderer.drawString("Power Level: ", 79, 25, 4210752);
+		this.fontRendererObj.drawString("Power Level: ", 79, 25, 4210752);
 		int e = (int) Math.min(this.tileEntity.stored,
 				TileEntityASU.EU_STORAGE);
-		this.fontRenderer.drawString(" " + e, 110, 35, 4210752);
-		this.fontRenderer.drawString(
+		this.fontRendererObj.drawString(" " + e, 110, 35, 4210752);
+		this.fontRendererObj.drawString(
 				"/" + TileEntityASU.EU_STORAGE, 110, 45, 4210752);
 
 		String output = "Out: " + TileEntityASU.EU_PER_TICK + " EU/t";
-		this.fontRenderer.drawString(output, 85, 60, 4210752);
+		this.fontRendererObj.drawString(output, 85, 60, 4210752);
 	}
 
 	@Override

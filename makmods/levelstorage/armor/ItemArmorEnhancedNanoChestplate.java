@@ -3,7 +3,7 @@ package makmods.levelstorage.armor;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
 import ic2.api.item.IMetalArmor;
-import ic2.api.item.Items;
+import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 import ic2.api.util.Keys;
 
@@ -13,31 +13,30 @@ import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.lib.IC2Items;
 import makmods.levelstorage.logic.util.CommonHelper;
 import makmods.levelstorage.logic.util.NBTHelper;
 import makmods.levelstorage.logic.util.NBTHelper.Cooldownable;
-import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.proxy.CommonProxy;
 import makmods.levelstorage.proxy.LSKeyboard;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.EnumArmorMaterial;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SuppressWarnings("deprecation")
 public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 		ISpecialArmor, IMetalArmor, IElectricItem, IHasRecipe {
 	public static final int TIER = 3;
@@ -46,7 +45,8 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 	public static int RENDER_ID = 0;
 
 	public ItemArmorEnhancedNanoChestplate(int id) {
-		super(id, EnumArmorMaterial.DIAMOND, RENDER_ID, 1);
+		super(ItemArmor.ArmorMaterial.DIAMOND, RENDER_ID, 
+				EntityEquipmentSlot.CHEST);
 
 		this.setMaxDamage(27);
 		this.setNoRepair();
@@ -59,19 +59,20 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 	public void addCraftingRecipe() {
 		Recipes.advRecipes.addRecipe(new ItemStack(
 				LSBlockItemList.itemArmorEnhancedNanoChestplate), "clc", "qnq",
-				"aja", Character.valueOf('c'), IC2Items.CARBON_PLATE.copy(),
-				Character.valueOf('n'), Items.getItem("nanoBodyarmor"),
+				"aja", Character.valueOf('c'), 
+				makmods.levelstorage.lib.IC2Items.CARBON_PLATE.copy(),
+				Character.valueOf('n'), IC2Items.getItem("nanoBodyarmor"),
 				Character.valueOf('l'), new ItemStack(
 						LSBlockItemList.itemEnhLappack),
 				Character.valueOf('j'),
-				Items.getItem("electricJetpack").copy(),
-				Character.valueOf('a'), IC2Items.ADV_CIRCUIT.copy(), Character
-						.valueOf('q'), "itemJetpackAccelerator");
+				IC2Items.getItem("electricJetpack").copy(),
+				Character.valueOf('a'), makmods.levelstorage.lib.IC2Items.ADV_CIRCUIT.copy(), 
+				Character.valueOf('q'), "itemJetpackAccelerator");
 	}
 
 	@SideOnly(Side.CLIENT)
 	public EnumRarity getRarity(ItemStack stack) {
-		return EnumRarity.rare;
+		return EnumRarity.RARE;
 	}
 
 	public boolean useJetpack(EntityPlayer player, boolean hoverMode) {
@@ -89,8 +90,8 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 
 			float forwardpower = power * retruster * 2.0F;
 
-			if (forwardpower > 0.0F) {
-				player.moveFlying(0.0F, 0.4F * forwardpower, 0.11F);
+			if (forwardpower > 0.0F) { //Used to invoke player.moveFlying in 1.6
+				player.moveRelative(0.0F, 0.4F * forwardpower, 0.11F);
 			}
 		}
 
@@ -130,7 +131,7 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 
 		if (!(player instanceof EntityPlayerMP))
 			return true;
-		((EntityPlayerMP) player).playerNetServerHandler.ticksForFloatKick = 0;
+		//((EntityPlayerMP) player).server.ticksForFloatKick = 0;
 		return true;
 	}
 
@@ -138,8 +139,8 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 	public static final int COOLDOWN = 10;
 	public static final String ON_NBT = "on";
 
-	public void onArmorTickUpdate(World world, EntityPlayer player,
-			ItemStack itemStack) {
+	@Override
+	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
 		NBTHelper.checkNBT(itemStack);
 		Cooldownable.onUpdate(itemStack, COOLDOWN);
 		if (LevelStorage.isSimulating())
@@ -147,20 +148,12 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 					LSKeyboard.JETPACK_SWITCH_KEY_NAME)) {
 				if (Cooldownable.use(itemStack, COOLDOWN)) {
 					NBTHelper.invertBoolean(itemStack, ON_NBT);
-					CommonHelper
-							.messagePlayer(
-									player,
-									EnumChatFormatting.GOLD
-											+ StatCollector
-													.translateToLocalFormatted(
-															"jetpack.statusChange",
-															NBTHelper
-																	.getBoolean(
-																			itemStack,
-																			ON_NBT) ? StatCollector
-																	.translateToLocal("jetpack.on")
-																	: StatCollector
-																			.translateToLocal("jetpack.off")));
+					CommonHelper.messagePlayer(
+						player, TextFormatting.GOLD + 
+						I18n.translateToLocalFormatted("jetpack.statusChange",
+							NBTHelper.getBoolean(itemStack, ON_NBT) ? 
+								I18n.translateToLocal("jetpack.on") : 
+									I18n.translateToLocal("jetpack.off")));
 				}
 			}
 		if (NBTHelper.getBoolean(itemStack, ON_NBT)) {
@@ -179,11 +172,11 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 
 					if (hoverMode)
 						CommonHelper.messagePlayer(player,
-								EnumChatFormatting.DARK_GREEN
+								TextFormatting.DARK_GREEN
 										+ "Hover Mode enabled.");
 					else {
 						CommonHelper.messagePlayer(player,
-								EnumChatFormatting.DARK_RED
+								TextFormatting.DARK_RED
 										+ "Hover Mode disabled.");
 					}
 				}
@@ -210,13 +203,13 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 			}
 		}
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister
 				.registerIcon(ClientProxy.ENHANCED_NANO_CHESTPLATE_TEXTURE);
-	}
+	}*/
 
 	public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase player,
 			ItemStack armor, DamageSource source, double damage, int slot) {
@@ -227,8 +220,8 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 				* getDamageAbsorptionRatio();
 		int energyPerDamage = ENERGY_PER_DAMAGE;
 
-		int damageLimit = energyPerDamage > 0 ? 25
-				* ElectricItem.manager.getCharge(armor) / energyPerDamage : 0;
+		int damageLimit = energyPerDamage > 0 ? (int)(25
+				* ElectricItem.manager.getCharge(armor) / energyPerDamage) : 0;
 
 		return new ISpecialArmor.ArmorProperties(0, absorptionRatio,
 				damageLimit);
@@ -245,7 +238,7 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 	public void damageArmor(EntityLivingBase entity, ItemStack stack,
 			DamageSource source, int damage, int slot) {
 		ElectricItem.manager.discharge(stack, damage * ENERGY_PER_DAMAGE,
-				2147483647, true, false);
+				2147483647, true, false, false);
 	}
 
 	public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
@@ -262,17 +255,7 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 	}
 
 	@Override
-	public int getChargedItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getEmptyItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getMaxCharge(ItemStack itemStack) {
+	public double getMaxCharge(ItemStack itemStack) {
 		return STORAGE;
 	}
 
@@ -282,18 +265,17 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 	}
 
 	@Override
-	public int getTransferLimit(ItemStack itemStack) {
+	public double getTransferLimit(ItemStack itemStack) {
 		return 3000;
 	}
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 		ItemStack var4 = new ItemStack(this, 1);
 		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE,
 				true, false);
-		par3List.add(var4);
-		par3List.add(new ItemStack(this, 1, this.getMaxDamage()));
+		list.add(var4);
+		list.add(new ItemStack(this, 1, this.getMaxDamage()));
 
 	}
 

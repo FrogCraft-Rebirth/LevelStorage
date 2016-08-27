@@ -2,8 +2,8 @@ package makmods.levelstorage.logic;
 
 import makmods.levelstorage.lib.Reference;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatMessageComponent;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 
 public class DummyPlayer extends EntityPlayer {
@@ -14,11 +14,11 @@ public class DummyPlayer extends EntityPlayer {
 	public boolean canCommandSenderUseCommand(int i, String s) {
 		return false;
 	}
-
-	public ChunkCoordinates getPlayerCoordinates() {
+/*
+	public ChunkPos getPlayerCoordinates() {
 		return null;
-	}
+	}*/
 
-	public void sendChatToPlayer(ChatMessageComponent chatmessagecomponent) {
+	public void addChatComponentMessage(ITextComponent chatComponent) {
 	}
 }

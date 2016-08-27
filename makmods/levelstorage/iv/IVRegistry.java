@@ -1,6 +1,6 @@
 package makmods.levelstorage.iv;
 
-import ic2.api.item.Items;
+import ic2.api.item.IC2Items;
 
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
@@ -14,6 +14,8 @@ import makmods.levelstorage.iv.parsers.IRecipeParser;
 import makmods.levelstorage.iv.parsers.IVRecipeParser;
 import makmods.levelstorage.logic.util.LogHelper;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
@@ -138,57 +140,58 @@ public class IVRegistry {
 	}
 
 	private void initCriticalNodes() {
-		assign(new ItemStack(Item.diamond), 8192);
-		assign(new ItemStack(Block.oreCoal), 128);
-		assign(new ItemStack(Item.coal), 128);
-		assign(new ItemStack(Item.coal, 1, 1), 32);
-		assign(new ItemStack(Block.wood, 1, OreDictionary.WILDCARD_VALUE), 32);
-		assign(new ItemStack(Item.ingotGold), 2048);
-		assign(new ItemStack(Item.redstone), 64);
-		assign(new ItemStack(Block.stone), 1);
-		assign(new ItemStack(Block.dirt), 1);
-		assign(new ItemStack(Block.sand), 1);
-		assign(new ItemStack(Item.ingotIron), 256);
-		assign(new ItemStack(Item.clay), 16);
-		assign(new ItemStack(Item.wheat), 32);
-		assign(new ItemStack(Item.silk), 12);
-		assign(new ItemStack(Block.obsidian), 64);
-		assign(new ItemStack(Item.enderPearl), 1024);
-		assign(new ItemStack(Item.blazeRod), 1536);
-		assign(new ItemStack(Item.carrot), 64);
-		assign(new ItemStack(Item.potato), 64);
-		assign(new ItemStack(Item.glowstone), 384);
-		assign(new ItemStack(Item.dyePowder, 1, 4), 768);
-		assign(new ItemStack(Item.leather), 64);
-		assign(new ItemStack(Item.emerald), 8192);
-		assign(new ItemStack(Item.feather), 48);
-		assign(new ItemStack(Block.ice), 1);
-		assign(new ItemStack(Block.dragonEgg), 2000000);
-		assign(new ItemStack(Item.melon), 16);
-		assign(new ItemStack(Item.netherQuartz), 24);
-		assign(new ItemStack(Item.saddle), 256);
-		assign(new ItemStack(Item.netherStar), 524288);
-		assign(Items.getItem("iridiumOre").copy(), 131072);
-		assign(Items.getItem("resin").copy(), 24);
-		assign(new ItemStack(Item.skull, 1, 1), 87381);
-		assign(new ItemStack(Item.reed), 24);
-		assign(new ItemStack(Block.slowSand), 49);
+		assign(new ItemStack(Items.DIAMOND), 8192);
+		assign(new ItemStack(Blocks.COAL_ORE), 128);
+		assign(new ItemStack(Items.COAL), 128);
+		assign(new ItemStack(Items.COAL, 1, 1), 32);
+		assign(new ItemStack(Blocks.LOG, 1, OreDictionary.WILDCARD_VALUE), 32);
+		assign(new ItemStack(Blocks.LOG2, 1, OreDictionary.WILDCARD_VALUE), 32);
+		assign(new ItemStack(Items.GOLD_INGOT), 2048);
+		assign(new ItemStack(Items.REDSTONE), 64);
+		assign(new ItemStack(Blocks.STONE), 1);
+		assign(new ItemStack(Blocks.DIRT), 1);
+		assign(new ItemStack(Blocks.SAND), 1);
+		assign(new ItemStack(Items.IRON_INGOT), 256);
+		assign(new ItemStack(Items.CLAY_BALL), 16);
+		assign(new ItemStack(Items.WHEAT), 32);
+		assign(new ItemStack(Items.STRING), 12);
+		assign(new ItemStack(Blocks.OBSIDIAN), 64);
+		assign(new ItemStack(Items.ENDER_PEARL), 1024);
+		assign(new ItemStack(Items.BLAZE_ROD), 1536);
+		assign(new ItemStack(Items.CARROT), 64);
+		assign(new ItemStack(Items.POTATO), 64);
+		assign(new ItemStack(Items.GLOWSTONE_DUST), 384);
+		assign(new ItemStack(Items.DYE, 1, 4), 768);
+		assign(new ItemStack(Items.LEATHER), 64);
+		assign(new ItemStack(Items.EMERALD), 8192);
+		assign(new ItemStack(Items.FEATHER), 48);
+		assign(new ItemStack(Blocks.ICE), 1);
+		assign(new ItemStack(Blocks.DRAGON_EGG), 2000000);
+		assign(new ItemStack(Items.MELON), 16);
+		assign(new ItemStack(Items.QUARTZ), 24);
+		assign(new ItemStack(Items.SADDLE), 256);
+		assign(new ItemStack(Items.NETHER_STAR), 524288);
+		assign(IC2Items.getItem("iridiumOre").copy(), 131072);
+		assign(IC2Items.getItem("resin").copy(), 24);
+		assign(new ItemStack(Items.SKULL, 1, 1), 87381);
+		assign(new ItemStack(Items.REEDS), 24);
+		assign(new ItemStack(Blocks.SOUL_SAND), 49);
 		assign(new ItemStack(Block.whiteStone), 4);
-		assign(new ItemStack(Item.gunpowder), 192);
-		assign(new ItemStack(Block.cobblestone), 1);
-		assign(new ItemStack(Block.netherrack), 1);
-		assign(Items.getItem("industrialDiamond"), 8192);
-		assign(Items.getItem("smallUran235"), 1024);
-		assign(Items.getItem("Uran238"), 204);
+		assign(new ItemStack(Items.GUNPOWDER), 192);
+		assign(new ItemStack(Blocks.COBBLESTONE), 1);
+		assign(new ItemStack(Blocks.NETHERRACK), 1);
+		assign(IC2Items.getItem("industrialDiamond"), 8192);
+		assign(IC2Items.getItem("smallUran235"), 1024);
+		assign(IC2Items.getItem("Uran238"), 204);
 		if (LevelStorage.configuration.get(LevelStorage.BALANCE_CATEGORY,
 				"disableBlazeRodToPowderExploit", true).getBoolean(true))
-			assign(new ItemStack(Item.blazePowder), 307);
-		assign(new ItemStack(Item.flint), 4);
-		assign(new ItemStack(Block.gravel), 4);
-		assign(new ItemStack(Item.ghastTear), 4096);
-		assign(new ItemStack(Item.rottenFlesh), 32);
-		assign(new ItemStack(Block.plantYellow), 16);
-		assign(new ItemStack(Block.plantRed), 16);
+			assign(new ItemStack(Items.BLAZE_POWDER), 307);
+		assign(new ItemStack(Items.FLINT), 4);
+		assign(new ItemStack(Blocks.GRAVEL), 4);
+		assign(new ItemStack(Items.GHAST_TEAR), 4096);
+		assign(new ItemStack(Items.ROTTEN_FLESH), 32);
+		assign(new ItemStack(Blocks.YELLOW_FLOWER), 16);
+		assign(new ItemStack(Blocks.RED_FLOWER), 16);
 		assignAll(ItemRecord.class, 16384);
 		// assign(Item.arrow, 16);
 		assign("ingotTin", 255);
@@ -279,7 +282,7 @@ public class IVRegistry {
 			ItemStack initialStack = (ItemStack) obj;
 			for (IVItemStackEntry entry : itemStackEntries) {
 				ItemStack entryStack = entry.getStack();
-				if (entryStack.itemID == initialStack.itemID
+				if (entryStack.getItem() == initialStack.getItem()
 						&& (entryStack.getItemDamage() == initialStack
 								.getItemDamage() || entryStack.getItemDamage() == OreDictionary.WILDCARD_VALUE)) {
 					toRemove = entry;
@@ -406,7 +409,7 @@ public class IVRegistry {
 			for (IVItemStackEntry ivItemStackEntry : itemStackEntries) {
 				ItemStack stack = ivItemStackEntry.getStack();
 
-				if (stack.itemID == toResolveIS.itemID
+				if (stack.getItem() == toResolveIS.getItem()
 						&& (stack.getItemDamage() == toResolveIS
 								.getItemDamage() || stack.getItemDamage() == OreDictionary.WILDCARD_VALUE))
 					return ivItemStackEntry.getValue();
@@ -420,7 +423,7 @@ public class IVRegistry {
 			return NOT_FOUND;
 		for (IVItemStackEntry itemStackEntry : itemStackEntries) {
 			ItemStack iterationIS = itemStackEntry.getStack();
-			if (objStack.itemID == iterationIS.itemID
+			if (objStack.getItem() == iterationIS.getItem()
 					&& (iterationIS.getItemDamage() == objStack.getItemDamage() || iterationIS
 							.getItemDamage() == OreDictionary.WILDCARD_VALUE))
 				return itemStackEntry.getValue();
@@ -428,7 +431,7 @@ public class IVRegistry {
 			for (Entry<ItemStack, String> entryIs : itemStackToNameMap
 					.entrySet()) {
 				ItemStack st = entryIs.getKey();
-				if (st.itemID == objStack.itemID
+				if (st.getItem() == objStack.getItem()
 						&& (st.getItemDamage() == objStack.getItemDamage() || st
 								.getItemDamage() == OreDictionary.WILDCARD_VALUE)) {
 					toResolveIS = entryIs.getValue();

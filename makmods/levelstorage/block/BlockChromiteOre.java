@@ -3,23 +3,22 @@ package makmods.levelstorage.block;
 import java.util.Random;
 
 import makmods.levelstorage.LSCreativeTab;
-import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.Item;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockChromiteOre extends Block {
 
 	public BlockChromiteOre(int id) {
-		super(id, Material.rock);
+		super(Material.ROCK);
 		if (FMLCommonHandler.instance().getSide().isClient()) {
 			this.setCreativeTab(LSCreativeTab.instance);
 		}
-		this.setStepSound(Block.soundStoneFootstep);
+		this.setSoundType(SoundType.STONE);
 		this.setHardness(3.0F);
 		OreDictionary.registerOre("oreChromite", this);
 	}
@@ -33,20 +32,20 @@ public class BlockChromiteOre extends Block {
 	}
 	
 	@Override
-	public int idDropped(int par1, Random par2Random, int par3) {
-		return blockID;
+	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+		return Item.getItemFromBlock(this);
 	}
 
 	@Override
-	public int damageDropped(int par1) {
+	public int damageDropped(IBlockState state) {
 		return 0;
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
 		this.blockIcon = iconRegister
 				.registerIcon(ClientProxy.CHROMITE_ORE_TEXTURE);
-	}
+	}*/
 
 }

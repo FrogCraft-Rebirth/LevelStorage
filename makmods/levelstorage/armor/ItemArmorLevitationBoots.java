@@ -3,7 +3,7 @@ package makmods.levelstorage.armor;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
 import ic2.api.item.IMetalArmor;
-import ic2.api.item.Items;
+import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 
 import java.util.List;
@@ -15,29 +15,28 @@ import makmods.levelstorage.api.IFlyArmor;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.item.ItemQuantumRing;
 import makmods.levelstorage.item.SimpleItems;
-import makmods.levelstorage.lib.IC2Items;
 import makmods.levelstorage.network.PacketFlightUpdate;
 import makmods.levelstorage.network.packet.PacketTypeHandler;
 import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.proxy.CommonProxy;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.EnumArmorMaterial;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
-import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.PacketDispatcher;
 import net.minecraftforge.fml.common.network.Player;
 import net.minecraftforge.fml.relauncher.Side;
@@ -52,8 +51,8 @@ public class ItemArmorLevitationBoots extends ItemArmor implements
 	public static final int FLYING_ENERGY_PER_TICK = 512;
 
 	public ItemArmorLevitationBoots(int id) {
-		super(id, EnumArmorMaterial.DIAMOND, LevelStorage.proxy
-				.getArmorIndexFor(CommonProxy.SUPERSONIC_DUMMY), 3);
+		super(ItemArmor.ArmorMaterial.DIAMOND, LevelStorage.proxy
+				.getArmorIndexFor(CommonProxy.SUPERSONIC_DUMMY), EntityEquipmentSlot.FEET);
 
 		this.setMaxDamage(27);
 		this.setNoRepair();
@@ -64,20 +63,21 @@ public class ItemArmorLevitationBoots extends ItemArmor implements
 		this.setMaxStackSize(1);
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onEntityLivingFallEvent(LivingFallEvent event) {
-		if ((!event.entityLiving.worldObj.isRemote)
-				&& ((event.entity instanceof EntityLivingBase))) {
-			EntityLivingBase entity = (EntityLivingBase) event.entity;
-			ItemStack armor = entity.getCurrentItemOrArmor(1);
+		if ((!event.getEntityLiving().worldObj.isRemote)
+				&& ((event.getEntityLiving() instanceof EntityPlayer))) {
+			EntityPlayer entity = (EntityPlayer) event.getEntityLiving();
+			ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
 
-			if ((armor != null) && (armor.itemID == this.itemID)) {
-				int fallDamage = Math.max((int) event.distance - 3 - 7, 0);
+			if ((armor != null) && (armor.getItem() == this)) {
+				event.setDistance(event.getDistance() - 3 - 7);
+				int fallDamage = (int) Math.max(event.getDistance(), 0);
 				int energyCost = ENERGY_PER_DAMAGE * fallDamage;
 
 				if (energyCost <= ElectricItem.manager.getCharge(armor)) {
 					ElectricItem.manager.discharge(armor, energyCost,
-							2147483647, true, false);
+							2147483647, true, false, false);
 
 					event.setCanceled(true);
 				}
@@ -125,8 +125,7 @@ public class ItemArmorLevitationBoots extends ItemArmor implements
 	}
 
 	@Override
-	public void onArmorTickUpdate(World world, EntityPlayer player,
-			ItemStack itemStack) {
+	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
 		ArmorFunctions.jumpBooster(world, player, itemStack);
 		ArmorFunctions.fly(FLYING_ENERGY_PER_TICK, player, itemStack, world);
 	}
@@ -134,24 +133,24 @@ public class ItemArmorLevitationBoots extends ItemArmor implements
 	public void addCraftingRecipe() {
 		Recipes.advRecipes.addRecipe(new ItemStack(
 				LSBlockItemList.itemLevitationBoots), "iii", "iqi", "lil",
-				Character.valueOf('i'), IC2Items.IRIDIUM_PLATE, Character
-						.valueOf('q'), Items.getItem("quantumBoots"), Character
-						.valueOf('l'), new ItemStack(
+				Character.valueOf('i'), makmods.levelstorage.lib.IC2Items.IRIDIUM_PLATE, 
+				Character.valueOf('q'), IC2Items.getItem("quantumBoots"), 
+				Character.valueOf('l'), new ItemStack(
 						LSBlockItemList.itemStorageFourtyMillion));
 
 	}
 
 	@SideOnly(Side.CLIENT)
 	public EnumRarity getRarity(ItemStack stack) {
-		return EnumRarity.epic;
+		return EnumRarity.EPIC;
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister
 				.registerIcon(ClientProxy.LEVITATION_BOOTS_TEXTURE);
-	}
+	}*/
 
 	public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase player,
 			ItemStack armor, DamageSource source, double damage, int slot) {
@@ -162,8 +161,8 @@ public class ItemArmorLevitationBoots extends ItemArmor implements
 				* getDamageAbsorptionRatio();
 		int energyPerDamage = ENERGY_PER_DAMAGE;
 
-		int damageLimit = energyPerDamage > 0 ? 25
-				* ElectricItem.manager.getCharge(armor) / energyPerDamage : 0;
+		int damageLimit = energyPerDamage > 0 ? (int)(25
+				* ElectricItem.manager.getCharge(armor) / energyPerDamage) : 0;
 
 		return new ISpecialArmor.ArmorProperties(0, absorptionRatio,
 				damageLimit);
@@ -180,7 +179,7 @@ public class ItemArmorLevitationBoots extends ItemArmor implements
 	public void damageArmor(EntityLivingBase entity, ItemStack stack,
 			DamageSource source, int damage, int slot) {
 		ElectricItem.manager.discharge(stack, damage * ENERGY_PER_DAMAGE,
-				2147483647, true, false);
+				2147483647, true, false, false);
 	}
 
 	public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
@@ -197,17 +196,7 @@ public class ItemArmorLevitationBoots extends ItemArmor implements
 	}
 
 	@Override
-	public int getChargedItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getEmptyItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getMaxCharge(ItemStack itemStack) {
+	public double getMaxCharge(ItemStack itemStack) {
 		return STORAGE;
 	}
 
@@ -217,18 +206,17 @@ public class ItemArmorLevitationBoots extends ItemArmor implements
 	}
 
 	@Override
-	public int getTransferLimit(ItemStack itemStack) {
+	public double getTransferLimit(ItemStack itemStack) {
 		return 10000;
 	}
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 		ItemStack var4 = new ItemStack(this, 1);
 		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE,
 				true, false);
-		par3List.add(var4);
-		par3List.add(new ItemStack(this, 1, this.getMaxDamage()));
+		list.add(var4);
+		list.add(new ItemStack(this, 1, this.getMaxDamage()));
 
 	}
 

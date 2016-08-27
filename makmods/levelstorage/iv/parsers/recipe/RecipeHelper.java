@@ -33,7 +33,7 @@ public class RecipeHelper {
 				// System.out.println(recOutput);
 				// System.out.println(is);
 
-				if (recOutput.itemID == is.itemID
+				if (recOutput.getItem() == is.getItem()
 						&& (recOutput.getItemDamage() == is.getItemDamage() || is
 								.getItemDamage() == OreDictionary.WILDCARD_VALUE))
 					recs.add(r);
@@ -49,7 +49,7 @@ public class RecipeHelper {
 		for (Entry<ItemStack, String> entryIs : IVRegistry.itemStackToNameMap
 				.entrySet()) {
 			ItemStack st = entryIs.getKey();
-			if (st.itemID == stack.itemID
+			if (st.getItem() == stack.getItem()
 					&& (st.getItemDamage() == stack.getItemDamage() || st
 							.getItemDamage() == OreDictionary.WILDCARD_VALUE)) {
 				return entryIs.getValue();

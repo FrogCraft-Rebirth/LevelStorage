@@ -9,24 +9,17 @@ import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.armor.ArmorFunctions;
 import makmods.levelstorage.armor.ItemArmorLevitationBoots;
 import makmods.levelstorage.armor.ItemArmorTeslaHelmet;
-import makmods.levelstorage.init.Config;
-import makmods.levelstorage.init.Config.LSConfigCategory;
-import makmods.levelstorage.logic.util.NBTHelper;
-import makmods.levelstorage.proxy.ClientProxy;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumArmorMaterial;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -43,9 +36,13 @@ public class ItemArmorAntimatterBase extends ItemArmor implements
 	public static final int STORAGE = (int)Math.pow(10, 9);
 
 	public static boolean BOOTS_EXPLOSION = true;
+	// Used for simplifying port process, TODO: finish it
+	public static EntityEquipmentSlot intToEquiSlot(int armorType) {
+		return EntityEquipmentSlot.CHEST;
+	}
 
 	public ItemArmorAntimatterBase(int id, int armorType) {
-		super(id, EnumArmorMaterial.DIAMOND, RENDER_ID, armorType);
+		super(ItemArmor.ArmorMaterial.DIAMOND, RENDER_ID, intToEquiSlot(armorType));
 		this.setMaxDamage(27);
 		this.setNoRepair();
 		if (FMLCommonHandler.instance().getSide().isClient()) {
@@ -58,20 +55,19 @@ public class ItemArmorAntimatterBase extends ItemArmor implements
 	public static final int EU_PER_TICK_WATERWALK = 100;
 
 	@Override
-	public void onArmorTickUpdate(World world, EntityPlayer player,
-			ItemStack itemStack) {
-		if (this.armorType == CHESTPLATE)
+	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
+		if (this.armorType == EntityEquipmentSlot.CHEST)
 			ArmorFunctions.extinguish(player, world);
-		else if (this.armorType == BOOTS) {
+		else if (this.armorType == EntityEquipmentSlot.FEET) {
 			ArmorFunctions.jumpBooster(world, player, itemStack);
 			ArmorFunctions.fly(ItemArmorLevitationBoots.FLYING_ENERGY_PER_TICK,
 					player, itemStack, world);
 			ArmorFunctions.bootsSpecialFly(player, world, itemStack);
-		} else if (this.armorType == LEGGINGS) {
+		} else if (this.armorType == EntityEquipmentSlot.LEGS) {
 			ArmorFunctions.speedUp(player, itemStack);
 			ArmorFunctions
 					.antimatterLeggingsFunctions(world, player, itemStack);
-		} else if (this.armorType == HELMET) {
+		} else if (this.armorType == EntityEquipmentSlot.HEAD) {
 			ArmorFunctions.helmetFunctions(world, player, itemStack,
 					ItemArmorTeslaHelmet.RAY_COST,
 					ItemArmorTeslaHelmet.FOOD_COST);
@@ -79,7 +75,7 @@ public class ItemArmorAntimatterBase extends ItemArmor implements
 	}
 
 	public double getDamageAbsorptionRatio() {
-		if (this.armorType == CHESTPLATE)
+		if (this.armorType == EntityEquipmentSlot.CHEST)
 			return 1.1D;
 		return 1.0D;
 	}
@@ -90,8 +86,8 @@ public class ItemArmorAntimatterBase extends ItemArmor implements
 				* getDamageAbsorptionRatio();
 		int energyPerDamage = ENERGY_PER_DAMAGE;
 
-		int damageLimit = energyPerDamage > 0 ? 25
-				* ElectricItem.manager.getCharge(armor) / energyPerDamage : 0;
+		int damageLimit = energyPerDamage > 0 ? (int)(25
+				* ElectricItem.manager.getCharge(armor) / energyPerDamage) : 0;
 
 		return new ISpecialArmor.ArmorProperties(0, absorptionRatio,
 				damageLimit);
@@ -99,23 +95,24 @@ public class ItemArmorAntimatterBase extends ItemArmor implements
 
 	private double getBaseAbsorptionRatio() {
 		switch (this.armorType) {
-		case 0:
+		case HEAD:
 			return 0.15D;
-		case 1:
+		case CHEST:
 			return 0.4D;
-		case 2:
+		case LEGS:
 			return 0.3D;
-		case 3:
+		case FEET:
 			return 0.15D;
+		default:
+			return 0.0D;
 		}
-		return 0.0D;
 	}
 
 	@SideOnly(Side.CLIENT)
 	public EnumRarity getRarity(ItemStack stack) {
-		return EnumRarity.epic;
+		return EnumRarity.EPIC;
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
@@ -131,13 +128,12 @@ public class ItemArmorAntimatterBase extends ItemArmor implements
 		else if (this.armorType == BOOTS)
 			this.itemIcon = par1IconRegister
 					.registerIcon(ClientProxy.ANTIMATTER_BOOTS_TEXTURE);
-
-	}
+	}*/
 
 	public void damageArmor(EntityLivingBase entity, ItemStack stack,
 			DamageSource source, int damage, int slot) {
 		ElectricItem.manager.discharge(stack, damage * ENERGY_PER_DAMAGE,
-				2147483647, true, false);
+				2147483647, true, false, false);
 	}
 
 	public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
@@ -150,35 +146,24 @@ public class ItemArmorAntimatterBase extends ItemArmor implements
 
 	@Override
 	public boolean canProvideEnergy(ItemStack itemStack) {
-		if (this.armorType == CHESTPLATE)
+		if (this.armorType == EntityEquipmentSlot.CHEST)
 			return true;
 		else
 			return false;
 	}
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 		ItemStack var4 = new ItemStack(this, 1);
 		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE,
 				true, false);
-		par3List.add(var4);
-		par3List.add(new ItemStack(this, 1, this.getMaxDamage()));
+		list.add(var4);
+		list.add(new ItemStack(this, 1, this.getMaxDamage()));
 
 	}
 
 	@Override
-	public int getChargedItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getEmptyItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getMaxCharge(ItemStack itemStack) {
+	public double getMaxCharge(ItemStack itemStack) {
 		return STORAGE;
 	}
 
@@ -188,7 +173,7 @@ public class ItemArmorAntimatterBase extends ItemArmor implements
 	}
 
 	@Override
-	public int getTransferLimit(ItemStack itemStack) {
+	public double getTransferLimit(ItemStack itemStack) {
 		return 1000000;
 	}
 

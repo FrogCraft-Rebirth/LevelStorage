@@ -3,30 +3,32 @@ package makmods.levelstorage.client;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
 
-import java.util.EnumSet;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.StatCollector;
-import net.minecraftforge.fml.common.ITickHandler;
-import net.minecraftforge.fml.common.TickType;
-import net.minecraftforge.fml.common.registry.TickRegistry;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class ElectricHUD implements ITickHandler {
+public class ElectricHUD {
 
+	// According to https://github.com/MinecraftForge/MinecraftForge/issues/960,
+	// ITickHandler is replaced by TickEvent.
+	
 	public ElectricHUD() {
-		TickRegistry.registerTickHandler(this, Side.CLIENT);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		;
+	@SubscribeEvent
+	public void tickEnd(TickEvent.ClientTickEvent event) {
+		if (event.phase == TickEvent.Phase.END)
+			renderHUD();
 	}
 
 	private static class SimpleEItemsData {
@@ -76,8 +78,7 @@ public class ElectricHUD implements ITickHandler {
 				&& !Minecraft.getMinecraft().gameSettings.showDebugInfo) {
 			// ARMOR CALCULATIONS
 			int percentArmor;
-			EnumChatFormatting color = EnumChatFormatting.WHITE;
-			FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+			TextFormatting color = TextFormatting.WHITE;
 			SimpleEItemsData armorData = calculateEItemsData(player.inventory.armorInventory);
 			if (armorData.capacity != 0)
 				percentArmor = (int) ((armorData.charge * 100.0f) / armorData.capacity);
@@ -85,41 +86,24 @@ public class ElectricHUD implements ITickHandler {
 				percentArmor = 0;
 
 			if (percentArmor > 0 && percentArmor <= 10)
-				color = EnumChatFormatting.RED;
+				color = TextFormatting.RED;
 			else if (percentArmor > 10 && percentArmor <= 20)
-				color = EnumChatFormatting.DARK_RED;
+				color = TextFormatting.DARK_RED;
 			else if (percentArmor > 20 && percentArmor <= 40)
-				color = EnumChatFormatting.GOLD;
+				color = TextFormatting.GOLD;
 			else if (percentArmor > 40 && percentArmor <= 60)
-				color = EnumChatFormatting.YELLOW;
+				color = TextFormatting.YELLOW;
 			else
-				color = EnumChatFormatting.WHITE;
+				color = TextFormatting.WHITE;
 
 			// ACTUAL RENDERING
 			if (percentArmor > 0) {
-				FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
+				FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 				fr.drawStringWithShadow(
-						color
-								+ StatCollector
-										.translateToLocal("other.energyHUD")
+						color + I18n.format("other.energyHUD")
 								+ " " + percentArmor + "%", 2, 2, 0);
 			}
 		}
-	}
-
-	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-		renderHUD();
-	}
-
-	@Override
-	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.RENDER);
-	}
-
-	@Override
-	public String getLabel() {
-		return "ElectricItemHUD";
 	}
 
 }

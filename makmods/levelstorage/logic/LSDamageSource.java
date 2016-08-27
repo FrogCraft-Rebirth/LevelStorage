@@ -2,9 +2,10 @@ package makmods.levelstorage.logic;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.StatCollector;
 
 public class LSDamageSource extends DamageSource {
 
@@ -23,13 +24,12 @@ public class LSDamageSource extends DamageSource {
 	private String killMessage;
 
 	@Override
-	public ChatMessageComponent getDeathMessage(
+	public ITextComponent getDeathMessage(
 	        EntityLivingBase par1EntityLivingBase) {
 		if (par1EntityLivingBase instanceof EntityPlayer)
-			return ChatMessageComponent.createFromText(String.format(
-			        StatCollector.translateToLocal(this.killMessage),
-			        ((EntityPlayer) par1EntityLivingBase).username));
-		return ChatMessageComponent.createFromText(this.killMessage);
+			return new TextComponentTranslation(this.killMessage,
+			        ((EntityPlayer) par1EntityLivingBase).getName());
+		return new TextComponentString(this.killMessage);
 	}
 
 	protected LSDamageSource(String par1Str) {

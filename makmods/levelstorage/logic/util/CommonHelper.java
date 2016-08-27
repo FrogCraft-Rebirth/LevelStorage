@@ -6,23 +6,24 @@ import java.util.Random;
 
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.registry.SyncType;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.google.common.collect.Lists;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.registry.LanguageRegistry;
 
 public class CommonHelper {
 	public static SyncType invertType(SyncType type) {
@@ -40,7 +41,7 @@ public class CommonHelper {
 			return false;
 		if (s2 == null)
 			return false;
-		return (s1.itemID == s2.itemID)
+		return (s1.getItem() == s2.getItem())
 				&& (s1.getItemDamage() == s2.getItemDamage())
 				&& (s1.stackSize == s2.stackSize);
 	}
@@ -48,7 +49,7 @@ public class CommonHelper {
 	public static boolean areStacksEqual(ItemStack first, ItemStack second) {
 		if (first == null || second == null)
 			return false;
-		return first.itemID == second.itemID
+		return first.getItem() == second.getItem()
 				&& (first.getItemDamage() == second.getItemDamage()
 						|| first.getItemDamage() == OreDictionary.WILDCARD_VALUE || second
 						.getItemDamage() == OreDictionary.WILDCARD_VALUE);
@@ -57,11 +58,11 @@ public class CommonHelper {
 	public static ItemStack createEnchantedBook(Enchantment ench, int level) {
 		if (ench == null)
 			return null;
-		ItemStack book = new ItemStack(Item.enchantedBook);
-		book.stackTagCompound = new NBTTagCompound();
+		ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
+		book.setTagCompound(new NBTTagCompound());
 		NBTTagList storedEnchs = new NBTTagList();
 		NBTTagCompound enchanted = new NBTTagCompound();
-		enchanted.setShort("id", (short) ench.effectId);
+		enchanted.setShort("id", (short) Enchantment.getEnchantmentID(ench));
 		enchanted.setShort("lvl", (short) level);
 		storedEnchs.appendTag(enchanted);
 		book.getTagCompound().setTag("StoredEnchantments", storedEnchs);
@@ -71,8 +72,7 @@ public class CommonHelper {
 	public static void dropBlockInWorld(World par1World, int par2, int par3,
 			int par4, ItemStack par5ItemStack) {
 		if (!par1World.isRemote
-				&& par1World.getGameRules().getGameRuleBooleanValue(
-						"doTileDrops")) {
+				&& par1World.getGameRules().getBoolean("doTileDrops")) {
 			float f = 0.7F;
 			double d0 = (double) (par1World.rand.nextFloat() * f)
 					+ (double) (1.0F - f) * 0.5D;
@@ -82,7 +82,7 @@ public class CommonHelper {
 					+ (double) (1.0F - f) * 0.5D;
 			EntityItem entityitem = new EntityItem(par1World, (double) par2
 					+ d0, (double) par3 + d1, (double) par4 + d2, par5ItemStack);
-			entityitem.delayBeforeCanPickup = 10;
+			entityitem.setPickupDelay(10);
 			par1World.spawnEntityInWorld(entityitem);
 		}
 	}
@@ -123,9 +123,9 @@ public class CommonHelper {
 	public static void dropBlockInWorld_exact(World world, double x, double y,
 			double z, ItemStack stack) {
 		if (!world.isRemote
-				&& world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
+				&& world.getGameRules().getBoolean("doTileDrops")) {
 			EntityItem entityitem = new EntityItem(world, x, y, z, stack);
-			entityitem.delayBeforeCanPickup = 0;
+			entityitem.setPickupDelay(0);
 			world.spawnEntityInWorld(entityitem);
 		}
 	}
@@ -136,7 +136,7 @@ public class CommonHelper {
 			return false;
 		else {
 			if (!world.isRemote) {
-				TileEntity tile = world.getBlockTileEntity(x, y, z);
+				TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
 				if (tile != null) {
 					player.openGui(LevelStorage.instance, 16384, world, x, y, z);
 				}
@@ -149,13 +149,13 @@ public class CommonHelper {
 	public static void dropBlockItems(World world, int x, int y, int z) {
 		Random rand = new Random();
 
-		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+		TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 		if (!(tileEntity instanceof IInventory))
 			return;
 		IInventory inventory = (IInventory) tileEntity;
 
 		for (int i = 0; i < inventory.getSizeInventory(); i++) {
-			ItemStack item = inventory.getStackInSlot(i);
+			ItemStack item = inventory.getStackInSlot(i).copy();
 
 			if (item != null && item.stackSize > 0) {
 				float rx = rand.nextFloat() * 0.8F + 0.1F;
@@ -163,8 +163,7 @@ public class CommonHelper {
 				float rz = rand.nextFloat() * 0.8F + 0.1F;
 
 				EntityItem entityItem = new EntityItem(world, x + rx, y + ry, z
-						+ rz, new ItemStack(item.itemID, item.stackSize,
-						item.getItemDamage()));
+						+ rz, item);
 
 				if (item.hasTagCompound()) {
 					entityItem.getEntityItem().setTagCompound(
@@ -189,7 +188,7 @@ public class CommonHelper {
 			return false;
 		if (s2 == null)
 			return false;
-		return (s1.itemID == s2.itemID)
+		return (s1.getItem() == s2.getItem())
 				&& (s1.getItemDamage() == s2.getItemDamage());
 	}
 
@@ -229,7 +228,7 @@ public class CommonHelper {
 	}
 
 	public static void spawnLightning(World w, int x, int y, int z, boolean exp) {
-		EntityLightningBolt lightning = new EntityLightningBolt(w, x, y, z);
+		EntityLightningBolt lightning = new EntityLightningBolt(w, x, y, z, false);
 		w.addWeatherEffect(lightning);
 		if (exp) {
 			w.createExplosion(lightning, x, y, z,
@@ -248,8 +247,7 @@ public class CommonHelper {
 		String name = stack.getDisplayName();
 		if (name.endsWith(".name")) {
 			if (FMLCommonHandler.instance().getSide().isClient())
-				sb.append(LanguageRegistry.instance().getStringLocalization(
-						name));
+				sb.append(I18n.format(name));
 			else
 				sb.append(name);
 		} else
@@ -268,8 +266,7 @@ public class CommonHelper {
 		String name = stack.getDisplayName();
 		if (name.endsWith(".name")) {
 			if (FMLCommonHandler.instance().getSide().isClient())
-				sb.append(LanguageRegistry.instance().getStringLocalization(
-						name));
+				sb.append(I18n.format(name));
 			else
 				sb.append(name);
 		} else

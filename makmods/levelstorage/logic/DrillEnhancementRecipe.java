@@ -3,8 +3,9 @@ package makmods.levelstorage.logic;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.item.ItemEnhancedDiamondDrill;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,23 +26,23 @@ public class DrillEnhancementRecipe implements IRecipe {
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack currentStack = inv.getStackInSlot(i);
 			if (currentStack != null) {
-				if (currentStack.itemID == Item.enchantedBook.itemID) {
+				if (currentStack.getItem() == Items.ENCHANTED_BOOK) {
 					if (foundBook)
 						return null;
-					NBTTagList nbttaglist = currentStack.stackTagCompound
-					        .getTagList("StoredEnchantments");
+					NBTTagList nbttaglist = currentStack.getTagCompound()
+					        .getTagList("StoredEnchantments", 9);
 					if (nbttaglist != null) {
 						for (int j = 0; j < nbttaglist.tagCount(); ++j) {
 							enchantmentId = ((NBTTagCompound) nbttaglist
-							        .tagAt(j)).getShort("id");
+							        .getCompoundTagAt(j)).getShort("id");
 							enchantmentLvl = ((NBTTagCompound) nbttaglist
-							        .tagAt(j)).getShort("lvl");
+							        .getCompoundTagAt(j)).getShort("lvl");
 						}
 					}
 					foundBook = true;
 				}
 
-				if (currentStack.itemID == LSBlockItemList.itemEnhDiamondDrill.itemID) {
+				if (currentStack.getItem() == LSBlockItemList.itemEnhDiamondDrill) {
 					if (foundDrill)
 						return null;
 					drill = currentStack;
@@ -53,20 +54,20 @@ public class DrillEnhancementRecipe implements IRecipe {
 		if (foundDrill && foundBook && drill != null && enchantmentId > 0
 		        && enchantmentLvl > 0) {
 			if (drill.getTagCompound() == null)
-				drill.stackTagCompound = new NBTTagCompound();
+				drill.setTagCompound(new NBTTagCompound());
 			// if (drill.getTagCompound().getCompoundTag(
 			// ItemEnhancedDiamondDrill.ENHANCEMENT_NBT) != null) {
 			// return null;
 			// }
-			Enchantment ench = Enchantment.enchantmentsList[enchantmentId];
-			if (ench == Enchantment.fortune || ench == Enchantment.silkTouch) {
+			Enchantment ench = Enchantment.getEnchantmentByID(enchantmentId);
+			if (ench == Enchantments.FORTUNE || ench == Enchantments.SILK_TOUCH) {
 				NBTTagCompound enhNBT = new NBTTagCompound();
 				enhNBT.setInteger(ItemEnhancedDiamondDrill.ENHANCEMENT_ID_NBT,
 				        enchantmentId);
 				enhNBT.setInteger(ItemEnhancedDiamondDrill.ENHANCEMENT_LVL_NBT,
 				        enchantmentLvl);
 				ItemStack newStack = drill.copy();
-				newStack.stackTagCompound.setCompoundTag(
+				newStack.getTagCompound().setTag(
 				        ItemEnhancedDiamondDrill.ENHANCEMENT_NBT, enhNBT);
 				return newStack;
 			}
@@ -87,12 +88,17 @@ public class DrillEnhancementRecipe implements IRecipe {
 
 	@Override
 	public int getRecipeSize() {
-		// TODO Auto-generated method stub
 		return 10;
 	}
 
 	@Override
 	public ItemStack getRecipeOutput() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
 		// TODO Auto-generated method stub
 		return null;
 	}

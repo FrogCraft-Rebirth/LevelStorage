@@ -5,14 +5,20 @@ import ic2.api.item.IElectricItem;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.server.FMLServerHandler;
 
 public class CommandChargeItems extends CommandBase {
 
@@ -26,15 +32,16 @@ public class CommandChargeItems extends CommandBase {
 		return "/" + getCommandName() + " [<player name>]";
 	}
 
-	public List addTabCompletionOptions(ICommandSender par1ICommandSender,
-			String[] args) {
+	@Override
+	public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args,
+			@Nullable BlockPos pos) {
 		if (args.length == 1)
 			return getListOfStringsMatchingLastWord(args, getPlayers());
 		return null;
 	}
 
 	protected String[] getPlayers() {
-		return MinecraftServer.getServer().getAllUsernames();
+		return FMLServerHandler.instance().getServer().getAllUsernames();
 	}
 
 	public int chargeItems(EntityPlayerMP player) {
@@ -43,38 +50,31 @@ public class CommandChargeItems extends CommandBase {
 		for (ItemStack stack : inv.armorInventory)
 			if (stack != null)
 				if (stack.getItem() instanceof IElectricItem)
-					charged += ElectricItem.manager.charge(stack,
-							Integer.MAX_VALUE, 10, true, false);
+					charged += ElectricItem.manager.charge(stack, Integer.MAX_VALUE, 10, true, false);
 		for (ItemStack stack : inv.mainInventory)
 			if (stack != null)
 				if (stack.getItem() instanceof IElectricItem)
-					charged += ElectricItem.manager.charge(stack,
-							Integer.MAX_VALUE, 10, true, false);
+					charged += ElectricItem.manager.charge(stack, Integer.MAX_VALUE, 10, true, false);
 		return charged;
 	}
 
 	@Override
-	public void processCommand(ICommandSender icommandsender, String[] astring) {
+	public void execute(MinecraftServer server, ICommandSender sender, String[] astring) throws CommandException {
 		if (astring.length == 1) {
 			String playerName = astring[0];
-			EntityPlayerMP player = MinecraftServer
-					.getServerConfigurationManager(MinecraftServer.getServer())
-					.getPlayerForUsername(playerName);
-			if (player == null)
+			Entity player = server
+					.getEntityFromUuid(server.getPlayerProfileCache().getGameProfileForUsername(playerName).getId());
+			if (player == null || !(player instanceof EntityPlayerMP))
 				throw new PlayerNotFoundException();
-			int charged = chargeItems(player);
-			icommandsender.sendChatToPlayer(ChatMessageComponent
-					.createFromText("\247dCharged all items inside "
-							+ playerName + "'s inventory. (used "
-								+ charged + " EU)"));
+			int charged = chargeItems((EntityPlayerMP) player);
+			sender.addChatMessage(new TextComponentString(
+					"\247dCharged all items inside " + playerName + "'s inventory. (used " + charged + " EU)"));
 			return;
 		}
-		EntityPlayerMP player = getCommandSenderAsPlayer(icommandsender);
+		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 		int charged = chargeItems(player);
-		icommandsender
-				.sendChatToPlayer(ChatMessageComponent
-						.createFromText("\247dCharged all items inside your inventory. (used "
-								+ charged + " EU)"));
+		sender.addChatMessage(
+				new TextComponentString("\247dCharged all items inside your inventory. (used " + charged + " EU)"));
 	}
 
 }

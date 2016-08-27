@@ -1,6 +1,6 @@
 package makmods.levelstorage.block;
 
-import ic2.api.item.Items;
+import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.init.IHasRecipe;
@@ -16,7 +16,7 @@ public class BlockASU extends BlockMachineAdvanced implements IHasRecipe {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world) {
+	public TileEntity createNewTileEntity(World world, int meta) {
 		return new TileEntityASU();
 	}
 
@@ -25,7 +25,7 @@ public class BlockASU extends BlockMachineAdvanced implements IHasRecipe {
 		// TODO: make the recipe more expensive. MUCH MORE EXPENSIVE.
 		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.blockASU),
 				"epe", "eme", "epe", 'e', new ItemStack(
-						LSBlockItemList.itemAntimatterCrystal), 'm', Items
+						LSBlockItemList.itemAntimatterCrystal), 'm', IC2Items
 						.getItem("mfsUnit"), 'p', SimpleItemShortcut.PLATE_ANTIMATTER_IRIDIUM.getItemStack());
 	}
 

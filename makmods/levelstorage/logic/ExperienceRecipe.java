@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LevelStorage;
-import makmods.levelstorage.api.XPStack;
+import makmods.levelstorage.api.XpStack;
 import makmods.levelstorage.item.ItemXPTome;
-import makmods.levelstorage.registry.XPStackRegistry;
+import makmods.levelstorage.registry.XpStackRegistry;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -33,13 +33,13 @@ public class ExperienceRecipe implements IRecipe {
 			ItemStack currentStack = inventoryCrafting.getStackInSlot(i);
 			if (currentStack != null && !currentStack.equals(null)) {
 				if (currentStack.getItem() instanceof ItemXPTome) {
-					if (currentStack.stackTagCompound != null) {
-						if (currentStack.stackTagCompound
+					if (currentStack.getTagCompound() != null) {
+						if (currentStack.getTagCompound()
 						        .hasKey(ItemXPTome.STORED_XP_NBT)) {
 							if (seenBook)
 								return null;
 							initialBookStack = currentStack;
-							bookXp = currentStack.stackTagCompound
+							bookXp = currentStack.getTagCompound()
 							        .getInteger(ItemXPTome.STORED_XP_NBT);
 							seenBook = true;
 							cycleCompleted = true;
@@ -48,7 +48,7 @@ public class ExperienceRecipe implements IRecipe {
 				}
 			}
 
-			for (XPStack entry : XPStackRegistry.instance.entries) {
+			for (XpStack entry : XpStackRegistry.instance.entries) {
 				ItemStack stack = entry.stack;
 				int value = entry.value;
 				if (stack != null && currentStack != null) {
@@ -82,8 +82,8 @@ public class ExperienceRecipe implements IRecipe {
 		if (!seenBook)
 			return null;
 		ItemStack result = new ItemStack(LSBlockItemList.itemLevelStorageBook);
-		result.stackTagCompound = new NBTTagCompound();
-		result.stackTagCompound.setInteger(ItemXPTome.STORED_XP_NBT,
+		result.setTagCompound(new NBTTagCompound());
+		result.getTagCompound().setInteger(ItemXPTome.STORED_XP_NBT,
 		        totalXp);
 
 		return result;
@@ -103,6 +103,12 @@ public class ExperienceRecipe implements IRecipe {
 	@Override
 	public ItemStack getRecipeOutput() {
 
+		return null;
+	}
+	
+	@Override
+	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+		// TODO Implementation
 		return null;
 	}
 }

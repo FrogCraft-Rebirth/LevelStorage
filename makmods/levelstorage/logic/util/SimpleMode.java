@@ -25,7 +25,7 @@ public enum SimpleMode {
 		if (nbt != null) {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setInteger(NBT_NAME, this.ordinal());
-			nbt.setCompoundTag(NBT_COMPOUND_NAME, compound);
+			nbt.setTag(NBT_COMPOUND_NAME, compound);
 		}
 	}
 

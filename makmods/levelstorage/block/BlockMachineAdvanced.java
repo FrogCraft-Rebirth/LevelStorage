@@ -3,16 +3,14 @@ package makmods.levelstorage.block;
 import ic2.api.tile.IWrenchable;
 import makmods.levelstorage.network.packet.PacketReRender;
 import makmods.levelstorage.proxy.ClientProxy;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.common.network.PacketDispatcher;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -28,7 +26,7 @@ public abstract class BlockMachineAdvanced extends BlockMachineStandart {
 		super(par1);
 	}
 
-	private Icon facing;
+	/*private Icon facing;
 
 	public Icon getBlockTexture(IBlockAccess par1IBlockAccess, int x, int y,
 			int z, int side) {
@@ -43,13 +41,13 @@ public abstract class BlockMachineAdvanced extends BlockMachineStandart {
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int side, int par2) {
 		return side != EnumFacing.SOUTH.ordinal() ? icons[side] : facing;
-	}
+	}*/
 
-	public void onBlockPlacedBy(World world, int i, int j, int k,
-			EntityLivingBase entityliving, ItemStack itemStack) {
+	public void onBlockPlacedBy(World world, BlockPos pos, 
+			IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		if (world.isRemote)
 			return;
-
+/*	TODO: Implement IWrenchable on block
 		IWrenchable te = (IWrenchable) world.getBlockTileEntity(i, j, k);
 
 		if (entityliving == null) {
@@ -82,8 +80,8 @@ public abstract class BlockMachineAdvanced extends BlockMachineStandart {
 		// tell the client that machine changed facing
 		PacketDispatcher.sendPacketToAllPlayers(tile.getDescriptionPacket());
 		// and ask it to rerender the block
-		PacketReRender.reRenderBlock(tile.xCoord, tile.yCoord, tile.zCoord);
-	}
+		PacketReRender.reRenderBlock(tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ());*/
+	}/*
 
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -92,6 +90,6 @@ public abstract class BlockMachineAdvanced extends BlockMachineStandart {
 		String blockName = this.getUnlocalizedName().replace("tile.", "");
 		this.facing = iconRegister.registerIcon(ClientProxy.getTexturePathFor(blockName + "/"
 				+ "facing"));
-	}
+	}*/
 
 }

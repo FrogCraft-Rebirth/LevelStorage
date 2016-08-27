@@ -1,15 +1,16 @@
 package makmods.levelstorage.logic.util;
 
 import makmods.levelstorage.LevelStorage;
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraft.util.EnumFacing;
-
+import net.minecraft.util.math.BlockPos;
+/**Use {@link net.minecraft.util.math.BlockPos BlockPos} instead*/
+@Deprecated 
 public class BlockLocation {
 	private int dimId;
 	private int x;
@@ -80,7 +81,7 @@ public class BlockLocation {
 	public String getBlockName() {
 		try {
 			World w = DimensionManager.getWorld(this.dimId);
-			return new ItemStack(Block.blocksList[w.getBlockId(x, y, z)])
+			return new ItemStack(w.getBlockState(new BlockPos(x, y, z)).getBlock())
 			        .getDisplayName();
 		} catch (Exception e) {
 			return "Unknown.";
@@ -111,9 +112,9 @@ public class BlockLocation {
 
 	public BlockLocation move(EnumFacing dir, int space) {
 		BlockLocation ret = this.copy();
-		ret.x += dir.offsetX * space;
-		ret.y += dir.offsetY * space;
-		ret.z += dir.offsetZ * space;
+		ret.x += dir.getFrontOffsetX() * space;
+		ret.y += dir.getFrontOffsetY() * space;
+		ret.z += dir.getFrontOffsetZ() * space;
 		return ret;
 	}
 
@@ -137,7 +138,7 @@ public class BlockLocation {
 		blockLocationC.setInteger(X_NBT, location.x);
 		blockLocationC.setInteger(Y_NBT, location.y);
 		blockLocationC.setInteger(Z_NBT, location.z);
-		nbt.setCompoundTag(BLOCK_LOCATION_NBT, blockLocationC);
+		nbt.setTag(BLOCK_LOCATION_NBT, blockLocationC);
 	}
 
 	/**
@@ -220,8 +221,8 @@ public class BlockLocation {
 	public TileEntity getTileEntity() {
 		if (!isDimIdValid(this.dimId))
 			return null;
-		return DimensionManager.getWorld(this.dimId).getBlockTileEntity(this.x,
-		        this.y, this.z);
+		return DimensionManager.getWorld(this.dimId).getTileEntity(
+				new BlockPos(this.x, this.y, this.z));
 	}
 
 	// Getters & setters ahead

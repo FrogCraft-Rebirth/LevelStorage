@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.google.common.collect.Lists;
@@ -69,8 +70,8 @@ public class AdvBlockFinder {
 
 	private boolean isBlockOreDict(Block bl) {
 		return bl != null && targetName != null ? OreDictionary.getOreName(
-				OreDictionary.getOreID(new ItemStack(bl))).equals(targetName)
-				: false;
+				OreDictionary.getOreIDs(new ItemStack(bl))[0]).equals(targetName)
+				: false; // TODO: may consider more comprehensive solution
 	}
 
 	private void findContinuation(BlockLocation loc) {
@@ -90,8 +91,8 @@ public class AdvBlockFinder {
 				int currY = newTh.getY();
 				int currZ = newTh.getZ();
 
-				Block currBlock = Block.blocksList[this.world.getBlockId(currX,
-						currY, currZ)];
+				Block currBlock = this.world.getBlockState(new BlockPos(
+						currX, currY, currZ)).getBlock();
 				if (currBlock != null) {
 					if (isBlockOreDict(currBlock)) {
 						// Recursion, very dangerous, but i hope nobody
@@ -99,7 +100,7 @@ public class AdvBlockFinder {
 						// use
 						// this on stone...
 						findContinuation(new BlockLocation(
-								this.world.provider.dimensionId, currX, currY,
+								this.world.provider.getDimension(), currX, currY,
 								currZ));
 					}
 				}

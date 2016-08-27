@@ -12,14 +12,14 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import com.google.common.collect.Maps;
 
-import net.minecraftforge.fml.common.ITickHandler;
-import net.minecraftforge.fml.common.TickType;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.PacketDispatcher;
 import net.minecraftforge.fml.common.network.Player;
-import net.minecraftforge.fml.common.registry.TickRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class FlightRegistry implements ITickHandler {
+public class FlightRegistry {
 
 	public static FlightRegistry instance = null;
 
@@ -27,7 +27,8 @@ public class FlightRegistry implements ITickHandler {
 
 	public FlightRegistry() {
 		// TickRegistry.registerTickHandler(this, Side.CLIENT);
-		TickRegistry.registerTickHandler(this, Side.SERVER);
+		// TickRegistry.registerTickHandler(this, Side.SERVER);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public static class Flight {
@@ -61,19 +62,16 @@ public class FlightRegistry implements ITickHandler {
 		}
 	}
 
-	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
+	@SubscribeEvent
+	public void tickStart(TickEvent.ServerTickEvent event/*EnumSet<TickType> type, Object... tickData*/) {
 		// modEnabledFlights.clear();
-		;
 	}
 
-	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-		if (tickData[0] == null)
+	@SubscribeEvent
+	public void tickEnd(TickEvent.PlayerTickEvent event/*EnumSet<TickType> type, Object... tickData*/) {
+		if (event.side != Side.SERVER)
 			return;
-		if (!(tickData[0] instanceof EntityPlayer))
-			return;
-		EntityPlayer p = (EntityPlayer) tickData[0];
+		EntityPlayer p = event.player;
 		for (Entry<String, Flight> flight : this.modEnabledFlights.entrySet()) {
 			if (flight.getKey() == Reference.MOD_ID) {
 				if (p != null)

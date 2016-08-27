@@ -2,30 +2,18 @@ package makmods.levelstorage.block;
 
 import ic2.api.recipe.Recipes;
 
-import java.util.Random;
-
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.lib.IC2Items;
-import makmods.levelstorage.logic.util.CommonHelper;
 import makmods.levelstorage.logic.util.LogHelper;
-import makmods.levelstorage.proxy.ClientProxy;
-import makmods.levelstorage.registry.BlockTextureRegistry;
 import makmods.levelstorage.tileentity.TileEntityMulticoreSolarPanel;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.SoundType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockMulticoreSolarPanel extends BlockMachineStandart implements IHasRecipe {
 
@@ -34,7 +22,7 @@ public class BlockMulticoreSolarPanel extends BlockMachineStandart implements IH
 		if (FMLCommonHandler.instance().getSide().isClient()) {
 			this.setCreativeTab(LSCreativeTab.instance);
 		}
-		this.setStepSound(Block.soundMetalFootstep);
+		this.setSoundType(SoundType.METAL);
 		this.setHardness(3.0F);
 	}
 
@@ -69,7 +57,7 @@ public class BlockMulticoreSolarPanel extends BlockMachineStandart implements IH
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world) {
+	public TileEntity createNewTileEntity(World world, int meta) {
 		return new TileEntityMulticoreSolarPanel();
 	}
 

@@ -27,7 +27,7 @@ public class XpRegistryAPI {
 
 		// Methods
 		m_pushToRegistry = APIHelper.getMethodFor(c_XpStackRegistry_class,
-		        "pushToRegistry", XPStack.class);
+		        "pushToRegistry", XpStack.class);
 		m_pushOreToRegistry = APIHelper.getMethodFor(c_XpStackRegistry_class,
 		        "pushOreToRegistry", String.class, int.class);
 
@@ -42,9 +42,9 @@ public class XpRegistryAPI {
 	/**
 	 * Gets all the entries in the XP Registry
 	 */
-	public static ArrayList<XPStack> getConversions() {
+	public static ArrayList<XpStack> getConversions() {
 		try {
-			return (ArrayList<XPStack>) f_XpStackRegistry_conversions
+			return (ArrayList<XpStack>) f_XpStackRegistry_conversions
 			        .get(c_XpStackRegistry_instance);
 		} catch (Exception e) {
 			APIHelper.logFailure();
@@ -56,7 +56,7 @@ public class XpRegistryAPI {
 	/**
 	 * Adds {@link.XpStack} to the registry.
 	 */
-	public static void pushToRegistry(XPStack stack) {
+	public static void pushToRegistry(XpStack stack) {
 		try {
 			m_pushToRegistry.invoke(c_XpStackRegistry_instance, stack);
 		} catch (Exception e) {

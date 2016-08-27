@@ -12,7 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -76,7 +76,7 @@ public class ModUniversalInitializer {
 		try {
 			if (!resolveRegisterWith(f))
 				return;
-			Class c = f.getType();
+			Class<?> c = f.getType();
 			int id = 0;
 			FieldKind fk = getKindOfField(f);
 			if (fk == FieldKind.BLOCK)
@@ -88,7 +88,7 @@ public class ModUniversalInitializer {
 			else
 				LogHelper
 						.severe("object is neither item nor block. This is a bug!");
-			Constructor con = c.getConstructor(int.class);
+			Constructor<?> con = c.getConstructor(int.class);
 			f.set(null, con.newInstance(id));
 			Object obj = f.get(null);
 			if (obj instanceof Block)
@@ -103,7 +103,7 @@ public class ModUniversalInitializer {
 	}
 
 	private Class<? extends ItemBlock> getPreferredItemBlock(Field f) {
-		Class blockClass = f.getType();
+		Class<?> blockClass = f.getType();
 		CustomItemBlock customIBAnn = (CustomItemBlock) blockClass
 				.getAnnotation(CustomItemBlock.class);
 		if (customIBAnn != null) {
@@ -157,7 +157,7 @@ public class ModUniversalInitializer {
 			}
 			Property p4 = LevelStorage.configuration.get(
 					LevelStorage.RECIPES_CATEGORY, f.getName(), true);
-			p4.comment = "Determines whether or not item's recipe is enabled";
+			p4.setComment("Determines whether or not item's recipe is enabled");
 			boolean enable = p4.getBoolean(true);
 			if (enable) {
 				LogHelper.info("Adding recipe for: " + f.getName());
@@ -178,7 +178,7 @@ public class ModUniversalInitializer {
 			if (obj instanceof Block) {
 				LogHelper.info("Setting harvest level for block: "
 						+ f.getName());
-				MinecraftForge.setBlockHarvestLevel((Block) obj, "pickaxe", 1);
+				((Block) obj).setHarvestLevel("pickaxe", 1);
 			}
 		} catch (ClassCastException e) {
 		} catch (Exception e) {

@@ -1,6 +1,7 @@
 package makmods.levelstorage.iv.parsers;
 
 import ic2.api.recipe.IMachineRecipeManager;
+import ic2.api.recipe.IMachineRecipeManager.RecipeIoContainer;
 import ic2.api.recipe.IRecipeInput;
 import ic2.api.recipe.RecipeInputItemStack;
 import ic2.api.recipe.RecipeInputOreDict;
@@ -8,8 +9,6 @@ import ic2.api.recipe.RecipeOutput;
 import ic2.api.recipe.Recipes;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.iv.IVEntry;
@@ -101,10 +100,10 @@ public class IVRecipeParser implements IRecipeParser {
 	}
 
 	public void assignIC2Machine(IMachineRecipeManager manager) {
-		Map<IRecipeInput, RecipeOutput> recipes = manager.getRecipes();
-		for (Entry<IRecipeInput, RecipeOutput> entry : recipes.entrySet()) {
-			IRecipeInput input = entry.getKey();
-			RecipeOutput output = entry.getValue();
+		Iterable<RecipeIoContainer> recipes = manager.getRecipes();
+		for (RecipeIoContainer entry : recipes) {
+			IRecipeInput input = entry.input;
+			RecipeOutput output = entry.output;
 
 			int inputValue = input instanceof RecipeInputItemStack ? IVRegistry
 					.getValue(((RecipeInputItemStack) input).input)
@@ -156,7 +155,7 @@ public class IVRecipeParser implements IRecipeParser {
 		IVRegistry.clearCache();
 		for (int i = 0; i < PASSES; i++) {
 			IVRegistry.clearCache();
-			assignFurnace(FurnaceRecipes.smelting());
+			assignFurnace(FurnaceRecipes.instance());
 			IVRegistry.clearCache();
 			assignIC2Machine(Recipes.macerator);
 			IVRegistry.clearCache();

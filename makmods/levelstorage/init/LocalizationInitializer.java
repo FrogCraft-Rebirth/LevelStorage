@@ -3,11 +3,11 @@ package makmods.levelstorage.init;
 import java.util.List;
 
 import makmods.levelstorage.lib.Reference;
-import makmods.levelstorage.logic.util.LogHelper;
+//import makmods.levelstorage.logic.util.LogHelper;
 
 import com.google.common.collect.Lists;
 
-import net.minecraftforge.fml.common.registry.LanguageRegistry;
+//import net.minecraftforge.fml.common.registry.LanguageRegistry;
 
 /**
  * Localization support
@@ -33,11 +33,11 @@ public class LocalizationInitializer {
 		localizationList.add("ru_RU");
 	}
 
-	public void init() {
+	public void init() {/*
 		for (String locale : localizationList) {
 			LogHelper.info("Loading locale " + locale);
 			LanguageRegistry.instance().loadLocalization(
 					LOCALIZATION_PATH_PREFIX + locale + ".lang", locale, false);
-		}
+		}*/
 	}
 }

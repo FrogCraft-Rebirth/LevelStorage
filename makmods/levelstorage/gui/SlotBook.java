@@ -1,8 +1,8 @@
 package makmods.levelstorage.gui;
 
-import makmods.levelstorage.api.XPStack;
+import makmods.levelstorage.api.XpStack;
 import makmods.levelstorage.item.ItemXPTome;
-import makmods.levelstorage.registry.XPStackRegistry;
+import makmods.levelstorage.registry.XpStackRegistry;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -19,9 +19,9 @@ public class SlotBook extends Slot {
 	}
 
 	public static boolean checkItemValidity(ItemStack stack) {
-		for (XPStack s : XPStackRegistry.instance.entries) {
+		for (XpStack s : XpStackRegistry.instance.entries) {
 			if (s.stack.getItemDamage() == stack.getItemDamage()
-			        && s.stack.itemID == stack.itemID)
+			        && s.stack.getItem() == stack.getItem())
 				return true;
 		}
 

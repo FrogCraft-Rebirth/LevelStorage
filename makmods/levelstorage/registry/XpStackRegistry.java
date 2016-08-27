@@ -1,6 +1,6 @@
 package makmods.levelstorage.registry;
 
-import ic2.api.item.Items;
+import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 
 import java.util.AbstractMap;
@@ -8,28 +8,29 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 
 import makmods.levelstorage.LevelStorage;
-import makmods.levelstorage.api.XPStack;
+import makmods.levelstorage.api.XpStack;
 import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.logic.util.CommonHelper;
 import makmods.levelstorage.logic.util.LogHelper;
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.google.common.collect.Lists;
 
 import net.minecraftforge.fml.common.FMLLog;
 
-public class XPStackRegistry {
+public class XpStackRegistry {
 
-	public static final XPStackRegistry instance = new XPStackRegistry();
+	public static final XpStackRegistry instance = new XpStackRegistry();
 
-	private XPStackRegistry() {
+	private XpStackRegistry() {
 	}
 
-	public ArrayList<XPStack> entries = new ArrayList<XPStack>();
+	public ArrayList<XpStack> entries = new ArrayList<XpStack>();
 	public static final String XP_REGISTRY_CATEGORY = "xpRegistry";
 
 	public static final AbstractMap.SimpleEntry<Integer, Integer> XP_EU_CONVERSION = new AbstractMap.SimpleEntry<Integer, Integer>(
@@ -49,20 +50,20 @@ public class XPStackRegistry {
 					Character.valueOf('c'), "ingotCopper",
 					Character.valueOf('t'), "ingotTin");
 		}
-		this.pushToRegistryWithConfig(new XPStack(new ItemStack(Item.redstone),
+		this.pushToRegistryWithConfig(new XpStack(new ItemStack(Items.REDSTONE),
 				4));
-		this.pushToRegistryWithConfig(new XPStack(new ItemStack(
-				Item.netherQuartz), 1));
-		this.pushToRegistryWithConfig(new XPStack(
-				new ItemStack(Item.ingotGold), 16));
-		this.pushToRegistryWithConfig(new XPStack(
-				new ItemStack(Item.enderPearl), 192));
-		this.pushToRegistryWithConfig(new XPStack(
-				new ItemStack(Item.glowstone), 8));
-		this.pushToRegistryWithConfig(new XPStack(new ItemStack(Item.diamond),
+		this.pushToRegistryWithConfig(new XpStack(new ItemStack(
+				Items.QUARTZ), 1));
+		this.pushToRegistryWithConfig(new XpStack(
+				new ItemStack(Items.GOLD_INGOT), 16));
+		this.pushToRegistryWithConfig(new XpStack(
+				new ItemStack(Items.ENDER_PEARL), 192));
+		this.pushToRegistryWithConfig(new XpStack(
+				new ItemStack(Items.GLOWSTONE_DUST), 8));
+		this.pushToRegistryWithConfig(new XpStack(new ItemStack(Items.DIAMOND),
 				256));
-		this.pushToRegistryWithConfig(new XPStack(
-				new ItemStack(Item.netherStar), 8192));
+		this.pushToRegistryWithConfig(new XpStack(
+				new ItemStack(Items.NETHER_STAR), 8192));
 
 		// dummy for debug
 		// this.pushOreToRegistry("ingotGold", 1);
@@ -81,10 +82,10 @@ public class XPStackRegistry {
 
 	public boolean containsStack(ItemStack stack) {
 		// NO CME
-		XPStack[] stacks = (XPStack[]) XPStackRegistry.instance.entries
-				.toArray(new XPStack[XPStackRegistry.instance.entries.size()]);
-		for (XPStack xpstack : stacks) {
-			if (xpstack.stack.itemID == stack.itemID
+		XpStack[] stacks = (XpStack[]) XpStackRegistry.instance.entries
+				.toArray(new XpStack[XpStackRegistry.instance.entries.size()]);
+		for (XpStack xpstack : stacks) {
+			if (xpstack.stack.getItem() == stack.getItem()
 					&& xpstack.stack.getItemDamage() == stack.getItemDamage())
 				return true;
 		}
@@ -94,10 +95,10 @@ public class XPStackRegistry {
 	public int getStackValue(ItemStack stack) {
 		// if (!containsStack(stack))
 		// return 0;
-		XPStack[] stacks = (XPStack[]) XPStackRegistry.instance.entries
-				.toArray(new XPStack[XPStackRegistry.instance.entries.size()]);
-		for (XPStack xpstack : stacks) {
-			if (xpstack.stack.itemID == stack.itemID
+		XpStack[] stacks = (XpStack[]) XpStackRegistry.instance.entries
+				.toArray(new XpStack[XpStackRegistry.instance.entries.size()]);
+		for (XpStack xpstack : stacks) {
+			if (xpstack.stack.getItem() == stack.getItem()
 					&& xpstack.stack.getItemDamage() == stack.getItemDamage())
 				return xpstack.value;
 		}
@@ -110,7 +111,7 @@ public class XPStackRegistry {
 
 	public void printRegistry() {
 		LogHelper.info("Starting printing the xp registry contents");
-		for (XPStack s : this.entries) {
+		for (XpStack s : this.entries) {
 			LogHelper.info("\t#" + s.stack.itemID + ":"
 					+ s.stack.getItemDamage() + " - "
 					+ s.stack.getDisplayName() + " - " + s.value + " (1 "
@@ -118,20 +119,20 @@ public class XPStackRegistry {
 		}
 	}
 
-	public void pushToRegistry(XPStack stack) {
+	public void pushToRegistry(XpStack stack) {
 		FMLLog.log(Level.INFO, "Adding #" + stack.stack.itemID + ":"
 				+ stack.stack.getItemDamage() + " to the Xp Registry, value: "
 				+ stack.value);
 		this.entries.add(stack);
 	}
 
-	public void pushToRegistryWithConfig(XPStack stack) {
+	public void pushToRegistryWithConfig(XpStack stack) {
 		Property property = LevelStorage.configuration
 				.get(XP_REGISTRY_CATEGORY,
 						stack.stack.getItem().getUnlocalizedName()
 								.replace("item.", "").replace(".name", "")
 								.replace("tile.", ""), stack.value);
-		property.comment = "Set to -1 to disable";
+		property.setComment("Set to -1 to disable");
 		int value = property.getInt();
 		if (value == -1) {
 			LogHelper.warning("XP entry for item "
@@ -142,13 +143,13 @@ public class XPStackRegistry {
 		FMLLog.log(Level.INFO, "Adding #" + stack.stack.itemID + ":"
 				+ stack.stack.getItemDamage() + " to the Xp Registry, value: "
 				+ stack.value);
-		this.entries.add(new XPStack(stack.stack, value));
+		this.entries.add(new XpStack(stack.stack, value));
 	}
 
 	public void pushOreToRegistry(String name, int value) {
 		boolean exists = false;
 		for (ItemStack stack : OreDictionary.getOres(name)) {
-			this.pushToRegistry(new XPStack(stack, value));
+			this.pushToRegistry(new XpStack(stack, value));
 			exists = true;
 		}
 		if (!exists) {

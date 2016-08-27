@@ -17,8 +17,8 @@ public class NBTHelper {
 	 * @param stack
 	 */
 	public static void checkNBT(ItemStack stack) {
-		if (stack.stackTagCompound == null) {
-			stack.stackTagCompound = new NBTTagCompound();
+		if (stack.getTagCompound() == null) {
+			stack.setTagCompound(new NBTTagCompound());
 		}
 	}
 
@@ -27,12 +27,12 @@ public class NBTHelper {
 	 */
 	public static boolean verifyKey(ItemStack stack, String name) {
 		checkNBT(stack);
-		return stack.stackTagCompound.hasKey(name);
+		return stack.getTagCompound().hasKey(name);
 	}
 
 	public static void setInteger(ItemStack stack, String name, int value) {
 		checkNBT(stack);
-		stack.stackTagCompound.setInteger(name, value);
+		stack.getTagCompound().setInteger(name, value);
 	}
 
 	public static int getInteger(ItemStack stack, String name) {
@@ -40,7 +40,7 @@ public class NBTHelper {
 		if (!verifyKey(stack, name)) {
 			setInteger(stack, name, 0);
 		}
-		return stack.stackTagCompound.getInteger(name);
+		return stack.getTagCompound().getInteger(name);
 	}
 
 	public static void decreaseInteger(ItemStack stack, String name, int value) {
@@ -57,7 +57,7 @@ public class NBTHelper {
 
 	public static void setString(ItemStack stack, String name, String value) {
 		checkNBT(stack);
-		stack.stackTagCompound.setString(name, value);
+		stack.getTagCompound().setString(name, value);
 	}
 
 	public static String getString(ItemStack stack, String name) {
@@ -65,12 +65,12 @@ public class NBTHelper {
 		if (!verifyKey(stack, name)) {
 			setString(stack, name, "");
 		}
-		return stack.stackTagCompound.getString(name);
+		return stack.getTagCompound().getString(name);
 	}
 
 	public static void setBoolean(ItemStack stack, String name, boolean value) {
 		checkNBT(stack);
-		stack.stackTagCompound.setBoolean(name, value);
+		stack.getTagCompound().setBoolean(name, value);
 	}
 
 	public static boolean getBoolean(ItemStack stack, String name) {
@@ -78,7 +78,7 @@ public class NBTHelper {
 		if (!verifyKey(stack, name)) {
 			setBoolean(stack, name, false);
 		}
-		return stack.stackTagCompound.getBoolean(name);
+		return stack.getTagCompound().getBoolean(name);
 	}
 	
 	public static void invertBoolean(ItemStack stack, String name) {
@@ -87,7 +87,7 @@ public class NBTHelper {
 	
 	public static void setByte(ItemStack stack, String name, byte value) {
 		checkNBT(stack);
-		stack.stackTagCompound.setByte(name, value);
+		stack.getTagCompound().setByte(name, value);
 	}
 	
 	public static byte getByte(ItemStack stack, String name) {
@@ -95,7 +95,7 @@ public class NBTHelper {
 		if (!verifyKey(stack, name)) {
 			setByte(stack, name, (byte)0);
 		}
-		return stack.stackTagCompound.getByte(name);
+		return stack.getTagCompound().getByte(name);
 	}
 
 	/**

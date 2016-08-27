@@ -8,8 +8,8 @@ import makmods.levelstorage.registry.ConductorType;
 import makmods.levelstorage.tileentity.TileEntityWirelessConductor;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
@@ -42,13 +42,12 @@ public class GuiWirelessConductor extends GuiContainer {
 		// draws "Inventory" or your regional equivalent
 		int xGuiPos = (this.width - this.xSize) / 2; // j
 		int yGuiPos = (this.height - this.ySize) / 2;
-		this.fontRenderer.drawString(
-		        StatCollector.translateToLocal("container.inventory"), 8,
-		        this.ySize - 96 + 2, 4210752);
+		this.fontRendererObj.drawString(I18n.format("container.inventory"), 
+				8, this.ySize - 96 + 2, 4210752);
 		String mode = "Mode: "
 		        + (this.tileEntity.type == ConductorType.SOURCE ? "Energy transmitter"
 		                : "Energy receiver");
-		this.fontRenderer.drawString(mode, 8, 55, 4210752);
+		this.fontRendererObj.drawString(mode, 8, 55, 4210752);
 	}
 
 	@Override
@@ -57,10 +56,10 @@ public class GuiWirelessConductor extends GuiContainer {
 		// par1GuiButton.id);
 		PacketPressButton packet = new PacketPressButton();
 		packet.buttonId = par1GuiButton.id;
-		packet.x = this.tileEntity.xCoord;
-		packet.y = this.tileEntity.yCoord;
-		packet.z = this.tileEntity.zCoord;
-		packet.dimId = this.tileEntity.worldObj.provider.dimensionId;
+		packet.x = this.tileEntity.getPos().getX();
+		packet.y = this.tileEntity.getPos().getY();
+		packet.z = this.tileEntity.getPos().getZ();
+		packet.dimId = this.tileEntity.getWorld().provider.getDimension();
 		PacketDispatcher.sendPacketToServer(PacketTypeHandler
 		        .populatePacket(packet));
 	}

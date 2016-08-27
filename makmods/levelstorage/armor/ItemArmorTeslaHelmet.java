@@ -11,24 +11,22 @@ import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.item.SimpleItems;
 import makmods.levelstorage.lib.IC2Items;
-import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.proxy.CommonProxy;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.EnumArmorMaterial;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.ISpecialArmor;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -45,8 +43,8 @@ public class ItemArmorTeslaHelmet extends ItemArmor implements ISpecialArmor,
 	public static final int RAY_COST = 50 * 1000;
 
 	public ItemArmorTeslaHelmet(int id) {
-		super(id, EnumArmorMaterial.DIAMOND, LevelStorage.proxy
-				.getArmorIndexFor(CommonProxy.SUPERSONIC_DUMMY), 0);
+		super(ItemArmor.ArmorMaterial.DIAMOND, LevelStorage.proxy
+				.getArmorIndexFor(CommonProxy.SUPERSONIC_DUMMY), EntityEquipmentSlot.HEAD);
 
 		this.setMaxDamage(27);
 		this.setNoRepair();
@@ -72,8 +70,7 @@ public class ItemArmorTeslaHelmet extends ItemArmor implements ISpecialArmor,
 	public static final int HEAL_COST = 1000;
 
 	@Override
-	public void onArmorTickUpdate(World world, EntityPlayer player,
-			ItemStack itemStack) {
+	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
 		ArmorFunctions.helmetFunctions(world, player, itemStack, RAY_COST,
 				FOOD_COST);
 	}
@@ -90,7 +87,7 @@ public class ItemArmorTeslaHelmet extends ItemArmor implements ISpecialArmor,
 		Property p = LevelStorage.configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"enableTeslaHelmetCraftingRecipe", true);
-		p.comment = "Determines whether or not crafting recipe is enabled";
+		p.setComment("Determines whether or not crafting recipe is enabled");
 		if (p.getBoolean(true)) {
 			Recipes.advRecipes.addRecipe(new ItemStack(
 					LSBlockItemList.itemArmorTeslaHelmet), "tit", "iqi", "lil",
@@ -105,15 +102,15 @@ public class ItemArmorTeslaHelmet extends ItemArmor implements ISpecialArmor,
 
 	@SideOnly(Side.CLIENT)
 	public EnumRarity getRarity(ItemStack stack) {
-		return EnumRarity.epic;
+		return EnumRarity.EPIC;
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister
 				.registerIcon(ClientProxy.TESLA_HELMET_TEXTURE);
-	}
+	}*/
 
 	public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase player,
 			ItemStack armor, DamageSource source, double damage, int slot) {
@@ -124,8 +121,8 @@ public class ItemArmorTeslaHelmet extends ItemArmor implements ISpecialArmor,
 				* getDamageAbsorptionRatio();
 		int energyPerDamage = ENERGY_PER_DAMAGE;
 
-		int damageLimit = energyPerDamage > 0 ? 25
-				* ElectricItem.manager.getCharge(armor) / energyPerDamage : 0;
+		int damageLimit = energyPerDamage > 0 ? (int)(25
+				* ElectricItem.manager.getCharge(armor) / energyPerDamage) : 0;
 
 		return new ISpecialArmor.ArmorProperties(0, absorptionRatio,
 				damageLimit);
@@ -142,7 +139,7 @@ public class ItemArmorTeslaHelmet extends ItemArmor implements ISpecialArmor,
 	public void damageArmor(EntityLivingBase entity, ItemStack stack,
 			DamageSource source, int damage, int slot) {
 		ElectricItem.manager.discharge(stack, damage * ENERGY_PER_DAMAGE,
-				2147483647, true, false);
+				2147483647, true, false, false);
 	}
 
 	public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
@@ -159,17 +156,7 @@ public class ItemArmorTeslaHelmet extends ItemArmor implements ISpecialArmor,
 	}
 
 	@Override
-	public int getChargedItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getEmptyItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getMaxCharge(ItemStack itemStack) {
+	public double getMaxCharge(ItemStack itemStack) {
 		return STORAGE;
 	}
 
@@ -179,19 +166,17 @@ public class ItemArmorTeslaHelmet extends ItemArmor implements ISpecialArmor,
 	}
 
 	@Override
-	public int getTransferLimit(ItemStack itemStack) {
+	public double getTransferLimit(ItemStack itemStack) {
 		return 10000;
 	}
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
-		ItemStack var4 = new ItemStack(this, 1);
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
+		ItemStack var4 = new ItemStack(item, 1);
 		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE,
 				true, false);
-		par3List.add(var4);
-		par3List.add(new ItemStack(this, 1, this.getMaxDamage()));
-
+		list.add(var4);
+		list.add(new ItemStack(this, 1, this.getMaxDamage()));
 	}
 
 	@Override

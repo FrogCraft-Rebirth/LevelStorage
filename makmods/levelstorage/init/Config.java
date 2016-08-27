@@ -3,7 +3,7 @@ package makmods.levelstorage.init;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.iv.IVRegistry;
 import makmods.levelstorage.logic.util.LogHelper;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 
 public class Config {
 

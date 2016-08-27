@@ -31,7 +31,7 @@ public class GUIHelper {
 				itemstack1 = slot.getStack();
 
 				if (itemstack1 != null
-				        && itemstack1.itemID == par1ItemStack.itemID
+				        && itemstack1.getItem() == par1ItemStack.getItem()
 				        && (!par1ItemStack.getHasSubtypes() || par1ItemStack
 				                .getItemDamage() == itemstack1.getItemDamage())
 				        && ItemStack.areItemStackTagsEqual(par1ItemStack,
@@ -101,12 +101,12 @@ public class GUIHelper {
 			Slot targetSlot;
 			if (sourceSlot.inventory == player.inventory) {
 				for (run = 0; run < 4 && sourceItemStack.stackSize > 0; ++run) {
-					Iterator it;
+					Iterator<Slot> it;
 					if (run < 2) {
 						it = c.inventorySlots.iterator();
 
 						while (it.hasNext()) {
-							targetSlot = (Slot) it.next();
+							targetSlot = it.next();
 							if (targetSlot.isItemValid(sourceItemStack)
 							        && (targetSlot.getStack() != null || run == 1)) {
 								mergeItemStack(c, sourceItemStack,
@@ -137,11 +137,11 @@ public class GUIHelper {
 				}
 			} else {
 				for (run = 0; run < 2 && sourceItemStack.stackSize > 0; ++run) {
-					ListIterator var9 = c.inventorySlots
+					ListIterator<Slot> var9 = c.inventorySlots
 					        .listIterator(c.inventorySlots.size());
 
 					while (var9.hasPrevious()) {
-						targetSlot = (Slot) var9.previous();
+						targetSlot = var9.previous();
 						if (targetSlot.inventory == player.inventory
 						        && targetSlot.isItemValid(sourceItemStack)
 						        && (targetSlot.getStack() != null || run == 1)) {

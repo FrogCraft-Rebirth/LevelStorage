@@ -1,7 +1,7 @@
 package makmods.levelstorage.api.event;
 
-import net.minecraftforge.event.Cancelable;
-import net.minecraftforge.event.Event;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fluids.Fluid;
 
 @Cancelable

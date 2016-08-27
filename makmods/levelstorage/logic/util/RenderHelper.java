@@ -50,7 +50,7 @@ public class RenderHelper {
 
 			if (fluidIcon != null) {
 				Minecraft.getMinecraft().renderEngine
-						.bindTexture(TextureMap.locationBlocksTexture);
+						.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 				int liquidHeight = gaugeLiquidScaled(60, tank);
 				RenderHelper.drawFluidWise(fluidIcon, xOffset + x + 1, yOffset
 						+ y + 60 + 1 - liquidHeight, 16.0D, liquidHeight,

@@ -1,8 +1,7 @@
 package makmods.levelstorage.gui.client;
 
-import ic2.api.item.Items;
+import ic2.api.item.IC2Items;
 import makmods.levelstorage.gui.container.ContainerParticleAccelerator;
-import makmods.levelstorage.item.SimpleItems;
 import makmods.levelstorage.item.SimpleItems.SimpleItemShortcut;
 import makmods.levelstorage.logic.util.RenderHelper;
 import makmods.levelstorage.network.packet.PacketPressButton;
@@ -10,10 +9,8 @@ import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.tileentity.TileEntityParticleAccelerator;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
 
 import org.lwjgl.opengl.GL11;
 
@@ -32,12 +29,12 @@ public class GUIParticleAccelerator extends GuiContainer {
 	protected void drawGuiContainerForegroundLayer(int param1, int param2) {
 		// draw text and stuff here
 		// the parameters for drawString are: string, x, y, color
-		this.fontRenderer.drawString("Particle Accelerator", 8, 6, 4210752);
+		this.fontRendererObj.drawString("Particle Accelerator", 8, 6, 4210752);
 		int y = 64;
 		int x = 12;
 	}
 
-	public static ItemStack MATTER_DISPLAY = Items.getItem("matter");
+	public static ItemStack MATTER_DISPLAY = IC2Items.getItem("matter");
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float par1, int par2,

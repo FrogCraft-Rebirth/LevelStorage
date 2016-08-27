@@ -1,6 +1,6 @@
 package makmods.levelstorage.block;
 
-import ic2.api.item.Items;
+import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 
 import java.util.List;
@@ -9,7 +9,6 @@ import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.block.item.ItemBlockRockDesintegrator;
 import makmods.levelstorage.init.CustomItemBlock;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.lib.IC2Items;
 import makmods.levelstorage.tileentity.TileEntityRockDesintegrator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -32,9 +31,9 @@ public class BlockRockDesintegrator extends BlockMachineStandart implements IHas
 		List<ItemStack> waters = Lists.newArrayList();
 		for (FluidContainerData d : FluidContainerRegistry
 				.getRegisteredFluidContainerData()) {
-			if (d.fluid.fluidID == FluidRegistry.WATER.getID())
+			if (d.fluid.getFluid() == FluidRegistry.WATER)
 				waters.add(d.filledContainer.copy());
-			if (d.fluid.fluidID == FluidRegistry.LAVA.getID())
+			if (d.fluid.getFluid() == FluidRegistry.LAVA)
 				lavas.add(d.filledContainer.copy());
 		}
 		for (ItemStack lava : lavas)
@@ -43,13 +42,13 @@ public class BlockRockDesintegrator extends BlockMachineStandart implements IHas
 						LSBlockItemList.blockRockDesintegrator), "lll", "cmc",
 						"www", Character.valueOf('l'), lava, Character
 								.valueOf('w'), water, Character.valueOf('c'),
-						IC2Items.BASIC_CIRCUIT, Character.valueOf('m'), Items
-								.getItem("machine"));
+						IC2Items.getItem("crafting", "circuit"), 
+						Character.valueOf('m'), IC2Items.getItem("machine"));
 			}
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world) {
+	public TileEntity createNewTileEntity(World world, int meta) {
 		return new TileEntityRockDesintegrator();
 	}
 

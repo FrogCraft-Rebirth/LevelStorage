@@ -1,7 +1,7 @@
 package makmods.levelstorage.init;
 
-import makmods.levelstorage.api.XPStack;
-import makmods.levelstorage.registry.XPStackRegistry;
+import makmods.levelstorage.api.XpStack;
+import makmods.levelstorage.registry.XpStackRegistry;
 import net.minecraft.item.ItemStack;
 
 public class LSIMCHandler {
@@ -26,7 +26,7 @@ public class LSIMCHandler {
 				String[] idAndMeta = stackAndValue[0].split(":");
 				int id = Integer.parseInt(idAndMeta[0]);
 				int meta = Integer.parseInt(idAndMeta[1]);
-				XPStackRegistry.instance.pushToRegistry(new XPStack(
+				XpStackRegistry.instance.pushToRegistry(new XpStack(
 						new ItemStack(id, 1, meta), stackValue));
 			}
 		} catch (Exception e) {

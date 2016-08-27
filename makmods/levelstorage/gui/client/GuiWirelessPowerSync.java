@@ -10,8 +10,8 @@ import makmods.levelstorage.tileentity.TileEntityWirelessPowerSynchronizer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.StatCollector;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -39,7 +39,7 @@ public class GuiWirelessPowerSync extends GuiContainer {
 		int yGuiPos = (this.height - this.ySize) / 2;
 		this.buttonList.add(new GuiButton(1, xGuiPos + 50, yGuiPos + 35, 75,
 		        15, "Change mode"));
-		this.freqTextBox = new GuiTextField(this.fontRenderer, xGuiPos + 50,
+		this.freqTextBox = new GuiTextField(0, this.fontRendererObj, xGuiPos + 50,
 		        yGuiPos + 15, 75, 15);
 		Keyboard.enableRepeatEvents(true);
 		this.freqTextBox.setMaxStringLength(4);
@@ -78,10 +78,10 @@ public class GuiWirelessPowerSync extends GuiContainer {
 					this.freqTextBox.setText(defaultInputFieldText);
 				}
 				PacketTextChanged packetTC = new PacketTextChanged();
-				packetTC.dimId = this.tileEntity.worldObj.provider.dimensionId;
-				packetTC.x = this.tileEntity.xCoord;
-				packetTC.y = this.tileEntity.yCoord;
-				packetTC.z = this.tileEntity.zCoord;
+				packetTC.dimId = this.tileEntity.getWorld().provider.getDimension();
+				packetTC.x = this.tileEntity.getPos().getX();
+				packetTC.y = this.tileEntity.getPos().getY();
+				packetTC.z = this.tileEntity.getPos().getZ();
 				packetTC.textBoxId = 0;
 				packetTC.newText = this.freqTextBox.getText();
 				PacketDispatcher.sendPacketToServer(PacketTypeHandler
@@ -111,10 +111,10 @@ public class GuiWirelessPowerSync extends GuiContainer {
 	protected void actionPerformed(GuiButton par1GuiButton) {
 		PacketPressButton packet = new PacketPressButton();
 		packet.buttonId = par1GuiButton.id;
-		packet.x = this.tileEntity.xCoord;
-		packet.y = this.tileEntity.yCoord;
-		packet.z = this.tileEntity.zCoord;
-		packet.dimId = this.tileEntity.worldObj.provider.dimensionId;
+		packet.x = this.tileEntity.getPos().getX();
+		packet.y = this.tileEntity.getPos().getY();
+		packet.z = this.tileEntity.getPos().getZ();
+		packet.dimId = this.tileEntity.getWorld().provider.getDimension();
 		PacketDispatcher.sendPacketToServer(PacketTypeHandler
 		        .populatePacket(packet));
 	}
@@ -127,10 +127,9 @@ public class GuiWirelessPowerSync extends GuiContainer {
 		// draws "Inventory" or your regional equivalent
 		int xGuiPos = (this.width - this.xSize) / 2; // j
 		int yGuiPos = (this.height - this.ySize) / 2;
-		this.fontRenderer.drawString(
-		        StatCollector.translateToLocal("container.inventory"), 8,
-		        this.ySize - 96 + 2, 4210752);
-		this.fontRenderer.drawString("Frequency: "
+		this.fontRendererObj.drawString(I18n.format("container.inventory"), 
+				8, this.ySize - 96 + 2, 4210752);
+		this.fontRendererObj.drawString("Frequency: "
 		        + this.tileEntity.frequency
 		        + "; "
 		        + "Mode: "

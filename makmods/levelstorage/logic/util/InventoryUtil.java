@@ -34,7 +34,7 @@ public class InventoryUtil {
 				inv.setInventorySlotContents(slot, whatToAdd.copy());
 			return true;
 		} else {
-			if (stackEx.itemID == whatToAdd.itemID
+			if (stackEx.getItem() == whatToAdd.getItem()
 			        && stackEx.getItemDamage() == whatToAdd.getItemDamage()) {
 				if (stackEx.stackSize + whatToAdd.stackSize <= inv
 				        .getInventoryStackLimit()) {

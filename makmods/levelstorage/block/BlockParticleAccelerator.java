@@ -1,6 +1,6 @@
 package makmods.levelstorage.block;
 
-import ic2.api.item.Items;
+import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.init.IHasRecipe;
@@ -19,15 +19,15 @@ public class BlockParticleAccelerator extends BlockMachineStandart implements
 	public void addCraftingRecipe() {
 		Recipes.advRecipes.addRecipe(new ItemStack(
 				LSBlockItemList.blockParticleAccelerator), "ImI", "RNR", "TTT",
-				Character.valueOf('m'), Items.getItem("massFabricator"),
-				Character.valueOf('I'), "ingotIridium", 'R', Items
-						.getItem("RTGPellets"), Character.valueOf('N'), Items
+				Character.valueOf('m'), IC2Items.getItem("massFabricator"),
+				Character.valueOf('I'), "ingotIridium", 'R', IC2Items
+						.getItem("RTGPellets"), Character.valueOf('N'), IC2Items
 						.getItem("advancedMachine"), Character.valueOf('T'),
-				Items.getItem("replicator"));
+				IC2Items.getItem("replicator"));
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world) {
+	public TileEntity createNewTileEntity(World world, int meta) {
 		return new TileEntityParticleAccelerator();
 	}
 

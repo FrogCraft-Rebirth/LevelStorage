@@ -18,8 +18,7 @@ public class LogicSlot {
 	}
 
 	public boolean isItemTheSame(ItemStack stack) {
-		return stack == null ? false : stack.itemID == get().itemID
-				&& stack.getItemDamage() == get().getItemDamage();
+		return stack == null ? false : stack.isItemEqual(get());
 	}
 
 	public boolean canConsume(int amount) {
@@ -65,11 +64,10 @@ public class LogicSlot {
 
 	public boolean add(ItemStack what, boolean simulate) {
 		if (get() != null) {
-			if (get().getItemDamage() != what.getItemDamage()
-					|| get().itemID != what.itemID) {
+			if (!get().isItemEqual(what)) {
 				return false;
 			} else {
-				int freeSpace = what.getItem().getItemStackLimit()
+				int freeSpace = what.getMaxStackSize()
 						- get().stackSize;
 				if (freeSpace >= what.stackSize) {
 					if (!simulate) {

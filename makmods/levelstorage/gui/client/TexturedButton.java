@@ -1,8 +1,8 @@
 package makmods.levelstorage.gui.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiSmallButton;
-import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class TexturedButton extends GuiSmallButton {
+public class TexturedButton extends GuiButton {
 	private ResourceLocation texture;
 	private int textureX;
 	private int textureY;
@@ -39,14 +39,13 @@ public class TexturedButton extends GuiSmallButton {
 					this.height - 4);
 		} else {
 			if (this.renderItem == null)
-				this.renderItem = new RenderItem();
-			this.renderItem.renderItemIntoGUI(minecraft.fontRenderer,
-					minecraft.renderEngine, this.itemStack, this.xPosition + 2,
+				this.renderItem = minecraft.getRenderItem();
+			this.renderItem.renderItemIntoGUI(this.itemStack, this.xPosition + 2,
 					this.yPosition + 1);
 			if (this.drawQuantity)
 				this.renderItem.renderItemOverlayIntoGUI(
-						minecraft.fontRenderer, minecraft.renderEngine,
-						this.itemStack, this.xPosition + 2, this.xPosition + 1);
+						minecraft.fontRendererObj, this.itemStack, 
+						this.xPosition + 2, this.xPosition + 1, null);
 		}
 	}
 }

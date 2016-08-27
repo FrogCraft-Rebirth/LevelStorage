@@ -3,8 +3,10 @@ package makmods.levelstorage.logic.util;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 public class OreFinder {
 	public ArrayList<BlockLocation> foundOre = new ArrayList<BlockLocation>();
@@ -24,7 +26,7 @@ public class OreFinder {
 		initialY = y;
 		initialZ = z;
 		BlockLocation initialBlock = new BlockLocation(
-		        world.provider.dimensionId, x, y, z);
+		        world.provider.getDimension(), x, y, z);
 		// foundOre.add(initialBlock);
 		findContinuation(initialBlock);
 	}
@@ -46,19 +48,20 @@ public class OreFinder {
 				int currY = newTh.getY();
 				int currZ = newTh.getZ();
 
-				Block currBlock = Block.blocksList[this.world.getBlockId(currX,
-				        currY, currZ)];
+				Block currBlock = this.world.getBlockState(new BlockPos(
+						currX, currY, currZ)).getBlock();
 				if (currBlock != null) {
-					if (currBlock.blockID == aimBlockId) {
-						int currMeta = this.world.getBlockMetadata(currX,
-						        currY, currZ);
+					if (currBlock.blockId == aimBlockId) {
+						IBlockState state = this.world.getBlockState(new BlockPos(
+								currX, currY, currZ));
+						int currMeta = state.getBlock().getMetaFromState(state);
 						if (currMeta == aimBlockMeta) {
 							// Recursion, very dangerous, but i hope nobody
 							// will
 							// use
 							// this on stone...
 							findContinuation(new BlockLocation(
-							        this.world.provider.dimensionId, currX,
+							        this.world.provider.getDimension(), currX,
 							        currY, currZ));
 						}
 					}

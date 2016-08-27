@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 /**
  * Represents simple ItemStack and its XP value
  */
-public class XPStack {
+public class XpStack {
 	/**
 	 * Assigned XP Value of this instance
 	 */
@@ -25,7 +25,7 @@ public class XPStack {
 	 * @param value
 	 *            XP value for the given stack
 	 */
-	public XPStack(ItemStack stack, int value) {
+	public XpStack(ItemStack stack, int value) {
 		this.stack = stack;
 		this.value = value;
 	}

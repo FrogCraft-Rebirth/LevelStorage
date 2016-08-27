@@ -14,18 +14,18 @@ import net.minecraft.network.packet.Packet41EntityEffect;
 import net.minecraft.network.packet.Packet43Experience;
 import net.minecraft.network.packet.Packet9Respawn;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 public class TranslocationHelper {
 
 	public static Entity teleportEntity(World newworld, Entity entity,
-			int dimension, ChunkCoordinates spawn, float yaw) {
-		Entity mount = entity.ridingEntity;
-		if (entity.ridingEntity != null) {
+			int dimension, ChunkPos spawn, float yaw) {
+		Entity mount = entity.getRidingEntity();
+		if (entity.getRidingEntity() != null) {
 			entity.mountEntity(null);
 			mount = teleportEntity(newworld, mount, dimension, spawn, yaw);
 		}
@@ -52,14 +52,14 @@ public class TranslocationHelper {
 			removeEntityFromWorld(entity.worldObj, entity);
 		}
 
-		entity.setLocationAndAngles(spawn.posX + 0.5D, spawn.posY,
-				spawn.posZ + 0.5D, yaw, entity.rotationPitch);
-		((WorldServer) newworld).theChunkProviderServer.loadChunk(
-				spawn.posX >> 4, spawn.posZ >> 4);
-		while (getCollidingWorldGeometry(newworld, entity.boundingBox, entity)
+		entity.setLocationAndAngles(spawn.chunkXPos + 0.5D, spawn.posY,
+				spawn.chunkZPos + 0.5D, yaw, entity.rotationPitch);
+		((WorldServer) newworld).getChunkProvider().loadChunk(
+				spawn.chunkXPos >> 4, spawn.chunkZPos >> 4);
+		while (getCollidingWorldGeometry(newworld, entity.getCollisionBoundingBox(), entity)
 				.size() != 0) {
 			spawn.posY += 1;
-			entity.setPosition(spawn.posX + 0.5D, spawn.posY, spawn.posZ + 0.5D);
+			entity.setPosition(spawn.chunkXPos + 0.5D, spawn.posY, spawn.chunkZPos + 0.5D);
 		}
 		if (changingworlds) {
 			if (!(entity instanceof EntityPlayer)) {
@@ -70,7 +70,7 @@ public class TranslocationHelper {
 				entity = EntityList.createEntityFromNBT(entityNBT, newworld);
 				if (entity == null)
 					return null;
-				entity.dimension = newworld.provider.dimensionId;
+				entity.dimension = newworld.provider.getDimension();
 			}
 			newworld.spawnEntityInWorld(entity);
 			entity.setWorld(newworld);
@@ -143,7 +143,7 @@ public class TranslocationHelper {
 
 	private static List getCollidingWorldGeometry(World world,
 			AxisAlignedBB axisalignedbb, Entity entity) {
-		ArrayList collidingBoundingBoxes = new ArrayList();
+		ArrayList collidingBoundingBoxes = new ArrayList<>();
 		int i = MathHelper.floor_double(axisalignedbb.minX);
 		int j = MathHelper.floor_double(axisalignedbb.maxX + 1.0D);
 		int k = MathHelper.floor_double(axisalignedbb.minY);

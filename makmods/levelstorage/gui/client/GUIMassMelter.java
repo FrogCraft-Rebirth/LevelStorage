@@ -5,9 +5,7 @@ import makmods.levelstorage.logic.util.RenderHelper;
 import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.tileentity.TileEntityMassMelter;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.Icon;
 
 import org.lwjgl.opengl.GL11;
 

@@ -3,26 +3,25 @@ package makmods.levelstorage.block;
 import java.util.Random;
 
 import makmods.levelstorage.LSCreativeTab;
-import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.Item;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockAntimatterStone extends Block {
 
 	public BlockAntimatterStone(int id) {
-		super(id, Material.rock);
+		super(Material.ROCK);
 		if (FMLCommonHandler.instance().getSide().isClient()) {
 			this.setCreativeTab(LSCreativeTab.instance);
 		}
-		this.setStepSound(Block.soundStoneFootstep);
+		this.setSoundType(/*Block.soundStoneFootstep*/SoundType.STONE);
 		this.setHardness(6.0F);
 		this.setResistance(600.0F);
-		this.setLightValue(1.0F);
+		this.setLightLevel(1.0F);
 	}
 
 	/**
@@ -38,25 +37,25 @@ public class BlockAntimatterStone extends Block {
 		return par1Random.nextInt(DROPRATE_RARITY) == 0 ? 1 : 0;
 	}
 	
-	public int dropID = OreDictionary.getOres("itemAntimatterMolecule").get(0).itemID;
+	public Item drop = OreDictionary.getOres("itemAntimatterMolecule").get(0).getItem();
 	public int dropMeta = OreDictionary.getOres("itemAntimatterMolecule").get(0).getItemDamage();
 	
 
 	@Override
-	public int idDropped(int par1, Random par2Random, int par3) {
-		return dropID;
+	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+		return drop;
 	}
 
 	@Override
-	public int damageDropped(int par1) {
+	public int damageDropped(IBlockState state) {
 		return dropMeta;
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
 		this.blockIcon = iconRegister
 				.registerIcon(ClientProxy.ANTIMATTER_STONE_TEXTURE);
-	}
+	}*/
 
 }
