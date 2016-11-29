@@ -2,9 +2,7 @@ package makmods.levelstorage.tileentity;
 
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
-import ic2.api.energy.tile.IEnergySink;
-import ic2.api.energy.tile.IEnergySource;
-import ic2.api.energy.tile.IEnergyTile;
+import ic2.api.energy.tile.*;
 import ic2.api.tile.IEnergyStorage;
 import ic2.api.tile.IWrenchable;
 
@@ -23,50 +21,38 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.google.common.collect.Lists;
 
-import net.minecraftforge.fml.common.ITickHandler;
-import net.minecraftforge.fml.common.TickType;
-import net.minecraftforge.fml.common.registry.TickRegistry;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
-		IHasTextBoxes, IHasButtons, IEnergyTile, IEnergySink, IWrenchable,
+		IHasTextBoxes, IHasButtons, ITickable, IEnergySink, IWrenchable,
 		IEnergySource, IEnergyStorage {
 
 	public static final int MAX_PACKET_SIZE = 2048;
 
-	public static class PowerSyncRegistry implements ITickHandler {
-		public static PowerSyncRegistry instance;
+	static {
+		MinecraftForge.EVENT_BUS.register(PowerSyncRegistry.class);
+	}
 
-		public List<TileEntityWirelessPowerSynchronizer> registry = Lists
+	public static class PowerSyncRegistry {
+		public static List<TileEntityWirelessPowerSynchronizer> registry = Lists
 				.newArrayList();
 
-		public PowerSyncRegistry() {
-			TickRegistry.registerTickHandler(this, Side.SERVER);
+		@SubscribeEvent
+		public static void tickStart(TickEvent.WorldTickEvent event) {
+			if (event.phase == TickEvent.Phase.START)
+				registry.clear();
 		}
 
-		@Override
-		public void tickStart(EnumSet<TickType> type, Object... tickData) {
-			registry.clear();
-
-		}
-
-		@Override
-		public void tickEnd(EnumSet<TickType> type, Object... tickData) {
+		@SubscribeEvent
+		public static void tickEnd(TickEvent.WorldTickEvent event) {
+			//if (event.phase == TickEvent.Phase.END)
 			// WChargerRegistry.instance.chargers.clear();
-		}
-
-		@Override
-		public EnumSet<TickType> ticks() {
-			return EnumSet.of(TickType.SERVER);
-		}
-
-		@Override
-		public String getLabel() {
-			return "PowerSyncTETickHandler";
 		}
 	}
 
@@ -76,13 +62,13 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 	public int internalBuffer = 0;
 
 	@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter,
+	public boolean acceptsEnergyFrom(IEnergyEmitter emitter,
 			EnumFacing direction) {
 		return true;
 	}
 
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, EnumFacing direction) {
+	public boolean emitsEnergyTo(IEnergyAcceptor receiver, EnumFacing direction) {
 		return true;
 	}
 
@@ -104,11 +90,11 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 		return false;
 	}
 
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 		if (!LevelStorage.isSimulating())
 			return;
-		PowerSyncRegistry.instance.registry.add(this);
+		PowerSyncRegistry.registry.add(this);
 		if (this.deviceType.equals(SyncType.RECEIVER))
 			return;
 	}
@@ -162,7 +148,7 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 	}
 
 	@Override
-	public double injectEnergyUnits(EnumFacing directionFrom, double amount) {
+	public double injectEnergy(EnumFacing directionFrom, double amount) {
 		if (this.deviceType.equals(SyncType.RECEIVER))
 			return amount;
 		List<Object> mutableRightSyncList = Lists.newArrayList();
@@ -205,21 +191,19 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound par1nbtTagCompound) {
-		super.readFromNBT(par1nbtTagCompound);
-		this.deviceType = par1nbtTagCompound.getBoolean("isTransmitter") ? SyncType.TRANSMITTER
-				: SyncType.RECEIVER;
-		this.frequency = par1nbtTagCompound.getInteger("frequency");
-		this.internalBuffer = par1nbtTagCompound.getInteger("stored");
+	public void readFromNBT(NBTTagCompound tag) {
+		super.readFromNBT(tag);
+		this.deviceType = tag.getBoolean("isTransmitter") ? SyncType.TRANSMITTER : SyncType.RECEIVER;
+		this.frequency = tag.getInteger("frequency");
+		this.internalBuffer = tag.getInteger("stored");
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound par1nbtTagCompound) {
-		super.writeToNBT(par1nbtTagCompound);
-		par1nbtTagCompound.setBoolean("isTransmitter",
-				this.deviceType == SyncType.TRANSMITTER);
-		par1nbtTagCompound.setInteger("frequency", frequency);
-		par1nbtTagCompound.setInteger("stored", internalBuffer);
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+		tag.setBoolean("isTransmitter", this.deviceType == SyncType.TRANSMITTER);
+		tag.setInteger("frequency", frequency);
+		tag.setInteger("stored", internalBuffer);
+		return super.writeToNBT(tag);
 	}
 
 	@Override

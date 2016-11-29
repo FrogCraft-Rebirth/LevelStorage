@@ -10,15 +10,10 @@ import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.lib.IC2Items;
-import makmods.levelstorage.proxy.ClientProxy;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemEnergeticEnrichedMatterOrb extends Item implements
         IElectricItem, IHasRecipe {
@@ -28,13 +23,11 @@ public class ItemEnergeticEnrichedMatterOrb extends Item implements
 	public static final int STORAGE = 40 * 1000 * 1000;
 
 	public ItemEnergeticEnrichedMatterOrb(int id) {
-		super(id);
+		super();
 
 		this.setMaxDamage(27);
 		this.setNoRepair();
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			this.setCreativeTab(LSCreativeTab.instance);
-		}
+		this.setCreativeTab(LSCreativeTab.instance);
 		this.setMaxStackSize(1);
 	}
 
@@ -53,17 +46,7 @@ public class ItemEnergeticEnrichedMatterOrb extends Item implements
 	}
 
 	@Override
-	public int getChargedItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getEmptyItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getMaxCharge(ItemStack itemStack) {
+	public double getMaxCharge(ItemStack itemStack) {
 		return STORAGE;
 	}
 
@@ -73,32 +56,29 @@ public class ItemEnergeticEnrichedMatterOrb extends Item implements
 	}
 
 	@Override
-	public int getTransferLimit(ItemStack itemStack) {
+	public double getTransferLimit(ItemStack itemStack) {
 		return 100000;
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister
 		        .registerIcon(ClientProxy.ENERGETIC_ENRICHED_MATTER_ORB_TEXTURE);
-	}
+	}*/
 
 	@Override
-	@SideOnly(Side.CLIENT)
 	public EnumRarity getRarity(ItemStack stack) {
-		return EnumRarity.epic;
+		return EnumRarity.EPIC;
 	}
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-	        List par3List) {
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 		ItemStack var4 = new ItemStack(this, 1);
 		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE,
 		        true, false);
-		par3List.add(var4);
-		par3List.add(new ItemStack(this, 1, this.getMaxDamage()));
-
+		list.add(var4);
+		list.add(new ItemStack(this, 1, this.getMaxDamage()));
 	}
 
 }

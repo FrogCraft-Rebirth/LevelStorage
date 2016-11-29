@@ -17,7 +17,7 @@ public abstract class TileEntityInventorySource extends TileEntityBasicSource im
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
+	public boolean hasCustomName() {
 		return true;
 	}
 
@@ -56,7 +56,7 @@ public abstract class TileEntityInventorySource extends TileEntityBasicSource im
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
+	public ItemStack removeStackFromSlot(int slot) {
 		ItemStack stack = this.getStackInSlot(slot);
 		if (stack != null) {
 			this.setInventorySlotContents(slot, null);
@@ -75,37 +75,36 @@ public abstract class TileEntityInventorySource extends TileEntityBasicSource im
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-		super.writeToNBT(par1NBTTagCompound);
-
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		NBTTagList itemList = new NBTTagList();
 		for (int i = 0; i < this.inv.length; i++) {
 			ItemStack stack = this.inv[i];
 			if (stack != null) {
-				NBTTagCompound tag = new NBTTagCompound();
-				tag.setByte("Slot", (byte) i);
-				stack.writeToNBT(tag);
-				itemList.appendTag(tag);
+				NBTTagCompound tagSlot = new NBTTagCompound();
+				tagSlot.setByte("Slot", (byte) i);
+				stack.writeToNBT(tagSlot);
+				itemList.appendTag(tagSlot);
 			}
 		}
-		par1NBTTagCompound.setTag("Inventory", itemList);
+		tag.setTag("Inventory", itemList);
+		return super.writeToNBT(tag);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
 		super.readFromNBT(par1NBTTagCompound);
 
-		NBTTagList tagList = par1NBTTagCompound.getTagList("Inventory");
+		NBTTagList tagList = par1NBTTagCompound.getTagList("Inventory", 9);
 		for (int i = 0; i < tagList.tagCount(); i++) {
-			NBTTagCompound tag = (NBTTagCompound) tagList.tagAt(i);
+			NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
 			byte slot = tag.getByte("Slot");
 			if (slot >= 0 && slot < this.inv.length) {
 				this.inv[slot] = ItemStack.loadItemStackFromNBT(tag);

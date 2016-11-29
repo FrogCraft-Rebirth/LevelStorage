@@ -1,13 +1,18 @@
 package makmods.levelstorage.item;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import ic2.api.item.ElectricItem;
+import ic2.api.item.IC2Items;
 import ic2.api.item.IElectricItem;
-import ic2.api.item.Items;
 import ic2.api.recipe.Recipes;
 import ic2.api.util.Keys;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
@@ -20,137 +25,94 @@ import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.logic.util.NBTHelper;
 import makmods.levelstorage.logic.util.NBTHelper.Cooldownable;
 import makmods.levelstorage.logic.util.OreDictHelper;
-import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumRarity;
-import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumMovingObjectType;
-import net.minecraft.util.Icon;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.StatCollector;
-import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.World;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 		IElectricItem, IHasRecipe {
 
-	public static float SPEED = 32.0F;
+	public static final float SPEED; //Defined in a static initializer
 	public static final int TIER = 2;
 	public static final int STORAGE = 100000;
 	public static final int ENERGY_PER_USE = 200;
-	public static final String ENHANCEMENT_NBT = "enhancement";
-	public static final String ENHANCEMENT_ID_NBT = "id";
-	public static final String ENHANCEMENT_LVL_NBT = "level";
 	public static final String MODE_NBT = "mode";
 
 	public static final Integer COOLDOWN = 20;
-
+/*
 	public Icon iconPass1;
-	public Icon iconPass2;
+	public Icon iconPass2;*/
 
 	public static enum EnhancementUtility {
-		FORTUNE_1, FORTUNE_2, FORTUNE_3, SILKTOUCH, UNKNOWN;
+		FORTUNE_1(ImmutableMap.of(Enchantments.FORTUNE, 1)),
+		FORTUNE_2(ImmutableMap.of(Enchantments.FORTUNE, 2)),
+		FORTUNE_3(ImmutableMap.of(Enchantments.FORTUNE, 3)),
+		SILKTOUCH(ImmutableMap.of(Enchantments.SILK_TOUCH, 1)),
+		UNKNOWN;
 
-		public static EnhancementUtility readDrillEnhancement(ItemStack stack) {
-			if (stack == null)
-				return null;
-			if (!(stack.getItem() instanceof ItemEnhancedDiamondDrill))
-				return null;
-			if (stack.getTagCompound() == null)
-				return null;
-			NBTHelper.checkNBT(stack);
-			if (!stack.getTagCompound().hasKey(ENHANCEMENT_NBT))
-				return null;
-			NBTTagCompound enhNBT = stack.getTagCompound().getCompoundTag(
-					ENHANCEMENT_NBT);
-			if (!enhNBT.hasKey(ENHANCEMENT_ID_NBT)
-					|| !enhNBT.hasKey(ENHANCEMENT_LVL_NBT))
-				return null;
-			int id = enhNBT.getInteger(ENHANCEMENT_ID_NBT);
-			int lvl = enhNBT.getInteger(ENHANCEMENT_LVL_NBT);
-			if (id == Enchantment.silkTouch.effectId)
-				return SILKTOUCH;
-			else if (id == Enchantment.fortune.effectId) {
-				if (lvl == 1)
-					return FORTUNE_1;
-				else if (lvl == 2)
-					return FORTUNE_2;
-				else if (lvl == 3)
-					return FORTUNE_3;
-			} else
-				return UNKNOWN;
-			return null;
+		private final Map<Enchantment, Integer> enchantment;
+
+		EnhancementUtility() {
+			this.enchantment = null;
+		}
+
+		EnhancementUtility(Map<Enchantment, Integer> enchantment) {
+			this.enchantment = enchantment;
 		}
 
 		public ItemStack createDrill() {
-			int id = -1;
-			int lvl = -1;
-			if (this == FORTUNE_1) {
-				id = Enchantment.fortune.effectId;
-				lvl = 1;
-			} else if (this == FORTUNE_2) {
-				id = Enchantment.fortune.effectId;
-				lvl = 2;
-			} else if (this == FORTUNE_3) {
-				id = Enchantment.fortune.effectId;
-				lvl = 3;
-			} else if (this == SILKTOUCH) {
-				id = Enchantment.silkTouch.effectId;
-				lvl = 1;
+			ItemStack drillStack = new ItemStack(LSBlockItemList.itemEnhDiamondDrill);
+			if (this.enchantment != null) {
+				EnchantmentHelper.setEnchantments(this.enchantment, drillStack);
 			}
-			if (id == -1 || lvl == -1)
-				return null;
-			ItemStack drillStack = new ItemStack(
-					LSBlockItemList.itemEnhDiamondDrill);
-			drillStack.stackTagCompound = new NBTTagCompound();
-			NBTTagCompound enhancement = new NBTTagCompound();
-			enhancement.setInteger(ENHANCEMENT_ID_NBT, id);
-			enhancement.setInteger(ENHANCEMENT_LVL_NBT, lvl);
-			drillStack.stackTagCompound.setTag(ENHANCEMENT_NBT, enhancement);
 			return drillStack;
 		}
 	}
 
 	public ItemEnhancedDiamondDrill(int id) {
-		super(id, EnumToolMaterial.EMERALD);
-
+		super(ToolMaterial.DIAMOND); //EnumToolMaterial.EMERALD -> ToolMaterial.DIAMOND, legacy typo
 		this.setMaxDamage(27);
 		this.setNoRepair();
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			this.setCreativeTab(LSCreativeTab.instance);
-		}
+		this.setCreativeTab(LSCreativeTab.instance);
 		this.setMaxStackSize(1);
-		MinecraftForge.setToolClass(this, "pickaxe", 3);
-		MinecraftForge.setToolClass(this, "shovel", 2);
 		this.damageVsEntity = 2.0f;
-		// MinecraftForge.setToolClass(this, "shovel", 3);
 		this.efficiencyOnProperMaterial = SPEED;
+	}
+
+	@Override
+	public Set<String> getToolClasses(ItemStack stack) {
+		return ImmutableSet.of("shovel", "pickaxe");
 	}
 
 	static {
 		Property p = LevelStorage.configuration
 				.get(Configuration.CATEGORY_GENERAL,
 						"enhancedDiamondDrillSpeed", 32);
-		p.comment = "Speed of enhanced diamond drill (diamond drill = 16, default = 32)";
+		p.setComment("Speed of enhanced diamond drill (diamond drill = 16, default = 32)");
 		SPEED = p.getInt(32);
 	}
 
@@ -164,7 +126,7 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 		}
 	}
 
-	public static void invertMode(ItemStack stack, EntityPlayer player) {
+	private static void invertMode(ItemStack stack, EntityPlayer player) {
 		try {
 			if (!NBTHelper.verifyKey(stack, MODE_NBT)) {
 				NBTHelper.setInteger(stack, MODE_NBT, Mode.TUNNEL.ordinal());
@@ -196,125 +158,112 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 	/**
 	 * Drill's onUpdate method. Used only for cooldown
 	 */
-	public void onUpdate(ItemStack par1ItemStack, World par2World,
-			Entity par3Entity, int par4, boolean par5) {
-		if (!par2World.isRemote) {
-			if (!NBTHelper.verifyKey(par1ItemStack, MODE_NBT))
-				NBTHelper.setInteger(par1ItemStack, MODE_NBT,
+	@Override
+	public void onUpdate(ItemStack stack, World world, Entity entity, int slotIn, boolean isSelected) {
+		if (!world.isRemote) {
+			if (!NBTHelper.verifyKey(stack, MODE_NBT))
+				NBTHelper.setInteger(stack, MODE_NBT,
 						Mode.NORMAL.ordinal());
-			Cooldownable.onUpdate(par1ItemStack, COOLDOWN);
+			Cooldownable.onUpdate(stack, COOLDOWN);
 		}
 	}
 
 	/**
 	 * Drill's onItemRightClick method. Used only for mode change.
 	 */
-	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World,
-			EntityPlayer par3EntityPlayer) {
-		if (!par2World.isRemote) {
-			if (Keys.instance.isModeSwitchKeyDown(par3EntityPlayer)) {
-				if (!Cooldownable.use(par1ItemStack, COOLDOWN))
-					return par1ItemStack;
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand) {
+		if (!world.isRemote) {
+			if (Keys.instance.isModeSwitchKeyDown(player)) {
+				if (!Cooldownable.use(itemStack, COOLDOWN))
+					return ActionResult.newResult(EnumActionResult.FAIL, itemStack);
 				// Unneeded really, but i'll keep it here
-				NBTHelper.checkNBT(par1ItemStack);
-				invertMode(par1ItemStack, par3EntityPlayer);
+				NBTHelper.checkNBT(itemStack);
+				invertMode(itemStack, player);
 			}
 		}
-		return par1ItemStack;
+		return ActionResult.newResult(EnumActionResult.PASS, itemStack);
 	}
 
-	public boolean hitEntity(ItemStack par1ItemStack,
-			EntityLivingBase par2EntityLivingBase,
-			EntityLivingBase par3EntityLivingBase) {
+	@Override
+	public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
 		return false;
 	}
 
+	@Override
 	public void addCraftingRecipe() {
-
-		Recipes.advRecipes.addRecipe(new ItemStack(
-				LSBlockItemList.itemEnhDiamondDrill), "cdc", "did", "aea",
-				Character.valueOf('c'), Items.getItem("carbonPlate"), Character
-						.valueOf('e'), Items.getItem("advBattery"), Character
-						.valueOf('i'), Items.getItem("diamondDrill"), Character
-						.valueOf('a'), Items.getItem("advancedCircuit"),
-				Character.valueOf('d'), new ItemStack(Item.diamond));
-		CraftingManager.getInstance().getRecipeList()
-				.add(new DrillEnhancementRecipe());
-
+		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.itemEnhDiamondDrill),
+				"cdc", "did", "aea",
+					'c', IC2Items.getItem("carbonPlate"),
+					'e', IC2Items.getItem("advBattery"),
+					'i', IC2Items.getItem("diamondDrill"),
+					'a', IC2Items.getItem("advancedCircuit"),
+					'd', new ItemStack(Items.DIAMOND)); //todo: oredict
+		CraftingManager.getInstance().getRecipeList().add(new DrillEnhancementRecipe());
 	}
 
-	public static ArrayList<Block> mineableBlocks = new ArrayList<Block>();
+	public static ArrayList<Block> mineableBlocks = new ArrayList<>();
 
 	static {
-		mineableBlocks.add(Block.cobblestone);
-		mineableBlocks.add(Block.stoneSingleSlab);
-		mineableBlocks.add(Block.stoneDoubleSlab);
-		mineableBlocks.add(Block.stairsCobblestone);
-		mineableBlocks.add(Block.stone);
-		mineableBlocks.add(Block.sandStone);
-		mineableBlocks.add(Block.stairsSandStone);
-		mineableBlocks.add(Block.cobblestoneMossy);
-		mineableBlocks.add(Block.oreIron);
-		mineableBlocks.add(Block.blockIron);
-		mineableBlocks.add(Block.oreCoal);
-		mineableBlocks.add(Block.blockGold);
-		mineableBlocks.add(Block.oreGold);
-		mineableBlocks.add(Block.oreDiamond);
-		mineableBlocks.add(Block.blockDiamond);
-		mineableBlocks.add(Block.ice);
-		mineableBlocks.add(Block.netherrack);
-		mineableBlocks.add(Block.oreLapis);
-		mineableBlocks.add(Block.blockLapis);
-		mineableBlocks.add(Block.oreRedstone);
-		mineableBlocks.add(Block.oreRedstoneGlowing);
-		mineableBlocks.add(Block.brick);
-		mineableBlocks.add(Block.stairsBrick);
-		mineableBlocks.add(Block.glowStone);
-		mineableBlocks.add(Block.grass);
-		mineableBlocks.add(Block.dirt);
-		mineableBlocks.add(Block.mycelium);
-		mineableBlocks.add(Block.sand);
-		mineableBlocks.add(Block.gravel);
-		mineableBlocks.add(Block.snow);
-		mineableBlocks.add(Block.blockSnow);
-		mineableBlocks.add(Block.blockClay);
-		mineableBlocks.add(Block.tilledField);
-		mineableBlocks.add(Block.stoneBrick);
-		mineableBlocks.add(Block.stairsStoneBrick);
-		mineableBlocks.add(Block.netherBrick);
-		mineableBlocks.add(Block.stairsNetherBrick);
-		mineableBlocks.add(Block.slowSand);
-		mineableBlocks.add(Block.anvil);
-		mineableBlocks.add(Block.oreNetherQuartz);
+		mineableBlocks.add(Blocks.COBBLESTONE);
+		mineableBlocks.add(Blocks.STONE_SLAB);
+		mineableBlocks.add(Blocks.STONE_SLAB2);
+		mineableBlocks.add(Blocks.STONE_STAIRS);
+		mineableBlocks.add(Blocks.STONE);
+		mineableBlocks.add(Blocks.SANDSTONE);
+		mineableBlocks.add(Blocks.SANDSTONE_STAIRS);
+		mineableBlocks.add(Blocks.MOSSY_COBBLESTONE);
+		mineableBlocks.add(Blocks.IRON_ORE);
+		mineableBlocks.add(Blocks.IRON_BLOCK);
+		mineableBlocks.add(Blocks.COAL_ORE);
+		mineableBlocks.add(Blocks.COAL_BLOCK);
+		mineableBlocks.add(Blocks.GOLD_BLOCK);
+		mineableBlocks.add(Blocks.GOLD_ORE);
+		mineableBlocks.add(Blocks.DIAMOND_ORE);
+		mineableBlocks.add(Blocks.DIAMOND_BLOCK);
+		mineableBlocks.add(Blocks.ICE);
+		mineableBlocks.add(Blocks.PACKED_ICE);
+		mineableBlocks.add(Blocks.NETHERRACK);
+		mineableBlocks.add(Blocks.LAPIS_ORE);
+		mineableBlocks.add(Blocks.LAPIS_BLOCK);
+		mineableBlocks.add(Blocks.REDSTONE_ORE);
+		mineableBlocks.add(Blocks.LIT_REDSTONE_ORE);
+		mineableBlocks.add(Blocks.BRICK_BLOCK);
+		mineableBlocks.add(Blocks.BRICK_STAIRS);
+		mineableBlocks.add(Blocks.GLOWSTONE);
+		mineableBlocks.add(Blocks.GRASS);
+		mineableBlocks.add(Blocks.DIRT);
+		mineableBlocks.add(Blocks.MYCELIUM);
+		mineableBlocks.add(Blocks.SAND);
+		mineableBlocks.add(Blocks.GRAVEL);
+		mineableBlocks.add(Blocks.SNOW_LAYER);
+		mineableBlocks.add(Blocks.SNOW);
+		mineableBlocks.add(Blocks.CLAY);
+		mineableBlocks.add(Blocks.FARMLAND); //Used to be called tilled field
+		mineableBlocks.add(Blocks.STONEBRICK);
+		mineableBlocks.add(Blocks.STONE_BRICK_STAIRS);
+		mineableBlocks.add(Blocks.NETHER_BRICK);
+		mineableBlocks.add(Blocks.NETHER_BRICK_STAIRS);
+		mineableBlocks.add(Blocks.SOUL_SAND); //Used to be called slow sand
+		mineableBlocks.add(Blocks.ANVIL);
+		mineableBlocks.add(Blocks.QUARTZ_ORE);
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
 	public EnumRarity getRarity(ItemStack is) {
-		return EnumRarity.rare;
+		return EnumRarity.RARE;
 	}
 
-	public void addInformation(ItemStack par1ItemStack,
-			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
-		par3List.add(StatCollector.translateToLocal("tooltip.drillEnhancement"));
-		if (par1ItemStack.stackTagCompound == null)
-			par1ItemStack.stackTagCompound = new NBTTagCompound();
-		NBTTagCompound enh = par1ItemStack.stackTagCompound
-				.getCompoundTag(ENHANCEMENT_NBT);
-		if (!enh.hasKey(ENHANCEMENT_ID_NBT))
-			par3List.add("\247c"
-					+ StatCollector
-							.translateToLocal("tooltip.drillEnhancement.none"));
-		else {
-			int id = enh.getInteger(ENHANCEMENT_ID_NBT);
-			int lvl = enh.getInteger(ENHANCEMENT_LVL_NBT);
-			if (id > 0 && lvl > 0) {
-				Enchantment ench = Enchantment.enchantmentsList[id];
-				par3List.add(ench.getTranslatedName(lvl));
-			}
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean adv) {
+		tooltip.add(I18n.format("tooltip.drillEnhancement"));
+		Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
+		if (enchantments.isEmpty()) {
+			tooltip.add("\247c" + I18n.format("tooltip.drillEnhancement.none"));
+		} else { //Assuming that the size of map is 1. Even if it's not 1, this would still work.
+			enchantments.forEach((ench, level) -> tooltip.add(ench.getTranslatedName(level)));
 		}
 	}
-
+/*
 	@SideOnly(Side.CLIENT)
 	public boolean requiresMultipleRenderPasses() {
 		return true;
@@ -328,7 +277,7 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 			return iconPass2;
 		}
 		return null;
-	}
+	}*/
 
 	@Override
 	public boolean canProvideEnergy(ItemStack itemStack) {
@@ -336,17 +285,7 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 	}
 
 	@Override
-	public int getChargedItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getEmptyItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getMaxCharge(ItemStack itemStack) {
+	public double getMaxCharge(ItemStack itemStack) {
 		return STORAGE;
 	}
 
@@ -356,41 +295,34 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 	}
 
 	@Override
-	public int getTransferLimit(ItemStack itemStack) {
+	public double getTransferLimit(ItemStack itemStack) {
 		return 2000;
 	}
 
+	private static final List<Map<Enchantment, Integer>> ENCH_COMBO = ImmutableList.of(
+			ImmutableMap.of(Enchantments.FORTUNE, 1),
+			ImmutableMap.of(Enchantments.FORTUNE, 2),
+			ImmutableMap.of(Enchantments.FORTUNE, 3),
+			ImmutableMap.of(Enchantments.SILK_TOUCH, 1)
+	);
+
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 		ItemStack var4 = new ItemStack(this, 1);
-		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE,
-				true, false);
-		par3List.add(var4);
-		par3List.add(new ItemStack(this, 1, this.getMaxDamage()));
+		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE, true, false);
+		list.add(var4);
+		list.add(new ItemStack(this, 1, this.getMaxDamage()));
 
-		int[][] enhancements = { { Enchantment.silkTouch.effectId, 1 },
-				{ Enchantment.fortune.effectId, 3 },
-				{ Enchantment.fortune.effectId, 2 },
-				{ Enchantment.fortune.effectId, 1 } };
-
-		for (int[] enh : enhancements) {
-
-			NBTTagCompound nbtEnh = new NBTTagCompound();
-			nbtEnh.setInteger(ENHANCEMENT_ID_NBT, enh[0]);
-			nbtEnh.setInteger(ENHANCEMENT_LVL_NBT, enh[1]);
-
+		for (Map<Enchantment, Integer> enchantment : ENCH_COMBO) {
 			ItemStack charged = new ItemStack(this, 1);
-			ElectricItem.manager.charge(charged, Integer.MAX_VALUE,
-					Integer.MAX_VALUE, true, false);
-			charged.stackTagCompound.setCompoundTag(ENHANCEMENT_NBT, nbtEnh);
-			par3List.add(charged);
+			ElectricItem.manager.charge(charged, Integer.MAX_VALUE, Integer.MAX_VALUE, true, false);
+			EnchantmentHelper.setEnchantments(enchantment, charged);
+			list.add(charged);
 
 			ItemStack discharged = new ItemStack(this, 1, this.getMaxDamage());
-			discharged.stackTagCompound = new NBTTagCompound();
-			discharged.stackTagCompound.setInteger("charge", 0);
-			discharged.stackTagCompound.setCompoundTag(ENHANCEMENT_NBT, nbtEnh);
-			par3List.add(discharged);
+			ElectricItem.manager.charge(discharged, 0, 1, true, false);
+			EnchantmentHelper.setEnchantments(enchantment, discharged);
+			list.add(discharged);
 		}
 	}
 
@@ -398,42 +330,31 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 		return 0;
 	}
 
-	public static ArrayList<Integer> blocksOtherThanOres = new ArrayList<Integer>();
+	public static ArrayList<Block> blocksOtherThanOres = new ArrayList<>();
 
 	static {
-		blocksOtherThanOres.add(Block.gravel.blockID);
-		blocksOtherThanOres.add(Block.oreRedstone.blockID);
-		blocksOtherThanOres.add(Block.oreRedstoneGlowing.blockID);
-		blocksOtherThanOres.add(Block.glowStone.blockID);
-		blocksOtherThanOres.add(Block.blockClay.blockID);
-
+		blocksOtherThanOres.add(Blocks.GRAVEL);
+		blocksOtherThanOres.add(Blocks.REDSTONE_ORE);
+		blocksOtherThanOres.add(Blocks.LIT_REDSTONE_ORE);
+		blocksOtherThanOres.add(Blocks.GLOWSTONE);
+		blocksOtherThanOres.add(Blocks.CLAY);
 	}
 
 	@Override
-	public boolean onBlockDestroyed(ItemStack par1ItemStack, World par2World,
-			int par3, int par4, int par5, int par6,
-			EntityLivingBase par7EntityLivingBase) {
-		// if ()
-		if (!par2World.isRemote) {
+	public boolean onBlockDestroyed(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
+		if (world.isRemote) {
 			int fortune = 0;
-			boolean silktouch = false;
-			NBTTagCompound enh = par1ItemStack.stackTagCompound
-					.getCompoundTag(ENHANCEMENT_NBT);
-			if (enh.hasKey(ENHANCEMENT_ID_NBT)) {
-				int encid = enh.getInteger(ENHANCEMENT_ID_NBT);
-				int lvl = enh.getInteger(ENHANCEMENT_LVL_NBT);
-				if (encid > 0 && lvl > 0) {
-					if (Enchantment.enchantmentsList[encid] == Enchantment.fortune)
-						fortune = lvl;
-					if (Enchantment.enchantmentsList[encid] == Enchantment.silkTouch)
-						silktouch = true;
-				}
+			boolean silktouch;
+			Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
+			if (enchantments.containsKey(Enchantments.FORTUNE)) {
+				fortune = enchantments.get(Enchantments.FORTUNE);
 			}
-			if (ElectricItem.manager.canUse(par1ItemStack, ENERGY_PER_USE)) {
-				ElectricItem.manager.use(par1ItemStack, ENERGY_PER_USE,
-						par7EntityLivingBase);
+			silktouch = enchantments.containsKey(Enchantments.SILK_TOUCH);
+
+			if (ElectricItem.manager.canUse(stack, ENERGY_PER_USE)) {
+				ElectricItem.manager.use(stack, ENERGY_PER_USE, entityLiving);
 			}
-			Block bl = Block.blocksList[par3];
+			Block bl = state.getBlock();
 			/*
 			 * if (OreDictHelper.getOreName(new ItemStack(bl)).startsWith("ore")
 			 * || blocksOtherThanOres.contains(bl.blockID)) { OreFinder finder =
@@ -467,353 +388,170 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 			 * }
 			 */
 			String name = OreDictHelper.getOreName(new ItemStack(bl));
-			int metadata = par2World.getBlockMetadata(par4, par5, par6);
+			int metadata = state.getBlock().getMetaFromState(state);
 			if (name.startsWith("ore")) {
-				AdvBlockFinder finder = new AdvBlockFinder(par2World, par4,
-						par5, par6, name);
+				AdvBlockFinder finder = new AdvBlockFinder(world, pos, name);
 				for (BlockLocation oreCh : finder.getBlocksFound()) {
-					int blockId = par2World.getBlockId(oreCh.getX(),
-							oreCh.getY(), oreCh.getZ());
-
-					int blockMeta = par2World.getBlockMetadata(oreCh.getX(),
-							oreCh.getY(), oreCh.getZ());
-					Block b = Block.blocksList[blockId];
-					if (b != null) {
-						if (par7EntityLivingBase instanceof EntityPlayer) {
-							if (b.getBlockHardness(par2World, oreCh.getX(),
-									oreCh.getY(), oreCh.getZ()) != -1.0F) {
-								if (b.removeBlockByPlayer(par2World,
-										(EntityPlayer) par7EntityLivingBase,
-										oreCh.getX(), oreCh.getY(),
-										oreCh.getZ())) {
-
-									if (!silktouch) {
-										b.dropBlockAsItem(par2World,
-												oreCh.getX(), oreCh.getY(),
-												oreCh.getZ(), metadata, fortune);
+					IBlockState blockFound = world.getBlockState(oreCh.toBlockPos());
+					Block b = blockFound.getBlock();
+					if (entityLiving instanceof EntityPlayer) {
+						if (b.getBlockHardness(blockFound, world, oreCh.toBlockPos()) != -1.0F) {
+							if (b.canEntityDestroy(blockFound, world, oreCh.toBlockPos(), entityLiving)) {
+								if (!silktouch) {
+										b.dropBlockAsItem(world, oreCh.toBlockPos(), blockFound, fortune);
+								} else {
+									if (b.canSilkHarvest(world, oreCh.toBlockPos(), blockFound, (EntityPlayer) entityLiving)) {
+										ItemStack itemstack = new ItemStack(b,1, metadata);
+										this.dropBlockAsItem_do(world, oreCh.getX(), oreCh.getY(), oreCh.getZ(), itemstack);
 									} else {
-										if (b.canSilkHarvest(
-												par2World,
-												(EntityPlayer) par7EntityLivingBase,
-												oreCh.getX(), oreCh.getY(),
-												oreCh.getZ(), metadata)) {
-											ItemStack itemstack = new ItemStack(
-													b, 1, metadata);
-											if (itemstack != null) {
-												this.dropBlockAsItem_do(
-														par2World,
-														oreCh.getX(),
-														oreCh.getY(),
-														oreCh.getZ(), itemstack);
-											}
-										} else {
-											b.dropBlockAsItem(par2World,
-													oreCh.getX(), oreCh.getY(),
-													oreCh.getZ(), metadata,
-													fortune);
-										}
+										b.dropBlockAsItem(world, oreCh.toBlockPos(), blockFound, fortune);
 									}
 								}
-								if (ElectricItem.manager.canUse(par1ItemStack,
-										ENERGY_PER_USE)) {
-									ElectricItem.manager.use(par1ItemStack,
-											ENERGY_PER_USE,
-											par7EntityLivingBase);
-								} else {
-									break;
-								}
+							}
+							if (ElectricItem.manager.canUse(stack, ENERGY_PER_USE)) {
+								ElectricItem.manager.use(stack, ENERGY_PER_USE, entityLiving);
+							} else {
+								break;
 							}
 						}
 					}
 				}
 			} else {
-				if (NBTHelper.getInteger(par1ItemStack, MODE_NBT) == Mode.TUNNEL
-						.ordinal()) {
-					if (par7EntityLivingBase instanceof EntityPlayer) {
-						EntityPlayer player = (EntityPlayer) par7EntityLivingBase;
+				if (NBTHelper.getInteger(stack, MODE_NBT) == Mode.TUNNEL.ordinal()) {
+					if (entityLiving instanceof EntityPlayer) {
+						EntityPlayer player = (EntityPlayer) entityLiving;
 						if (!player.isSneaking()) {
-							MovingObjectPosition pos = this
-									.getMovingObjectPositionFromPlayer(
-											par2World, player, true);
-							if (pos != null)
-								if (pos.typeOfHit == EnumMovingObjectType.TILE) {
-									EnumFacing hitFrom = EnumFacing.VALID_DIRECTIONS[pos.sideHit];
-									BlockLocation currBlock = new BlockLocation(
-											par2World.provider.dimensionId,
-											par4, par5, par6);
-									BlockLocation[] removeBlocks = new BlockLocation[12];
-									switch (hitFrom) {
+							RayTraceResult rayTrace = this.rayTrace(world, player, true);
+							if (rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
+								EnumFacing hitFrom = rayTrace.sideHit;
+								BlockLocation currBlock = new BlockLocation(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ());
+								BlockLocation[] removeBlocks = new BlockLocation[12];
+								switch (hitFrom) {
 									case DOWN: {
-										removeBlocks[0] = currBlock.move(
-												EnumFacing.NORTH, 1);
-										removeBlocks[1] = currBlock.move(
-												EnumFacing.WEST, 1);
-										removeBlocks[2] = currBlock.move(
-												EnumFacing.SOUTH, 1);
-										removeBlocks[3] = currBlock.move(
-												EnumFacing.EAST, 1);
+										removeBlocks[0] = currBlock.move(EnumFacing.NORTH, 1);
+										removeBlocks[1] = currBlock.move(EnumFacing.WEST, 1);
+										removeBlocks[2] = currBlock.move(EnumFacing.SOUTH, 1);
+										removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
 
-										removeBlocks[4] = currBlock.move(
-												EnumFacing.NORTH, 1).move(
-												EnumFacing.EAST, 1);
-										removeBlocks[5] = currBlock.move(
-												EnumFacing.WEST, 1).move(
-												EnumFacing.NORTH, 1);
-										removeBlocks[6] = currBlock.move(
-												EnumFacing.NORTH, 1).move(
-												EnumFacing.WEST, 1);
-										removeBlocks[7] = currBlock.move(
-												EnumFacing.WEST, 1).move(
-												EnumFacing.SOUTH, 1);
-										removeBlocks[8] = currBlock.move(
-												EnumFacing.SOUTH, 1).move(
-												EnumFacing.EAST, 1);
+										removeBlocks[4] = currBlock.move(EnumFacing.NORTH, 1).move(EnumFacing.EAST, 1);
+										removeBlocks[5] = currBlock.move(EnumFacing.WEST, 1).move(EnumFacing.NORTH, 1);
+										removeBlocks[6] = currBlock.move(EnumFacing.NORTH, 1).move(EnumFacing.WEST, 1);
+										removeBlocks[7] = currBlock.move(EnumFacing.WEST, 1).move(EnumFacing.SOUTH, 1);
+										removeBlocks[8] = currBlock.move(EnumFacing.SOUTH, 1).move(EnumFacing.EAST, 1);
 										break;
 									}
 									case UP: {
-										removeBlocks[0] = currBlock.move(
-												EnumFacing.NORTH, 1);
-										removeBlocks[1] = currBlock.move(
-												EnumFacing.WEST, 1);
-										removeBlocks[2] = currBlock.move(
-												EnumFacing.SOUTH, 1);
-										removeBlocks[3] = currBlock.move(
-												EnumFacing.EAST, 1);
+										removeBlocks[0] = currBlock.move(EnumFacing.NORTH, 1);
+										removeBlocks[1] = currBlock.move(EnumFacing.WEST, 1);
+										removeBlocks[2] = currBlock.move(EnumFacing.SOUTH, 1);
+										removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
 
-										removeBlocks[4] = currBlock.move(
-												EnumFacing.NORTH, 1).move(
-												EnumFacing.EAST, 1);
-										removeBlocks[5] = currBlock.move(
-												EnumFacing.WEST, 1).move(
-												EnumFacing.NORTH, 1);
-										removeBlocks[6] = currBlock.move(
-												EnumFacing.NORTH, 1).move(
-												EnumFacing.WEST, 1);
-										removeBlocks[7] = currBlock.move(
-												EnumFacing.WEST, 1).move(
-												EnumFacing.SOUTH, 1);
-										removeBlocks[8] = currBlock.move(
-												EnumFacing.SOUTH, 1).move(
-												EnumFacing.EAST, 1);
+										removeBlocks[4] = currBlock.move(EnumFacing.NORTH, 1).move(EnumFacing.EAST, 1);
+										removeBlocks[5] = currBlock.move(EnumFacing.WEST, 1).move(EnumFacing.NORTH, 1);
+										removeBlocks[6] = currBlock.move(EnumFacing.NORTH, 1).move(EnumFacing.WEST, 1);
+										removeBlocks[7] = currBlock.move(EnumFacing.WEST, 1).move(EnumFacing.SOUTH, 1);
+										removeBlocks[8] = currBlock.move(EnumFacing.SOUTH, 1).move(EnumFacing.EAST, 1);
 										break;
 									}
 									case NORTH: {
 										// Up & down
-										removeBlocks[0] = currBlock.move(
-												EnumFacing.UP, 1);
-										removeBlocks[1] = currBlock.move(
-												EnumFacing.DOWN, 1);
+										removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
+										removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
 										// West & east
-										removeBlocks[2] = currBlock.move(
-												EnumFacing.WEST, 1);
-										removeBlocks[3] = currBlock.move(
-												EnumFacing.EAST, 1);
+										removeBlocks[2] = currBlock.move(EnumFacing.WEST, 1);
+										removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
 										// Up-west & Down-west
-										removeBlocks[4] = currBlock.move(
-												EnumFacing.DOWN, 1).move(
-												EnumFacing.WEST, 1);
-										removeBlocks[5] = currBlock.move(
-												EnumFacing.UP, 1).move(
-												EnumFacing.EAST, 1);
+										removeBlocks[4] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.WEST, 1);
+										removeBlocks[5] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.EAST, 1);
 
-										removeBlocks[6] = currBlock.move(
-												EnumFacing.UP, 1).move(
-												EnumFacing.WEST, 1);
-										removeBlocks[7] = currBlock.move(
-												EnumFacing.DOWN, 1).move(
-												EnumFacing.EAST, 1);
+										removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.WEST, 1);
+										removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.EAST, 1);
 
-										removeBlocks[8] = currBlock.move(
-												EnumFacing.UP, 1).move(
-												EnumFacing.EAST, 1);
-										removeBlocks[9] = currBlock.move(
-												EnumFacing.DOWN, 1).move(
-												EnumFacing.WEST, 1);
+										removeBlocks[8] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.EAST, 1);
+										removeBlocks[9] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.WEST, 1);
 
 										break;
 										// South up & north down
 									}
 									case WEST: {
-										removeBlocks[0] = currBlock.move(
-												EnumFacing.UP, 1);
-										removeBlocks[1] = currBlock.move(
-												EnumFacing.DOWN, 1);
+										removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
+										removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
 										// West & east
-										removeBlocks[2] = currBlock.move(
-												EnumFacing.NORTH, 1);
-										removeBlocks[3] = currBlock.move(
-												EnumFacing.SOUTH, 1);
+										removeBlocks[2] = currBlock.move(EnumFacing.NORTH, 1);
+										removeBlocks[3] = currBlock.move(EnumFacing.SOUTH, 1);
 
-										removeBlocks[4] = currBlock.move(
-												EnumFacing.UP, 1).move(
-												EnumFacing.NORTH, 1);
-										removeBlocks[5] = currBlock.move(
-												EnumFacing.DOWN, 1).move(
-												EnumFacing.SOUTH, 1);
+										removeBlocks[4] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.NORTH, 1);
+										removeBlocks[5] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.SOUTH, 1);
 
-										removeBlocks[6] = currBlock.move(
-												EnumFacing.UP, 1).move(
-												EnumFacing.NORTH, 1);
-										removeBlocks[7] = currBlock.move(
-												EnumFacing.DOWN, 1).move(
-												EnumFacing.SOUTH, 1);
-										removeBlocks[10] = currBlock.move(
-												EnumFacing.SOUTH, 1).move(
-												EnumFacing.UP, 1);
-										removeBlocks[11] = currBlock.move(
-												EnumFacing.NORTH, 1).move(
-												EnumFacing.DOWN, 1);
+										removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.NORTH, 1);
+										removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.SOUTH, 1);
+										removeBlocks[10] = currBlock.move(EnumFacing.SOUTH, 1).move(EnumFacing.UP, 1);
+										removeBlocks[11] = currBlock.move(EnumFacing.NORTH, 1).move(EnumFacing.DOWN, 1);
 										break;
 									}
 									case EAST: {
-										removeBlocks[0] = currBlock.move(
-												EnumFacing.UP, 1);
-										removeBlocks[1] = currBlock.move(
-												EnumFacing.DOWN, 1);
+										removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
+										removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
 										// West & east
-										removeBlocks[2] = currBlock.move(
-												EnumFacing.NORTH, 1);
-										removeBlocks[3] = currBlock.move(
-												EnumFacing.SOUTH, 1);
+										removeBlocks[2] = currBlock.move(EnumFacing.NORTH, 1);
+										removeBlocks[3] = currBlock.move(EnumFacing.SOUTH, 1);
 
-										removeBlocks[4] = currBlock.move(
-												EnumFacing.UP, 1).move(
-												EnumFacing.NORTH, 1);
-										removeBlocks[5] = currBlock.move(
-												EnumFacing.DOWN, 1).move(
-												EnumFacing.SOUTH, 1);
+										removeBlocks[4] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.NORTH, 1);
+										removeBlocks[5] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.SOUTH, 1);
 
-										removeBlocks[6] = currBlock.move(
-												EnumFacing.UP, 1).move(
-												EnumFacing.NORTH, 1);
-										removeBlocks[7] = currBlock.move(
-												EnumFacing.DOWN, 1).move(
-												EnumFacing.SOUTH, 1);
-										removeBlocks[10] = currBlock.move(
-												EnumFacing.SOUTH, 1).move(
-												EnumFacing.UP, 1);
-										removeBlocks[11] = currBlock.move(
-												EnumFacing.NORTH, 1).move(
-												EnumFacing.DOWN, 1);
+										removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.NORTH, 1);
+										removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.SOUTH, 1);
+										removeBlocks[10] = currBlock.move(EnumFacing.SOUTH, 1).move(EnumFacing.UP, 1);
+										removeBlocks[11] = currBlock.move(EnumFacing.NORTH, 1).move(EnumFacing.DOWN, 1);
 										break;
 									}
 									case SOUTH: {
-										removeBlocks[0] = currBlock.move(
-												EnumFacing.UP, 1);
-										removeBlocks[1] = currBlock.move(
-												EnumFacing.DOWN, 1);
+										removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
+										removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
 										// West & east
-										removeBlocks[2] = currBlock.move(
-												EnumFacing.WEST, 1);
-										removeBlocks[3] = currBlock.move(
-												EnumFacing.EAST, 1);
+										removeBlocks[2] = currBlock.move(EnumFacing.WEST, 1);
+										removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
 										// Up-west & Down-west
-										removeBlocks[4] = currBlock.move(
-												EnumFacing.DOWN, 1).move(
-												EnumFacing.WEST, 1);
-										removeBlocks[5] = currBlock.move(
-												EnumFacing.UP, 1).move(
-												EnumFacing.EAST, 1);
+										removeBlocks[4] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.WEST, 1);
+										removeBlocks[5] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.EAST, 1);
 
-										removeBlocks[6] = currBlock.move(
-												EnumFacing.UP, 1).move(
-												EnumFacing.WEST, 1);
-										removeBlocks[7] = currBlock.move(
-												EnumFacing.DOWN, 1).move(
-												EnumFacing.EAST, 1);
+										removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.WEST, 1);
+										removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.EAST, 1);
 
-										removeBlocks[8] = currBlock.move(
-												EnumFacing.UP, 1).move(
-												EnumFacing.EAST, 1);
-										removeBlocks[9] = currBlock.move(
-												EnumFacing.DOWN, 1).move(
-												EnumFacing.WEST, 1);
+										removeBlocks[8] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.EAST, 1);
+										removeBlocks[9] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.WEST, 1);
 										break;
 									}
-									case UNKNOWN:
+									default:
 										break;
 									}
-									// Stuff destroying part.. messy code, but
-									// it
-									// works.
+									// Stuff destroying part.. messy code, but it works.
 									for (BlockLocation blockLoc : removeBlocks) {
 										if (blockLoc != null) {
-											Block b = Block.blocksList[par2World
-													.getBlockId(
-															blockLoc.getX(),
-															blockLoc.getY(),
-															blockLoc.getZ())];
-											int aimBlockMeta = par2World
-													.getBlockMetadata(
-															blockLoc.getX(),
-															blockLoc.getY(),
-															blockLoc.getZ());
-											if (b != null) {
-												if (b.getBlockHardness(
-														par2World,
-														blockLoc.getX(),
-														blockLoc.getY(),
-														blockLoc.getZ()) != -1.0F) {
-													if (b.removeBlockByPlayer(
-															par2World,
-															(EntityPlayer) par7EntityLivingBase,
-															blockLoc.getX(),
-															blockLoc.getY(),
-															blockLoc.getZ())) {
-
-														if (!silktouch) {
-															b.dropBlockAsItem(
-																	par2World,
-																	blockLoc.getX(),
-																	blockLoc.getY(),
-																	blockLoc.getZ(),
-																	aimBlockMeta,
-																	fortune);
+											IBlockState bs = world.getBlockState(blockLoc.toBlockPos());
+											int aimBlockMeta = bs.getBlock().getMetaFromState(bs);
+											if (bs.getBlockHardness(world, blockLoc.toBlockPos()) != -1.0F) {
+												if (bs.getBlock().canEntityDestroy(bs, world, blockLoc.toBlockPos(), entityLiving)) {
+													if (!silktouch) {
+														bs.getBlock().dropBlockAsItem(world, blockLoc.toBlockPos(), bs, fortune);
+													} else {
+														if (bs.getBlock().canSilkHarvest(world, blockLoc.toBlockPos(), bs, (EntityPlayer) entityLiving)) {
+															ItemStack itemstack = new ItemStack(bs.getBlock(), 1, aimBlockMeta);
+															this.dropBlockAsItem_do(world, blockLoc.getX(), blockLoc.getY(), blockLoc.getZ(), itemstack);
 														} else {
-															if (b.canSilkHarvest(
-																	par2World,
-																	(EntityPlayer) par7EntityLivingBase,
-																	blockLoc.getX(),
-																	blockLoc.getY(),
-																	blockLoc.getZ(),
-																	aimBlockMeta)) {
-																ItemStack itemstack = new ItemStack(
-																		b, 1,
-																		aimBlockMeta);
-																if (itemstack != null) {
-																	this.dropBlockAsItem_do(
-																			par2World,
-																			blockLoc.getX(),
-																			blockLoc.getY(),
-																			blockLoc.getZ(),
-																			itemstack);
-																}
-															} else {
-																b.dropBlockAsItem(
-																		par2World,
-																		blockLoc.getX(),
-																		blockLoc.getY(),
-																		blockLoc.getZ(),
-																		aimBlockMeta,
-																		fortune);
-															}
+															bs.getBlock().dropBlockAsItem(world, blockLoc.toBlockPos(), bs, fortune);
 														}
 													}
-													if (ElectricItem.manager
-															.canUse(par1ItemStack,
-																	ENERGY_PER_USE)) {
-														ElectricItem.manager
-																.use(par1ItemStack,
-																		ENERGY_PER_USE,
-																		par7EntityLivingBase);
-													} else {
-														break;
-													}
+												}
+												if (ElectricItem.manager.canUse(stack, ENERGY_PER_USE)) {
+														ElectricItem.manager.use(stack, ENERGY_PER_USE, entityLiving);
+												} else {
+													break;
 												}
 											}
 										}
-										// End of messy part
 									}
+										// End of messy part
 								}
 						}
 					}
@@ -827,8 +565,7 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 	public void dropBlockAsItem_do(World par1World, int par2, int par3,
 			int par4, ItemStack par5ItemStack) {
 		if (!par1World.isRemote
-				&& par1World.getGameRules().getGameRuleBooleanValue(
-						"doTileDrops")) {
+				&& par1World.getGameRules().getBoolean("doTileDrops")) {
 			float f = 0.7F;
 			double d0 = (double) (par1World.rand.nextFloat() * f)
 					+ (double) (1.0F - f) * 0.5D;
@@ -838,11 +575,12 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 					+ (double) (1.0F - f) * 0.5D;
 			EntityItem entityitem = new EntityItem(par1World, (double) par2
 					+ d0, (double) par3 + d1, (double) par4 + d2, par5ItemStack);
-			entityitem.delayBeforeCanPickup = 10;
+			entityitem.setPickupDelay(10);
 			par1World.spawnEntityInWorld(entityitem);
 		}
 	}
-
+/*
+	//md -> metadata, getStrVsBlock -> getStrengthVersusBlock
 	public float getStrVsBlock(ItemStack itemstack, Block block, int md) {
 		if (!ElectricItem.manager.canUse(itemstack, ENERGY_PER_USE)) {
 			return 1.0F;
@@ -867,6 +605,6 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 				.registerIcon(ClientProxy.ITEM_ENHANCED_DIAMOND_DRILL_PASS_ONE);
 		this.iconPass2 = par1IconRegister
 				.registerIcon(ClientProxy.ITEM_ENHANCED_DIAMOND_DRILL_PASS_TWO);
-	}
+	}*/
 
 }

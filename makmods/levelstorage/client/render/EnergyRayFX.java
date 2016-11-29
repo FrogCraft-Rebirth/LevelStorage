@@ -6,13 +6,12 @@ import java.util.Random;
 import makmods.levelstorage.logic.LSDamageSource;
 import makmods.levelstorage.logic.util.RenderHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
@@ -21,7 +20,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class EnergyRayFX extends EntityFX {
+public class EnergyRayFX extends Particle {
 	// public int particle = 16;
 
 	private double offset = 0.0D;
@@ -72,7 +71,7 @@ public class EnergyRayFX extends EntityFX {
 		this.prevYaw = this.rotYaw;
 		this.prevPitch = this.rotPitch;
 		this.particleMaxAge = age;
-		EntityLivingBase renderentity = Minecraft.getMinecraft().renderViewEntity;
+		Entity renderentity = Minecraft.getMinecraft().getRenderViewEntity();
 		int visibleDistance = 1000;
 		//if (!ModLoader.getMinecraftInstance().gameSettings.fancyGraphics)
 		//	visibleDistance = 25;
@@ -114,7 +113,7 @@ public class EnergyRayFX extends EntityFX {
 			this.impact -= 1;
 
 		List entities = this.worldObj.getEntitiesWithinAABB(EntityMob.class,
-				AxisAlignedBB.getBoundingBox(tX - 4, tY - 4, tZ - 4, tX + 4,
+				new AxisAlignedBB(tX - 4, tY - 4, tZ - 4, tX + 4,
 						tY + 4, tZ + 4));
 
 		for (Object obj : entities) {
@@ -122,7 +121,7 @@ public class EnergyRayFX extends EntityFX {
 		}
 
 		if (this.particleAge++ >= this.particleMaxAge) {
-			setDead();
+			this.setExpired(); //Per Entity#setDead()
 		}
 	}
 
@@ -197,9 +196,9 @@ public class EnergyRayFX extends EntityFX {
 		GL11.glBlendFunc(770, 1);
 		GL11.glDepthMask(false);
 
-		float xx = (float) (this.prevPosX + (this.posX - this.prevPosX) * f - EntityFX.interpPosX);
-		float yy = (float) (this.prevPosY + (this.posY - this.prevPosY) * f - EntityFX.interpPosY);
-		float zz = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * f - EntityFX.interpPosZ);
+		float xx = (float) (this.prevPosX + (this.posX - this.prevPosX) * f - this.interpPosX);
+		float yy = (float) (this.prevPosY + (this.posY - this.prevPosY) * f - this.interpPosY);
+		float zz = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * f - this.interpPosZ);
 		GL11.glTranslated(xx, yy, zz);
 
 		float ry = (float) (this.prevYaw + (this.rotYaw - this.prevYaw) * f);
@@ -266,9 +265,9 @@ public class EnergyRayFX extends EntityFX {
 		float var11 = var10 + 0.125F;
 		float var12 = this.endMod / 2.0F / (6 - this.impact);
 
-		float var13 = (float) (this.ptX + (this.tX - this.ptX) * f - EntityFX.interpPosX);
-		float var14 = (float) (this.ptY + (this.tY - this.ptY) * f - EntityFX.interpPosY);
-		float var15 = (float) (this.ptZ + (this.tZ - this.ptZ) * f - EntityFX.interpPosZ);
+		float var13 = (float) (this.ptX + (this.tX - this.ptX) * f - this.interpPosX);
+		float var14 = (float) (this.ptY + (this.tY - this.ptY) * f - this.interpPosY);
+		float var15 = (float) (this.ptZ + (this.tZ - this.ptZ) * f - this.interpPosZ);
 		float var16 = 1.0F;
 
 		tessellator.startDrawingQuads();

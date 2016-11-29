@@ -16,18 +16,16 @@ import makmods.levelstorage.iv.IVRegistry;
 import makmods.levelstorage.logic.LevelStorageEventHandler;
 import makmods.levelstorage.logic.util.LogHelper;
 import makmods.levelstorage.registry.FlightRegistry;
-import makmods.levelstorage.registry.XPStackRegistry;
+import makmods.levelstorage.registry.XpStackRegistry;
 import makmods.levelstorage.tileentity.TileEntityWirelessPowerSynchronizer.PowerSyncRegistry;
 import makmods.levelstorage.worldgen.LSWorldGenerator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.TickRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonProxy {
 
@@ -54,7 +52,7 @@ public class CommonProxy {
 	}
 
 	public void init() {
-		NetworkRegistry.instance().registerGuiHandler(LevelStorage.instance,
+		NetworkRegistry.INSTANCE.registerGuiHandler(LevelStorage.instance,
 				new LSGUIHandler());
 		MinecraftForge.EVENT_BUS.register(new LevelStorageEventHandler());
 		LocalizationInitializer.instance.init();
@@ -66,21 +64,20 @@ public class CommonProxy {
 		ModTileEntities.instance.init();
 		LSFluids.instance.init();
 		LSDimensions.init();
-		biomeAntimatterField = new BiomeAntimatterField(
+		biomeAntimatterField = new BiomeAntimatterField(/*
 				LevelStorage.configuration.get("dimension",
-						"biomeAntimatterFieldId", 40).getInt());
+						"biomeAntimatterFieldId", 40).getInt()*/);
 		PowerSyncRegistry.instance = new PowerSyncRegistry();
 		LSWorldGenerator.instance = new LSWorldGenerator();
-		GameRegistry.registerWorldGenerator(LSWorldGenerator.instance);
+		GameRegistry.registerWorldGenerator(LSWorldGenerator.instance, 3);
 		//
 		FlightRegistry.instance = new FlightRegistry();
-		TickRegistry.registerTickHandler(new AntimatterUniverseRayHandler(),
-				Side.SERVER);
+		new AntimatterUniverseRayHandler(); //Used to be registered into TickHandler, now use TickEvent
 		SimpleRecipeAdder.addSimpleCraftingRecipes();
 	}
 
 	public void postInit() {
-		XPStackRegistry.instance.initCriticalNodes();
+		XpStackRegistry.instance.initCriticalNodes();
 		// XPStackRegistry.instance.printRegistry();
 		ModAchievements.instance.init();
 		IVRegistry.instance.init();
@@ -92,17 +89,14 @@ public class CommonProxy {
 			LogHelper
 					.severe("GregTech detected. Performing needed changes. (mostly nerfs.. you know the drill)");
 			LevelStorage.detectedGT = true;
-			XPStackRegistry.UUM_XP_CONVERSION.setValue(1300);
+			XpStackRegistry.UUM_XP_CONVERSION.setValue(1300);
 		}
 		// LSBlockItemList.itemCapFluidCell.fillMetaListWithFluids();
 	}
 
 	public void messagePlayer(EntityPlayer player, String message, Object[] args) {
 		if ((player instanceof EntityPlayerMP)) {
-			ChatMessageComponent msg = ChatMessageComponent
-					.createFromText(message);
-
-			((EntityPlayerMP) player).sendChatToPlayer(msg);
+			player.addChatComponentMessage(new TextComponentString(message));
 		}
 	}
 }

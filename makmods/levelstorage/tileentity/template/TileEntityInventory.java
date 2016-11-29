@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.Constants;
 
 public abstract class TileEntityInventory extends TileEntity implements IInventory {
 	public ItemStack[] inv;
@@ -16,7 +17,7 @@ public abstract class TileEntityInventory extends TileEntity implements IInvento
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
+	public boolean hasCustomName() {
 		return true;
 	}
 
@@ -55,7 +56,7 @@ public abstract class TileEntityInventory extends TileEntity implements IInvento
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
+	public ItemStack removeStackFromSlot(int slot) {
 		ItemStack stack = this.getStackInSlot(slot);
 		if (stack != null) {
 			this.setInventorySlotContents(slot, null);
@@ -74,17 +75,15 @@ public abstract class TileEntityInventory extends TileEntity implements IInvento
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-		super.writeToNBT(par1NBTTagCompound);
-
+	public NBTTagCompound writeToNBT(NBTTagCompound par1NBTTagCompound) {
 		NBTTagList itemList = new NBTTagList();
 		for (int i = 0; i < this.inv.length; i++) {
 			ItemStack stack = this.inv[i];
@@ -96,15 +95,16 @@ public abstract class TileEntityInventory extends TileEntity implements IInvento
 			}
 		}
 		par1NBTTagCompound.setTag("Inventory", itemList);
+		return super.writeToNBT(par1NBTTagCompound);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
 		super.readFromNBT(par1NBTTagCompound);
 
-		NBTTagList tagList = par1NBTTagCompound.getTagList("Inventory");
+		NBTTagList tagList = par1NBTTagCompound.getTagList("Inventory", 9);
 		for (int i = 0; i < tagList.tagCount(); i++) {
-			NBTTagCompound tag = (NBTTagCompound) tagList.tagAt(i);
+			NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
 			byte slot = tag.getByte("Slot");
 			if (slot >= 0 && slot < this.inv.length) {
 				this.inv[slot] = ItemStack.loadItemStackFromNBT(tag);
@@ -112,4 +112,19 @@ public abstract class TileEntityInventory extends TileEntity implements IInvento
 		}
 	}
 
+	public int getField(int id) {
+		return 0;
+	}
+
+	public void setField(int id, int value) {
+
+	}
+
+	public int getFieldCount() {
+		return 0;
+	}
+
+	public void clear() {
+
+	}
 }

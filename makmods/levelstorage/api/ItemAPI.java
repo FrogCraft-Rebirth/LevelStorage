@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
  * LevelStorage. <br />
  */
 public class ItemAPI {
-	private static Class c_LSBlockItemList;
+	private static Class<?> c_LSBlockItemList;
 
 	static {
 		c_LSBlockItemList = APIHelper.getClassByName("LSBlockItemList");
@@ -56,7 +56,7 @@ public class ItemAPI {
 	 */
 	public static class SimpleItemAPI {
 
-		private static Class c_SimpleItems;
+		private static Class<?> c_SimpleItems;
 		private static Object o_SimpleItemsInstance;
 		private static final String SIMPLE_ITEMS_CLASSNAME = "item.SimpleItems";
 
@@ -68,14 +68,14 @@ public class ItemAPI {
 
 		public static ItemStack getSimpleItem(String name) {
 			try {
-				int sItemsId = ((Item) o_SimpleItemsInstance).itemID;
 				Field itemNamesField = c_SimpleItems.getField("itemNames");
+				@SuppressWarnings("unchecked")
 				List<String> names = (List<String>) itemNamesField
 						.get(o_SimpleItemsInstance);
 				if (!names.contains(name)) {
 					throw new Exception("SimpleItem not found!");
 				}
-				return new ItemStack(sItemsId, 1, names.indexOf(name));
+				return new ItemStack((Item) o_SimpleItemsInstance, 1, names.indexOf(name));
 			} catch (Exception e) {
 				APIHelper.logFailure();
 				e.printStackTrace();

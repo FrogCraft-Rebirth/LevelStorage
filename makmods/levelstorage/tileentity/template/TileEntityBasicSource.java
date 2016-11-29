@@ -1,21 +1,27 @@
 package makmods.levelstorage.tileentity.template;
 
-import ic2.api.Direction;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergyAcceptor;
 import ic2.api.energy.tile.IEnergySource;
-import ic2.api.energy.tile.IEnergyTile;
 import ic2.api.tile.IEnergyStorage;
 import ic2.api.tile.IWrenchable;
 import makmods.levelstorage.LevelStorage;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 
@@ -23,7 +29,7 @@ import net.minecraftforge.common.MinecraftForge;
  * 
  */
 public abstract class TileEntityBasicSource extends TileEntity implements
-        IEnergyTile, IEnergySource, IWrenchable, IEnergyStorage {
+		ITickable, IEnergySource, IWrenchable, IEnergyStorage {
 
 	private boolean addedToENet = false;
 	private int stored;
@@ -41,24 +47,22 @@ public abstract class TileEntityBasicSource extends TileEntity implements
 
 	}
 
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-		super.writeToNBT(par1NBTTagCompound);
-
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound par1NBTTagCompound) {
 		par1NBTTagCompound.setInteger(NBT_STORED, stored);
-
+		return super.writeToNBT(par1NBTTagCompound);
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound tagCompound = new NBTTagCompound();
 		this.writeToNBT(tagCompound);
-		return new Packet132TileEntityData(this.xCoord, this.yCoord,
-		        this.zCoord, 5, tagCompound);
+		return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tagCompound);
 	}
 
 	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
-		this.readFromNBT(pkt.data);
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+		this.readFromNBT(pkt.getNbtCompound());
 	}
 
 	@Override
@@ -69,33 +73,29 @@ public abstract class TileEntityBasicSource extends TileEntity implements
 
 	// IWrenchable stuff
 
-	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) {
+	@Override
+	public EnumFacing getFacing(World world, BlockPos pos) {
+		return null; //per ForgeDirection.UNKNOWN
+	}
+
+	public boolean setFacing(World world, BlockPos pos, EnumFacing newDirection, EntityPlayer player) {
 		return false;
 	}
 
-	public short getFacing() {
-		return (short) EnumFacing.UNKNOWN.flag;
-	}
-
-	public void setFacing(short facing) {
-		;
-		// Do nothing here
-	}
-
-	public boolean wrenchCanRemove(EntityPlayer entityPlayer) {
+	public boolean wrenchCanRemove(World world, BlockPos pos, EntityPlayer player) {
 		return true;
 	}
 
-	public float getWrenchDropRate() {
-		return 0.5f;
+	@Override
+	public List<ItemStack> getWrenchDrops(World world, BlockPos pos, IBlockState state, TileEntity te, EntityPlayer player, int fortune) {
+		return Arrays.asList(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)));
 	}
 
 	// End of IWrenchable
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
-		if (LevelStorage.isSimulating())
+	public void update() {
+		if (!LevelStorage.isSimulating())
 			if (!addedToENet) {
 				MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
 				addedToENet = true;
@@ -107,7 +107,7 @@ public abstract class TileEntityBasicSource extends TileEntity implements
 			if (addedToENet) {
 				MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
 				addedToENet = false;
-			}
+		}
 	}
 
 	public abstract void onUnloaded();
@@ -129,7 +129,8 @@ public abstract class TileEntityBasicSource extends TileEntity implements
 		return addedToENet;
 	}
 
-	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction) {
+	@Override
+	public boolean emitsEnergyTo(IEnergyAcceptor receiver, EnumFacing side) {
 		return true;
 	}
 
@@ -151,10 +152,6 @@ public abstract class TileEntityBasicSource extends TileEntity implements
 		return this.stored;
 	}
 
-	public boolean isTeleporterCompatible(Direction side) {
-		return false;
-	}
-
 	@Override
 	public double getOutputEnergyUnitsPerTick() {
 		return 0;
@@ -170,11 +167,6 @@ public abstract class TileEntityBasicSource extends TileEntity implements
 		return 0;
 	}
 
-	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, EnumFacing direction) {
-		return true;
-	}
-	
 	@Override
 	public double getOfferedEnergy() {
 		return Math.min(maxOutput, stored);

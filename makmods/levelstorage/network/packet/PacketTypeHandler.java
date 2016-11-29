@@ -14,16 +14,18 @@ import net.minecraft.network.play.client.CPacketCustomPayload;
  * 
  */
 public enum PacketTypeHandler {
-	PACKET_PRESS_BUTTON(PacketPressButton.class), PACKET_TEXT_CHANGED(
-			PacketTextChanged.class), PACKET_PARTICLE(PacketParticle.class), PACKET_FLIGHT_UPDATE(
-			PacketFlightUpdate.class), PACKET_TESLA_RAY(PacketTeslaRay.class), PACKET_PARTICLES(
-			PacketParticles.class), PACKET_TILE_UPDATE(PacketTileUpdate.class), PACKET_RERENDER(
-			PacketReRender.class);
+	PACKET_PRESS_BUTTON(PacketPressButton.class),
+	PACKET_TEXT_CHANGED(PacketTextChanged.class),
+	PACKET_PARTICLE(PacketParticle.class),
+	PACKET_FLIGHT_UPDATE(PacketFlightUpdate.class),
+	PACKET_TESLA_RAY(PacketTeslaRay.class),
+	PACKET_PARTICLES(PacketParticles.class),
+	PACKET_TILE_UPDATE(PacketTileUpdate.class),
+	PACKET_RERENDER(PacketReRender.class);
 
 	private Class<? extends PacketLS> clazz;
 
 	PacketTypeHandler(Class<? extends PacketLS> clazz) {
-
 		this.clazz = clazz;
 	}
 
@@ -47,7 +49,6 @@ public enum PacketTypeHandler {
 	}
 
 	public static PacketLS buildPacket(PacketTypeHandler type) {
-
 		PacketLS packet = null;
 
 		try {
@@ -62,6 +63,8 @@ public enum PacketTypeHandler {
 	public static Packet<?> populatePacket(PacketLS packetLV) {
 
 		byte[] data = packetLV.populate();
+
+
 
 		CPacketCustomPayload packet250 = new CPacketCustomPayload();
 		packet250.channel = Reference.MOD_ID;

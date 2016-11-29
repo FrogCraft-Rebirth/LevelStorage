@@ -5,9 +5,9 @@ import makmods.levelstorage.logic.util.RenderHelper;
 import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.tileentity.TileEntityLavaFabricator;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.Icon;
 
 import org.lwjgl.opengl.GL11;
 
@@ -51,8 +51,8 @@ public class GUILavaFabricator extends GuiContainer {
 		int yOffset = y;
 
 		if (this.tileEntity.getFluidTank().getFluidAmount() > 0) {
-			Icon fluidIcon = this.tileEntity.getFluidTank().getFluid()
-					.getFluid().getIcon();
+			TextureAtlasSprite fluidIcon = this.mc.getTextureMapBlocks().getAtlasSprite(
+					this.tileEntity.getFluidTank().getFluid().getFluid().getStill().toString());
 
 			if (fluidIcon != null) {
 				// drawTexturedModalRect(xOffset + 106, yOffset + 22, 176, 0,
@@ -60,7 +60,7 @@ public class GUILavaFabricator extends GuiContainer {
 				// 55);
 
 				this.mc.renderEngine
-						.bindTexture(TextureMap.locationBlocksTexture);
+						.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 				int liquidHeight = this.tileEntity.gaugeLiquidScaled(60);
 				RenderHelper.drawFluidWise(fluidIcon, xOffset + 152, yOffset
 						+ 9 + 60 - liquidHeight, 16.0D, liquidHeight,

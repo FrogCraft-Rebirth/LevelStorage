@@ -1,6 +1,5 @@
 package makmods.levelstorage.registry;
 
-import java.util.EnumSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -15,8 +14,6 @@ import com.google.common.collect.Maps;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.PacketDispatcher;
-import net.minecraftforge.fml.common.network.Player;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class FlightRegistry {
@@ -26,8 +23,6 @@ public class FlightRegistry {
 	public Map<String, Flight> modEnabledFlights = Maps.newHashMap();
 
 	public FlightRegistry() {
-		// TickRegistry.registerTickHandler(this, Side.CLIENT);
-		// TickRegistry.registerTickHandler(this, Side.SERVER);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -63,13 +58,8 @@ public class FlightRegistry {
 	}
 
 	@SubscribeEvent
-	public void tickStart(TickEvent.ServerTickEvent event/*EnumSet<TickType> type, Object... tickData*/) {
-		// modEnabledFlights.clear();
-	}
-
-	@SubscribeEvent
-	public void tickEnd(TickEvent.PlayerTickEvent event/*EnumSet<TickType> type, Object... tickData*/) {
-		if (event.side != Side.SERVER)
+	public void tickEnd(TickEvent.PlayerTickEvent event) {
+		if (event.side != Side.SERVER || event.phase != TickEvent.Phase.END)
 			return;
 		EntityPlayer p = event.player;
 		for (Entry<String, Flight> flight : this.modEnabledFlights.entrySet()) {
@@ -81,24 +71,12 @@ public class FlightRegistry {
 						PacketFlightUpdate flUpd = new PacketFlightUpdate();
 						flUpd.allowFlying = false;
 						flUpd.isFlying = false;
-						PacketDispatcher
-						        .sendPacketToPlayer(
-						                PacketTypeHandler.populatePacket(flUpd),
-						                (Player) p);
+						PacketDispatcher.sendPacketToPlayer(
+								PacketTypeHandler.populatePacket(flUpd), (Player) p);
 					}
 				}
 			}
 		}
-	}
-
-	@Override
-	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.PLAYER);
-	}
-
-	@Override
-	public String getLabel() {
-		return "FlightRegistryTickHandler";
 	}
 
 }

@@ -1,5 +1,6 @@
 package makmods.levelstorage.logic.util;
 
+import jdk.nashorn.internal.ir.Block;
 import makmods.levelstorage.LevelStorage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,6 +37,13 @@ public class BlockLocation {
 		this.z = z;
 	}
 
+	public BlockLocation(int dimId, BlockPos pos) {
+		this.dimId = dimId;
+		this.x = pos.getX();
+		this.y = pos.getY();
+		this.z = pos.getZ();
+	}
+
 	/**
 	 * Less picky version of the above constructor <br />
 	 * Initializes a new instance of BlockLocation <br />
@@ -55,16 +63,27 @@ public class BlockLocation {
 		this.z = z;
 	}
 
+	/**
+	 * Helper method for migration
+	 * @return A {@link BlockPos} equivalent of this class
+	 */
+	public BlockPos toBlockPos() {
+		return new BlockPos(this.x, this.y, this.z);
+	}
+
 	@Override
 	public boolean equals(Object other) {
 		boolean eq = true;
-		eq = eq && other instanceof BlockLocation;
-		if (eq) {
+		if (other instanceof BlockLocation) {
 			eq = eq && ((BlockLocation) other).dimId == this.dimId;
 			eq = eq && ((BlockLocation) other).x == this.x;
 			eq = eq && ((BlockLocation) other).y == this.y;
 			eq = eq && ((BlockLocation) other).z == this.z;
-		}
+		} else if  (other instanceof BlockPos) {
+			eq = eq && ((BlockPos) other).getX() == this.x;
+			eq = eq && ((BlockPos) other).getY() == this.y;
+			eq = eq && ((BlockPos) other).getZ() == this.z;
+		} //Note: BlockLocation also contains dimension info. Perhaps let BlockLocation inherit BlockPos for minimum overhaul?
 		return eq;
 	}
 

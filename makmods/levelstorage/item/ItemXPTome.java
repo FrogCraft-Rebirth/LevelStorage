@@ -15,23 +15,26 @@ import makmods.levelstorage.logic.util.NBTHelper;
 import makmods.levelstorage.logic.util.NBTHelper.Cooldownable;
 import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.proxy.LSKeyboard;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
-
-import com.google.common.collect.Lists;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -47,11 +50,11 @@ public class ItemXPTome extends Item implements IHasRecipe {
 	public static int XP_PER_BOOKCRAFT = Config.getInt(LSConfigCategory.BALANCE, "xpPerBookEnchantment", 840, "Determines how much XP is consumed from XP tome when you try to enchant a book with it (default V while holding XP tome in your hand and having books in inventory");
 
 	public ItemXPTome(int id) {
-		super(id);
+		super();
 		this.bookMaxStorage = LevelStorage.itemLevelStorageBookSpace;
 		this.setMaxDamage(512);
 		this.setNoRepair();
-		this.setCreativeTab(CreativeTabs.tabTools);
+		this.setCreativeTab(CreativeTabs.TOOLS);
 		this.setMaxStackSize(1);
 	}
 
@@ -59,10 +62,10 @@ public class ItemXPTome extends Item implements IHasRecipe {
 		// Book
 		ItemStack stackDepleted = new ItemStack(
 				LSBlockItemList.itemLevelStorageBook, 1, 0);
-		stackDepleted.stackTagCompound = new NBTTagCompound();
-		ItemStack stackBook = new ItemStack(Item.book);
-		ItemStack stackGoldBlock = new ItemStack(Block.blockGold);
-		ItemStack stackEnchTable = new ItemStack(Block.enchantmentTable);
+		stackDepleted.setTagCompound(new NBTTagCompound());
+		ItemStack stackBook = new ItemStack(Items.BOOK);
+		ItemStack stackGoldBlock = new ItemStack(Blocks.GOLD_BLOCK);
+		ItemStack stackEnchTable = new ItemStack(Blocks.ENCHANTING_TABLE);
 		GameRegistry.addShapelessRecipe(stackDepleted, stackBook,
 				stackGoldBlock, stackEnchTable);
 		if (LevelStorage.experienceRecipesOn) {
@@ -78,42 +81,36 @@ public class ItemXPTome extends Item implements IHasRecipe {
 	}
 
 	@Override
-	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World,
-			EntityPlayer par3EntityPlayer) {
-		if (!par2World.isRemote) {
-			if (!Cooldownable.use(par1ItemStack, COOLDOWN))
-				return par1ItemStack;
-			if (par3EntityPlayer.isSneaking()) {
-				if ((this.bookMaxStorage - getStoredXP(par1ItemStack)) > par3EntityPlayer.experienceTotal) {
-					increaseStoredXP(par1ItemStack,
-							par3EntityPlayer.experienceTotal);
-					par3EntityPlayer.experienceTotal = 0;
-					par3EntityPlayer.experienceLevel = 0;
-					par3EntityPlayer.experience = 0;
+	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand) {
+		if (!world.isRemote) {
+			if (!Cooldownable.use(itemStack, COOLDOWN))
+				return ActionResult.newResult(EnumActionResult.FAIL, itemStack);
+			if (player.isSneaking()) {
+				if ((this.bookMaxStorage - getStoredXP(itemStack)) > player.experienceTotal) {
+					increaseStoredXP(itemStack, player.experienceTotal);
+					player.experienceTotal = 0;
+					player.experienceLevel = 0;
+					player.experience = 0;
 					// par3EntityPlayer.setScore(0);
 				}
 			} else {
-				xpPerInteraction = par3EntityPlayer.xpBarCap();
-				if (getStoredXP(par1ItemStack) > xpPerInteraction) {
-					par3EntityPlayer.addExperience(xpPerInteraction);
-					increaseStoredXP(par1ItemStack, -xpPerInteraction);
+				xpPerInteraction = player.xpBarCap();
+				if (getStoredXP(itemStack) > xpPerInteraction) {
+					player.addExperience(xpPerInteraction);
+					increaseStoredXP(itemStack, -xpPerInteraction);
 					float f = 5 / 30.0F;
-					par2World.playSoundAtEntity(par3EntityPlayer,
-							"random.levelup", f * 0.75F, 1.0F);
+					world.playSound(player, player.getPosition(), SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, f * 0.75F, 1.0F);
 				} else {
-					if (getStoredXP(par1ItemStack) != 0) {
-						par3EntityPlayer
-								.addExperience(getStoredXP(par1ItemStack));
-						par1ItemStack.stackTagCompound.setInteger(
-								STORED_XP_NBT, 0);
+					if (getStoredXP(itemStack) != 0) {
+						player.addExperience(getStoredXP(itemStack));
+						itemStack.getTagCompound().setInteger(STORED_XP_NBT, 0);
 						float f = 5 / 30.0F;
-						par2World.playSoundAtEntity(par3EntityPlayer,
-								"random.levelup", f * 0.75F, 1.0F);
+						world.playSound(player, player.getPosition(), SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, f * 0.75F, 1.0F);
 					}
 				}
 			}
 		}
-		return par1ItemStack;
+		return ActionResult.newResult(EnumActionResult.SUCCESS, itemStack);
 	}
 
 	public static void increaseStoredXP(ItemStack stack, int amount) {
@@ -127,16 +124,9 @@ public class ItemXPTome extends Item implements IHasRecipe {
 	}
 
 	public ItemStack generateRandomBook(Random rand) {
-		List<Enchantment> availableIDs = Lists.newArrayList();
-		for (Enchantment ench : Enchantment.enchantmentsBookList)
-			if (ench != null)
-				availableIDs.add(ench);
-		int idToSelect = rand.nextInt(availableIDs.size());
-		Enchantment selected = availableIDs.get(idToSelect);
-		int level = selected.getMaxLevel() == 1 ? 1 : rand.nextInt(selected
-				.getMaxLevel() - 1) + 1;
-		ItemStack enchantedBook = CommonHelper.createEnchantedBook(selected,
-				level);
+		Enchantment selected = Enchantment.REGISTRY.getRandomObject(rand);
+		int level = selected.getMaxLevel() == 1 ? 1 : rand.nextInt(selected.getMaxLevel() - 1) + 1;
+		ItemStack enchantedBook = CommonHelper.createEnchantedBook(selected, level);
 		return enchantedBook;
 	}
 
@@ -199,9 +189,9 @@ public class ItemXPTome extends Item implements IHasRecipe {
 		// Here we add our nice little tooltip
 		super.addInformation(par1ItemStack, par2EntityPlayer, par3List, par4);
 		NBTHelper.checkNBT(par1ItemStack);
-		par3List.add(StatCollector.translateToLocal("tooltip.xptome.stored")
+		par3List.add(I18n.format("tooltip.xptome.stored")
 				+ " " + String.valueOf(getStoredXP(par1ItemStack)) + " "
-				+ StatCollector.translateToLocal("tooltip.xptome.xppoints"));
+				+ I18n.format("tooltip.xptome.xppoints"));
 	}
 
 	public static int calculateDurability(ItemStack stack) {
@@ -217,27 +207,24 @@ public class ItemXPTome extends Item implements IHasRecipe {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public EnumRarity getRarity(ItemStack stack) {
-		return EnumRarity.rare;
+		return EnumRarity.RARE;
 	}
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
-		ItemStack stackFull = new ItemStack(par1, 1, 1);
-		stackFull.stackTagCompound = new NBTTagCompound();
-		stackFull.stackTagCompound.setInteger(STORED_XP_NBT,
-				this.bookMaxStorage - 1);
-		ItemStack stackDepleted = new ItemStack(par1, 1,
-				this.getMaxDamage() - 1);
-		stackDepleted.stackTagCompound = new NBTTagCompound();
-		stackDepleted.stackTagCompound.setInteger(STORED_XP_NBT, 0);
-		par3List.add(stackFull);
-		par3List.add(stackDepleted);
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
+		ItemStack stackFull = new ItemStack(item, 1, 1);
+		stackFull.setTagCompound(new NBTTagCompound());
+		stackFull.getTagCompound().setInteger(STORED_XP_NBT, this.bookMaxStorage - 1);
+		ItemStack stackDepleted = new ItemStack(item, 1, this.getMaxDamage() - 1);
+		stackDepleted.setTagCompound(new NBTTagCompound());
+		stackDepleted.getTagCompound().setInteger(STORED_XP_NBT, 0);
+		list.add(stackFull);
+		list.add(stackDepleted);
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister.registerIcon(ClientProxy.BOOK_TEXTURE);
-	}
+	}*/
 }

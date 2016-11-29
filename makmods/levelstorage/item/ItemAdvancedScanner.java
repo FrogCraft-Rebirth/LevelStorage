@@ -2,29 +2,29 @@ package makmods.levelstorage.item;
 
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
-import ic2.api.item.Items;
+import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.proxy.ClientProxy;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemAdvancedScanner extends Item implements IElectricItem, IHasRecipe {
 
@@ -37,7 +37,7 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 	public static final String NBT_COOLDOWN = "cooldown";
 
 	public ItemAdvancedScanner(int id) {
-		super(id);
+		super();
 		this.setMaxDamage(27);
 		this.setNoRepair();
 		if (FMLCommonHandler.instance().getSide().isClient()) {
@@ -48,10 +48,10 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 
 	public void addCraftingRecipe() {
 
-		ItemStack ovScanner = Items.getItem("ovScanner");
-		ItemStack energyCrystal = Items.getItem("energyCrystal");
-		ItemStack advCircuit = Items.getItem("advancedCircuit");
-		ItemStack glassFiber = Items.getItem("glassFiberCableItem");
+		ItemStack ovScanner = IC2Items.getItem("ovScanner");
+		ItemStack energyCrystal = IC2Items.getItem("energyCrystal");
+		ItemStack advCircuit = IC2Items.getItem("advancedCircuit");
+		ItemStack glassFiber = IC2Items.getItem("glassFiberCableItem");
 		ItemStack advScanner = new ItemStack(LSBlockItemList.itemAdvScanner);
 		Recipes.advRecipes.addRecipe(advScanner, "ucu", "asa", "ggg",
 		        Character.valueOf('u'), advCircuit, Character.valueOf('g'),
@@ -63,10 +63,10 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 
 	public static void verifyStack(ItemStack stack) {
 		// Just in case... Whatever!
-		if (stack.stackTagCompound == null) {
-			stack.stackTagCompound = new NBTTagCompound();
-			if (!stack.stackTagCompound.hasKey("charge")) {
-				stack.stackTagCompound.setInteger("charge", 0);
+		if (!stack.hasTagCompound()) {
+			stack.setTagCompound(new NBTTagCompound());
+			if (!stack.getTagCompound().hasKey("charge")) {
+				stack.getTagCompound().setInteger("charge", 0);
 			}
 		}
 	}
@@ -74,15 +74,15 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 	// TODO: refactor this later with the NBTHelper.
 	public static void setNBTInt(ItemStack stack, String name, int value) {
 		verifyStack(stack);
-		stack.stackTagCompound.setInteger(name, value);
+		stack.getTagCompound().setInteger(name, value);
 	}
 
 	public static int getNBTInt(ItemStack stack, String name) {
 		verifyStack(stack);
-		if (!stack.stackTagCompound.hasKey(name)) {
-			stack.stackTagCompound.setInteger(name, 0);
+		if (!stack.getTagCompound().hasKey(name)) {
+			stack.getTagCompound().setInteger(name, 0);
 		}
-		return stack.stackTagCompound.getInteger(name);
+		return stack.getTagCompound().getInteger(name);
 	}
 
 	public void printMessage(String message, EntityPlayer player) {
@@ -90,52 +90,47 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 	}
 
 	@Override
-	public void addInformation(ItemStack par1ItemStack,
-	        EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
-		String[] lines = StatCollector.translateToLocal("tooltip.advScanner").split("\n");
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltips, boolean adv) {
+		String[] lines = I18n.format("tooltip.advScanner").split("\n");
 		for (String line : lines) {
-			par3List.add("\2472" + line);
+			tooltips.add("\2472" + line);
 		}
 	}
 
 	@Override
-	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World,
-	        EntityPlayer par3EntityPlayer) {
-		if (!par2World.isRemote) {
-			if (ElectricItem.manager.canUse(par1ItemStack, ENERGY_PER_USE)) {
-				ElectricItem.manager.use(par1ItemStack, ENERGY_PER_USE,
-				        par3EntityPlayer);
+	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand) {
+		if (!world.isRemote) {
+			if (ElectricItem.manager.canUse(itemStack, ENERGY_PER_USE)) {
+				ElectricItem.manager.use(itemStack, ENERGY_PER_USE, player);
 			} else
-				return par1ItemStack;
-			if (!(getNBTInt(par1ItemStack, NBT_COOLDOWN) == 0))
-				return par1ItemStack;
-			setNBTInt(par1ItemStack, NBT_COOLDOWN, COOLDOWN_PERIOD);
+				return ActionResult.newResult(EnumActionResult.FAIL, itemStack);
+			if (!(getNBTInt(itemStack, NBT_COOLDOWN) == 0))
+				return ActionResult.newResult(EnumActionResult.FAIL, itemStack);
+			setNBTInt(itemStack, NBT_COOLDOWN, COOLDOWN_PERIOD);
 
-			ArrayList<ItemStack> blocksFound = new ArrayList<ItemStack>();
+			ArrayList<ItemStack> blocksFound = new ArrayList<>();
 
-			int playerX = (int) par3EntityPlayer.posX;
-			int playerY = (int) par3EntityPlayer.posY;
-			int playerZ = (int) par3EntityPlayer.posZ;
+			int playerX = (int) player.posX;
+			int playerY = (int) player.posY;
+			int playerZ = (int) player.posZ;
 
-			for (int y = 0; y < (int) par3EntityPlayer.posY; y++) {
+			for (int y = 0; y < (int) player.posY; y++) {
 				for (int x = -(RADIUS / 2); x < (RADIUS / 2); x++) {
 					for (int z = -(RADIUS / 2); z < (RADIUS / 2); z++) {
-						ItemStack foundStack = new ItemStack(
-						        par2World.getBlockId(playerX + x, y, playerZ
-						                + z), 1, par2World.getBlockMetadata(
-						                playerX + x, y, playerZ + z));
+						IBlockState bs = world.getBlockState(new BlockPos(playerX + x, playerY + y, playerZ + z));
+						ItemStack foundStack = new ItemStack(bs.getBlock(), 1, bs.getBlock().getMetaFromState(bs));
 						blocksFound.add(foundStack);
 					}
 				}
 			}
 
-			this.printMessage("", par3EntityPlayer);
-			this.printMessage("", par3EntityPlayer);
+			this.printMessage("", player);
+			this.printMessage("", player);
 			this.printMessage("Found materials in " + RADIUS + "x" + RADIUS
-			        + " cubouid below you", par3EntityPlayer);
-			this.printMessage("", par3EntityPlayer);
-			ArrayList<String> names = new ArrayList<String>();
-			ArrayList<CollectedStatInfo> info = new ArrayList<CollectedStatInfo>();
+			        + " cubouid below you", player);
+			this.printMessage("", player);
+			ArrayList<String> names = new ArrayList<>();
+			ArrayList<CollectedStatInfo> info = new ArrayList<>();
 			for (ItemStack stack : blocksFound) {
 				try {
 					String currentName = stack.getDisplayName();
@@ -163,10 +158,10 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 				}
 			}
 			for (CollectedStatInfo i : info) {
-				this.printMessage(i.name + " - " + i.amount, par3EntityPlayer);
+				this.printMessage(i.name + " - " + i.amount, player);
 			}
 		}
-		return par1ItemStack;
+		return ActionResult.newResult(EnumActionResult.SUCCESS, itemStack);
 	}
 
 	@Override
@@ -187,17 +182,7 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 	}
 
 	@Override
-	public int getChargedItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getEmptyItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getMaxCharge(ItemStack itemStack) {
+	public double getMaxCharge(ItemStack itemStack) {
 		return STORAGE;
 	}
 
@@ -207,28 +192,27 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 	}
 
 	@Override
-	public int getTransferLimit(ItemStack itemStack) {
+	public double getTransferLimit(ItemStack itemStack) {
 		return 2000;
 	}
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-	        List par3List) {
-		ItemStack var4 = new ItemStack(this, 1);
-		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE,
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> stacks) {
+		ItemStack stack = new ItemStack(this, 1);
+		ElectricItem.manager.charge(stack, Integer.MAX_VALUE, Integer.MAX_VALUE,
 		        true, false);
-		par3List.add(var4);
-		par3List.add(new ItemStack(this, 1, this.getMaxDamage()));
+		stacks.add(stack);
+		stacks.add(new ItemStack(this, 1, this.getMaxDamage()));
 
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister
 		        .registerIcon(ClientProxy.ADV_SCANNER_TEXTURE);
 	}
-
+*/
 	public class CollectedStatInfo {
 		public int amount;
 		public String name;

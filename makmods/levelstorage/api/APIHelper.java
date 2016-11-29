@@ -33,7 +33,7 @@ public class APIHelper {
 	public static Object getInstanceFor(String classname) {
 		String clsname = getMainPackage() + "." + classname;
 		try {
-			Class cl = Class.forName(clsname);
+			Class<?> cl = Class.forName(clsname);
 			Field f = cl.getField("instance");
 			return f.get(null);
 		} catch (Exception e) {
@@ -53,7 +53,7 @@ public class APIHelper {
 	 *            Name of field you'd like to get.
 	 * @return Requested field.
 	 */
-	public static Field getFieldFor(Class cls, String name) {
+	public static Field getFieldFor(Class<?> cls, String name) {
 		try {
 			return cls.getField(name);
 		} catch (Exception e) {
@@ -73,8 +73,8 @@ public class APIHelper {
 	 *            Name of method you'd like to get.
 	 * @return Requested method.
 	 */
-	public static Method getMethodFor(Class cls, String name,
-			Class... parameterTypes) {
+	public static Method getMethodFor(Class<?> cls, String name,
+			Class<?>... parameterTypes) {
 		try {
 			return cls.getMethod(name, parameterTypes);
 		} catch (Exception e) {
@@ -92,7 +92,7 @@ public class APIHelper {
 	 *            Class name
 	 * @return
 	 */
-	public static Class getClassByName(String classname) {
+	public static Class<?> getClassByName(String classname) {
 		String clsname = getMainPackage() + "." + classname;
 		try {
 			return Class.forName(clsname);

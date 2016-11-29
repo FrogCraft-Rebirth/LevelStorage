@@ -105,8 +105,9 @@ public class TileEntityLavaFabricator extends TileEntityInventorySinkWithFluid
 			}
 	}
 
-	public void updateEntity() {
-		super.updateEntity();
+	@Override
+	public void update() {
+		super.update();
 		this.fillContainerIfPossible();
 		while (canUse(EU_PER_LAVA_MB)) {
 			boolean used = false;

@@ -26,10 +26,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumMovingObjectType;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
@@ -66,8 +65,8 @@ public class ArmorFunctions {
 			return;
 		if (!w.isRemote)
 			ElectricItem.manager.discharge(armor, SPECIAL_FLIGHT_EU_COST,
-					Integer.MAX_VALUE, true, false);
-		Vec3 lookVec = ep.getLookVec();
+					Integer.MAX_VALUE, true, false, false);
+		Vec3d lookVec = ep.getLookVec();
 		double x = lookVec.xCoord;
 		double y = lookVec.yCoord;
 		double z = lookVec.zCoord;
@@ -80,7 +79,7 @@ public class ArmorFunctions {
 			if (!w.isRemote)
 				ElectricItem.manager.discharge(armor,
 						SPECIAL_FLIGHT_EU_COST * 4, Integer.MAX_VALUE, true,
-						false);
+						false, false);
 			x *= 2;
 			y *= 2;
 			z *= 2;
@@ -92,7 +91,7 @@ public class ArmorFunctions {
 		ep.motionZ += z;
 	}
 
-	public static MovingObjectPosition getMovingObjectPositionFromPlayer(
+	public static RayTraceResult getMovingObjectPositionFromPlayer(
 			World par1World, EntityPlayer par2EntityPlayer, boolean par3) {
 		float var4 = 1.0F;
 		float var5 = par2EntityPlayer.prevRotationPitch
@@ -105,11 +104,10 @@ public class ArmorFunctions {
 				+ (par2EntityPlayer.posX - par2EntityPlayer.prevPosX) * var4;
 		double var9 = par2EntityPlayer.prevPosY
 				+ (par2EntityPlayer.posY - par2EntityPlayer.prevPosY) * var4
-				+ 1.62D - par2EntityPlayer.yOffset;
+				+ 1.62D - par2EntityPlayer.getYOffset();
 		double var11 = par2EntityPlayer.prevPosZ
 				+ (par2EntityPlayer.posZ - par2EntityPlayer.prevPosZ) * var4;
-		Vec3 var13 = par1World.getWorldVec3Pool().getVecFromPool(var7, var9,
-				var11);
+		Vec3d var13 = new Vec3d(var7, var9, var11);
 		float var14 = MathHelper.cos(-var6 * 0.017453292F - (float) Math.PI);
 		float var15 = MathHelper.sin(-var6 * 0.017453292F - (float) Math.PI);
 		float var16 = -MathHelper.cos(-var5 * 0.017453292F);
@@ -117,17 +115,17 @@ public class ArmorFunctions {
 		float var18 = var15 * var16;
 		float var20 = var14 * var16;
 		double var21 = 1024.0D;
-		Vec3 var23 = var13.addVector(var18 * var21, var17 * var21, var20
+		Vec3d var23 = var13.addVector(var18 * var21, var17 * var21, var20
 				* var21);
-		return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
+		return par1World.rayTraceBlocks(var13, var23, par3, !par3, false);
 	}
 
-	public static HashMap<Integer, Integer> potionRemovalCost = new HashMap<Integer, Integer>();
+	public static HashMap<Potion, Integer> potionRemovalCost = new HashMap<Potion, Integer>();
 
 	static {
-		potionRemovalCost.put(Integer.valueOf(Potion.poison.id),
+		potionRemovalCost.put(Potion.getPotionFromResourceLocation("poison"),
 				Integer.valueOf(10000));
-		potionRemovalCost.put(Integer.valueOf(Potion.wither.id),
+		potionRemovalCost.put(Potion.getPotionFromResourceLocation("wither"),
 				Integer.valueOf(25000));
 	}
 
@@ -139,14 +137,14 @@ public class ArmorFunctions {
 				LSKeyboard.RAY_SHOOT_KEY_NAME)
 				&& player.isSneaking()) {
 			int x = 0, y = 0, z = 0;
-			MovingObjectPosition mop = getMovingObjectPositionFromPlayer(world,
+			RayTraceResult mop = getMovingObjectPositionFromPlayer(world,
 					player, true);
-			if (mop != null && mop.typeOfHit == EnumMovingObjectType.TILE) {
+			if (mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK) {
 				if (ElectricItem.manager.canUse(armor,
 						ItemArmorAntimatterBase.EU_PER_TELEPORT)) {
 					ElectricItem.manager.discharge(armor,
 							ItemArmorAntimatterBase.EU_PER_TELEPORT,
-							Integer.MAX_VALUE, true, false);
+							Integer.MAX_VALUE, true, false, false);
 				}
 				x = mop.blockX;
 				y = mop.blockY;
@@ -169,7 +167,7 @@ public class ArmorFunctions {
 					Entity toShoot = EntityUtil.getTarget(world, player, 128);
 					if (toShoot != null) {
 						ElectricItem.manager.discharge(itemStack, RAY_COST,
-								Integer.MAX_VALUE, true, false);
+								Integer.MAX_VALUE, true, false, false);
 						PacketTeslaRay.issue(player.posX, player.posY + 1.6,
 								player.posZ, toShoot.posX, toShoot.posY,
 								toShoot.posZ);
@@ -186,20 +184,17 @@ public class ArmorFunctions {
 			if (player.getFoodStats().getFoodLevel() < 18) {
 				if (ElectricItem.manager.canUse(itemStack, FOOD_COST)) {
 					ElectricItem.manager.discharge(itemStack, FOOD_COST,
-							Integer.MAX_VALUE, true, false);
+							Integer.MAX_VALUE, true, false, false);
 					player.getFoodStats().addStats(20, 20);
 				}
 			}
 			if (player.getAir() < 100) {
 				player.setAir(200);
 			}
-			LinkedList<PotionEffect> lk = new LinkedList(
+			LinkedList<PotionEffect> lk = new LinkedList<>(
 					player.getActivePotionEffects());
 			for (PotionEffect effect : lk) {
-				int id = effect.getPotionID();
-
-				Integer cost = (Integer) potionRemovalCost.get(Integer
-						.valueOf(id));
+				Integer cost = (Integer) potionRemovalCost.get(effect.getPotion());
 
 				if (cost != null) {
 					cost = Integer.valueOf(cost.intValue()
@@ -208,8 +203,8 @@ public class ArmorFunctions {
 					if (ElectricItem.manager.canUse(itemStack, cost.intValue())) {
 						ElectricItem.manager
 								.discharge(itemStack, cost.intValue(),
-										Integer.MAX_VALUE, true, false);
-						player.removePotionEffect(id);
+										Integer.MAX_VALUE, true, false, false);
+						player.removePotionEffect(effect.getPotion());
 					}
 				}
 			}
@@ -230,7 +225,7 @@ public class ArmorFunctions {
 			if (speedTicker >= 10) {
 				speedTicker = 0;
 				ElectricItem.manager.discharge(itemStack, 1000,
-						Integer.MAX_VALUE, true, false);
+						Integer.MAX_VALUE, true, false, false);
 			}
 			speedTickerMap.remove(player);
 			speedTickerMap.put(player, Integer.valueOf(speedTicker));
@@ -242,7 +237,7 @@ public class ArmorFunctions {
 			}
 
 			if (speed > 0.0F)
-				player.moveFlying(0.0F, 1.0F, speed);
+				player.moveRelative(0.0F, 1.0F, speed);
 		}
 	}
 
@@ -260,7 +255,7 @@ public class ArmorFunctions {
 					&& (Keys.instance.isJumpKeyDown(player))
 					&& (Keys.instance.isBoostKeyDown(player))) {
 				ElectricItem.manager.discharge(itemStack, 4000,
-						Integer.MAX_VALUE, true, false);
+						Integer.MAX_VALUE, true, false, false);
 			}
 			onGroundMap.remove(player);
 			onGroundMap.put(player, Boolean.valueOf(player.onGround));
@@ -300,16 +295,16 @@ public class ArmorFunctions {
 			if (player.capabilities.isFlying) {
 				if (Keys.instance.isBoostKeyDown(player)) {
 					float boost = 0.44f;
-					player.moveFlying(0.0F, 1.0F, boost);
+					player.moveRelative(0.0F, 1.0F, boost);
 					if (!world.isRemote) {
 						ElectricItem.manager.discharge(itemStack, energy * 3,
-								Integer.MAX_VALUE, true, false);
+								Integer.MAX_VALUE, true, false, false);
 					}
 				}
 				if (!world.isRemote) {
 					if (!player.capabilities.isCreativeMode) {
 						ElectricItem.manager.discharge(itemStack, energy,
-								Integer.MAX_VALUE, true, false);
+								Integer.MAX_VALUE, true, false, false);
 						MinecraftForge.EVENT_BUS.post(new BootsFlyingEvent(
 								player, itemStack));
 					}

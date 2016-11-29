@@ -6,8 +6,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import makmods.levelstorage.network.packet.PacketTypeHandler;
-import net.minecraft.network.INetworkManager;
-import net.minecraftforge.fml.common.network.Player;
 
 /**
  * @author pahimar

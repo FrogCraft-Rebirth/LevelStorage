@@ -8,16 +8,23 @@ import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.network.packet.PacketTypeHandler;
 import makmods.levelstorage.proxy.LSKeyboard;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraftforge.fml.common.network.IPacketHandler;
-import net.minecraftforge.fml.common.network.Player;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.FMLEventChannel;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-public class PacketHandler implements IPacketHandler {
+public enum PacketHandler {
 
-	@Override
-	public void onPacketData(INetworkManager manager,
-			Packet250CustomPayload packet, Player player) {
+	INSTANCE; // Singleton
+
+	private final FMLEventChannel channel;
+
+	PacketHandler() {
+		this.channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(Reference.MOD_ID);
+	}
+
+	@SubscribeEvent // There seems to be three different channels. Should merge into one.
+	public void onServerPacketData(FMLNetworkEvent.ServerCustomPacketEvent event) {
 		if (packet.channel.equals(LSKeyboard.PACKET_KEYBOARD_CHANNEL)) {
 			ByteArrayInputStream bis = new ByteArrayInputStream(packet.data);
 			DataInputStream dis = new DataInputStream(bis);
@@ -38,6 +45,11 @@ public class PacketHandler implements IPacketHandler {
 			PacketLS packetEE = PacketTypeHandler.buildPacket(packet.data);
 			packetEE.execute(manager, player);
 		}
+	}
+
+	@SubscribeEvent
+	public void onClientPacketData(FMLNetworkEvent.ClientCustomPacketEvent event) {
+
 	}
 
 }

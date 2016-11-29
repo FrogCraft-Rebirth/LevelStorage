@@ -1,28 +1,21 @@
 package makmods.levelstorage.fluid;
 
-import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.LSFluids;
-import makmods.levelstorage.init.ModUniversalInitializer;
 import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockFluidIV extends BlockFluidClassic {
 
 	public BlockFluidIV() {
-		super(LevelStorage.configuration.getBlock("fluidIV",
-		        ModUniversalInitializer.instance.getNextBlockID()).getInt(),
-		        LSFluids.instance.fluidIV, Material.water);
-		LSFluids.instance.fluidIV.setBlockID(this);
+		super(LSFluids.instance.fluidIV, Material.WATER);
+		LSFluids.instance.fluidIV.setBlock(this);
 		this.setUnlocalizedName("iv");
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
@@ -37,10 +30,10 @@ public class BlockFluidIV extends BlockFluidClassic {
 	}
 
 	@Override
-	public boolean canDisplace(IBlockAccess world, int x, int y, int z) {
-		if (world.getBlockMaterial(x, y, z).isLiquid())
+	public boolean canDisplace(IBlockAccess world, BlockPos pos) {
+		if (world.getBlockState(pos).getBlock().getMaterial())
 			return false;
-		return super.canDisplace(world, x, y, z);
+		return super.canDisplace(world, pos;
 	}
 
 	@Override
@@ -49,5 +42,5 @@ public class BlockFluidIV extends BlockFluidClassic {
 			return false;
 		return super.displaceIfPossible(world, x, y, z);
 	}
-
+*/
 }

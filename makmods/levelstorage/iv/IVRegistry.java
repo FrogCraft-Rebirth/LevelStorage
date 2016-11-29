@@ -5,6 +5,7 @@ import ic2.api.item.IC2Items;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -61,7 +62,7 @@ public class IVRegistry {
 				try {
 					if (DEBUG)
 						LogHelper.info("OreDict entry: " + s);
-					ArrayList<ItemStack> stacksForGiven = OreDictionary
+					List<ItemStack> stacksForGiven = OreDictionary
 							.getOres(s);
 					for (ItemStack st : stacksForGiven) {
 						if (st == null)
@@ -176,7 +177,7 @@ public class IVRegistry {
 		assign(new ItemStack(Items.SKULL, 1, 1), 87381);
 		assign(new ItemStack(Items.REEDS), 24);
 		assign(new ItemStack(Blocks.SOUL_SAND), 49);
-		assign(new ItemStack(Block.whiteStone), 4);
+		assign(new ItemStack(Blocks.END_STONE), 4);
 		assign(new ItemStack(Items.GUNPOWDER), 192);
 		assign(new ItemStack(Blocks.COBBLESTONE), 1);
 		assign(new ItemStack(Blocks.NETHERRACK), 1);
@@ -239,15 +240,23 @@ public class IVRegistry {
 	public void assign(Block item, int value) {
 		assignItemStack(new ItemStack(item), value);
 	}
+	
+	private static <T> Iterable<T> toIterable(Iterator<T> iterator) {
+		return new Iterable<T>() {
+			public Iterator<T> iterator() {
+				return iterator;
+			}
+		};
+	}
 
 	public void assignAll(Class<?> baseClass, int value) {
-		for (Block b : Block.blocksList) {
+		for (Block b : toIterable(Block.REGISTRY.iterator())) {
 			if (b != null) {
 				if (baseClass.isAssignableFrom(b.getClass()))
 					assignItemStack(new ItemStack(b), value);
 			}
 		}
-		for (Item b : Item.itemsList) {
+		for (Item b : toIterable(Item.REGISTRY.iterator())) {
 			if (b != null) {
 				if (baseClass.isAssignableFrom(b.getClass()))
 					assignItemStack(new ItemStack(b), value);
@@ -256,7 +265,7 @@ public class IVRegistry {
 	}
 
 	public void assignItemStack(ItemStack stack, int value) {
-		int id = stack.itemID;
+		String id = stack.getItem().getRegistryName().toString();
 		int meta = stack.getItemDamage();
 		int valueActual = LevelStorage.configuration.get(
 				IV_CATEGORY,

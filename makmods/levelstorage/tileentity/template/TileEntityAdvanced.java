@@ -2,36 +2,44 @@ package makmods.levelstorage.tileentity.template;
 
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergyAcceptor;
+import ic2.api.energy.tile.IEnergyEmitter;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import ic2.api.tile.IEnergyStorage;
 import ic2.api.tile.IWrenchable;
 import makmods.levelstorage.LevelStorage;
-import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.network.packet.PacketReRender;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.PacketDispatcher;
+
+import java.util.Arrays;
+import java.util.List;
+
 
 public abstract class TileEntityAdvanced extends TileEntity implements
 		IEnergySource, IEnergyStorage, IEnergySink, IWrenchable, IInventory,
-		IFluidHandler {
+		IFluidHandler, ITickable {
 
 	public ItemStack[] inv;
-	public int facing;
+	public EnumFacing facing;
 	public boolean addedToENet;
 
 	public final boolean acceptsEnergy;
@@ -77,13 +85,12 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 	}
 
 	@Override
-	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(int maxDrain, boolean doDrain) {
 		return tank.drain(maxDrain, doDrain);
 	}
 
 	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource,
-			boolean doDrain) {
+	public FluidStack drain(FluidStack resource, boolean doDrain) {
 		if (resource == null || !resource.isFluidEqual(tank.getFluid())) {
 			return null;
 		}
@@ -91,7 +98,7 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
+	public boolean hasCustomName() {
 		return true;
 	}
 
@@ -129,9 +136,9 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 		return stack;
 	}
 
-	public void updateEntity() {
-		super.updateEntity();
-		if (this.worldObj.isRemote)
+	@Override
+	public void update() {
+		if (this.getWorld().isRemote)
 			return;
 
 		if (oldFacing != facing) {
@@ -147,7 +154,7 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
+	public ItemStack removeStackFromSlot(int slot) {
 		ItemStack stack = this.getStackInSlot(slot);
 		if (stack != null) {
 			this.setInventorySlotContents(slot, null);
@@ -166,34 +173,33 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-		super.writeToNBT(par1NBTTagCompound);
-
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		NBTTagList itemList = new NBTTagList();
 		for (int i = 0; i < this.inv.length; i++) {
 			ItemStack stack = this.inv[i];
 			if (stack != null) {
-				NBTTagCompound tag = new NBTTagCompound();
-				tag.setByte("Slot", (byte) i);
-				stack.writeToNBT(tag);
-				itemList.appendTag(tag);
+				NBTTagCompound tagStack = new NBTTagCompound();
+				tagStack.setByte("Slot", (byte) i);
+				stack.writeToNBT(tagStack);
+				itemList.appendTag(tagStack);
 			}
 		}
-		par1NBTTagCompound.setTag("Inventory", itemList);
-		par1NBTTagCompound.setInteger("facing", facing);
-		par1NBTTagCompound.setInteger("stored", stored);
+		tag.setTag("Inventory", itemList);
+		tag.setInteger("facing", facing.ordinal());
+		tag.setInteger("stored", stored);
 
 		NBTTagCompound fluidTankTag = new NBTTagCompound();
 		this.tank.writeToNBT(fluidTankTag);
-		par1NBTTagCompound.setTag("fluidTank", fluidTankTag);
+		tag.setTag("fluidTank", fluidTankTag);
+		return super.writeToNBT(tag);
 	}
 
 	@Override
@@ -219,55 +225,50 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound tagCompound = new NBTTagCompound();
 		this.writeToNBT(tagCompound);
-		return new Packet132TileEntityData(this.xCoord, this.yCoord,
-				this.zCoord, 5, tagCompound);
+		return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tagCompound);
 	}
 
-	public int oldFacing;
+	public EnumFacing oldFacing;
 
 	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
-		this.readFromNBT(pkt.data);
-	}
-	
-	public BlockLocation getTELocation() {
-		return new BlockLocation(this.worldObj.provider.dimensionId, xCoord, yCoord, zCoord);
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+		this.readFromNBT(pkt.getNbtCompound());
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
-		super.readFromNBT(par1NBTTagCompound);
+	public void readFromNBT(NBTTagCompound tag) {
+		super.readFromNBT(tag);
 
-		NBTTagList tagList = par1NBTTagCompound.getTagList("Inventory");
+		NBTTagList tagList = tag.getTagList("Inventory", 9);
 		for (int i = 0; i < tagList.tagCount(); i++) {
-			NBTTagCompound tag = (NBTTagCompound) tagList.tagAt(i);
-			byte slot = tag.getByte("Slot");
+			NBTTagCompound tagSlot = (NBTTagCompound) tagList.get(i);
+			byte slot = tagSlot.getByte("Slot");
 			if (slot >= 0 && slot < this.inv.length) {
-				this.inv[slot] = ItemStack.loadItemStackFromNBT(tag);
+				this.inv[slot] = ItemStack.loadItemStackFromNBT(tagSlot);
 			}
 		}
 
-		facing = par1NBTTagCompound.getInteger("facing");
-		stored = par1NBTTagCompound.getInteger("stored");
-		tank.readFromNBT(par1NBTTagCompound.getCompoundTag("fluidTank"));
+		facing = EnumFacing.VALUES[tag.getInteger("facing")];
+		stored = tag.getInteger("stored");
+		tank.readFromNBT(tag.getCompoundTag("fluidTank"));
 	}
 
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, EnumFacing direction) {
+	public boolean emitsEnergyTo(IEnergyAcceptor receiver, EnumFacing direction) {
 		return emitsEnergy;
 	}
 
 	@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter,
+	public boolean acceptsEnergyFrom(IEnergyEmitter emitter,
 			EnumFacing direction) {
 		return acceptsEnergy;
 	}
 
 	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+	public int fill(FluidStack resource, boolean doFill) {
 		return 0;
 	}
 
@@ -284,60 +285,45 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing from) {
+	public IFluidTankProperties[] getTankProperties() {
 		if (!fluidTE)
 			return null;
 		else
-			return new FluidTankInfo[] { tank.getInfo() };
+			return tank.getTankProperties();
 	}
 
 	@Override
-	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) {
-		return side != facing;
+	public EnumFacing getFacing(World world, BlockPos pos) {
+		return facing;
 	}
 
 	@Override
-	public short getFacing() {
-		return (short) facing;
-	}
-
-	@Override
-	public void setFacing(short facing) {
-		this.facing = facing;
-	}
-
-	@Override
-	public boolean wrenchCanRemove(EntityPlayer entityPlayer) {
+	public boolean setFacing(World world, BlockPos pos, EnumFacing newDirection, EntityPlayer player) {
+		this.facing = newDirection;
 		return true;
 	}
 
 	@Override
-	public float getWrenchDropRate() {
-		return 0.5F;
+	public boolean wrenchCanRemove(World world, BlockPos pos, EntityPlayer player) {
+		return true;
 	}
 
 	@Override
-	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
-		return new ItemStack(worldObj.getBlockId(xCoord, yCoord, zCoord), 1,
-				worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
+	public List<ItemStack> getWrenchDrops(World world, BlockPos pos, IBlockState state, TileEntity te, EntityPlayer player, int fortune) {
+		return Arrays.asList(new ItemStack(this.getBlockType(), 1, this.getBlockMetadata()));
 	}
 
 	@Override
-	public double demandedEnergyUnits() {
+	public double getDemandedEnergy() {
 		return Math.min(eut, maxStorage - stored);
 	}
 
 	@Override
-	public double injectEnergyUnits(EnumFacing directionFrom, double amount) {
+	public double injectEnergy(EnumFacing directionFrom, double amount, double voltage) {
 		if (stored + amount > maxStorage)
 			return amount;
 		this.stored += (int) amount;
 		return 0;
-	}
-
-	@Override
-	public int getMaxSafeInput() {
-		return eut;
 	}
 
 	@Override

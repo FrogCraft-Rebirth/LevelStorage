@@ -1,7 +1,6 @@
 package makmods.levelstorage.armor.antimatter;
 
 import ic2.api.item.ElectricItem;
-import ic2.api.item.Items;
 import ic2.api.recipe.Recipes;
 
 import java.util.List;
@@ -15,8 +14,8 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public class ItemArmorAntimatterChestplate extends ItemArmorAntimatterBase
@@ -31,15 +30,15 @@ public class ItemArmorAntimatterChestplate extends ItemArmorAntimatterBase
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onUpdate(LivingUpdateEvent event) {
 		// if (event.entityLiving.worldObj.isRemote)
 		// return;
-		if (event.entityLiving instanceof EntityPlayer)
+		if (event.getEntityLiving() instanceof EntityPlayer)
 			return;
-		if (!(event.entityLiving instanceof EntityMob))
+		if (!(event.getEntityLiving() instanceof EntityMob))
 			return;
-		List<EntityPlayer> playerList = event.entityLiving.worldObj.playerEntities;
+		List<EntityPlayer> playerList = event.getEntityLiving().worldObj.playerEntities;
 		for (EntityPlayer ep : playerList) {
 			ItemStack armor = ep.inventory.armorInventory[INDEX];
 			if (armor == null)
@@ -47,34 +46,34 @@ public class ItemArmorAntimatterChestplate extends ItemArmorAntimatterBase
 			if (!(armor.getItem() instanceof ItemArmorAntimatterChestplate))
 				continue;
 			int distance = CommonHelper.getDistance(ep.posX, ep.posY, ep.posZ,
-					event.entityLiving.posX, event.entityLiving.posY,
-					event.entityLiving.posZ);
+					event.getEntityLiving().posX, event.getEntityLiving().posY,
+					event.getEntityLiving().posZ);
 			if (distance < KEEPAWAY_DISTANCE) {
 				if (ElectricItem.manager.canUse(armor, ENERGY_PER_HIT)) {
-					if (!event.entityLiving.worldObj.isRemote)
+					if (!event.getEntityLiving().worldObj.isRemote)
 						ElectricItem.manager.use(armor, ENERGY_PER_HIT, ep);
-					event.entityLiving.attackEntityFrom(
+					event.getEntityLiving().attackEntityFrom(
 							LSDamageSource.forcefieldArmorInstaKill, 20.0F);
 				}
 			}
 		}
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onHurt(LivingHurtEvent event) {
 		// if (event.entityLiving.worldObj.isRemote)
 		// return;
-		if (!(event.entityLiving instanceof EntityPlayer))
+		if (!(event.getEntityLiving() instanceof EntityPlayer))
 			return;
-		EntityPlayer ep = (EntityPlayer) event.entityLiving;
+		EntityPlayer ep = (EntityPlayer) event.getEntityLiving();
 		ItemStack armor = ep.inventory.armorInventory[INDEX];
 		if (armor == null)
 			return;
 		if (!(armor.getItem() instanceof ItemArmorAntimatterChestplate))
 			return;
-		int toBeUsed = (int) (event.ammount * ItemArmorAntimatterBase.ENERGY_PER_DAMAGE);
+		int toBeUsed = (int) (event.getAmount() * ItemArmorAntimatterBase.ENERGY_PER_DAMAGE);
 		if (ElectricItem.manager.canUse(armor, toBeUsed)) {
-			if (!event.entityLiving.worldObj.isRemote)
+			if (!event.getEntityLiving().worldObj.isRemote)
 				ElectricItem.manager.use(armor, toBeUsed, ep);
 			event.setCanceled(true);
 		}
@@ -88,6 +87,6 @@ public class ItemArmorAntimatterChestplate extends ItemArmorAntimatterBase
 						.getItemStack(), 'e', new ItemStack(
 						LSBlockItemList.itemAntimatterCrystal), 'a',
 				new ItemStack(LSBlockItemList.itemArmorEnergeticChestplate),
-				'c', Items.getItem("teslaCoil"));
+				'c', ic2.api.item.IC2Items.getItem("teslaCoil"));
 	}
 }

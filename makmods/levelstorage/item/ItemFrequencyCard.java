@@ -1,6 +1,6 @@
 package makmods.levelstorage.item;
 
-import ic2.api.item.Items;
+import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 
 import java.util.List;
@@ -10,37 +10,36 @@ import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.logic.util.NBTHelper;
-import makmods.levelstorage.proxy.ClientProxy;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemFrequencyCard extends Item implements IHasRecipe {
 
 	public ItemFrequencyCard(int id) {
-		super(id);
+		super();
 		this.setNoRepair();
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			this.setCreativeTab(LSCreativeTab.instance);
-		}
+		this.setCreativeTab(LSCreativeTab.instance);
 		this.setMaxStackSize(1);
 	}
 
 	public void addCraftingRecipe() {
 		// Frequency card
-		ItemStack frequencyTr = Items.getItem("frequencyTransmitter");
+		ItemStack frequencyTr = IC2Items.getItem("frequencyTransmitter");
 		Recipes.advRecipes.addShapelessRecipe(new ItemStack(
 		        LSBlockItemList.itemFreqCard), frequencyTr, new ItemStack(
-		        Item.paper));
+				Items.PAPER));
 		// To get rid of card data
 		Recipes.advRecipes.addShapelessRecipe(new ItemStack(
 		        LSBlockItemList.itemFreqCard), new ItemStack(
@@ -48,36 +47,24 @@ public class ItemFrequencyCard extends Item implements IHasRecipe {
 	}
 
 	@Override
-	public void addInformation(ItemStack par1ItemStack,
-	        EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
-		NBTHelper.checkNBT(par1ItemStack);
-		if (par1ItemStack.getTagCompound().hasKey(
-		        BlockLocation.BLOCK_LOCATION_NBT)) {
-			boolean isValid = isValid(par1ItemStack);
-			BlockLocation location = BlockLocation.readFromNBT(par1ItemStack
-			        .getTagCompound());
-			par3List.add(StatCollector
-			        .translateToLocal("tooltip.freqCard.location")
-			        + " "
-			        + location);
-			par3List.add(StatCollector
-			        .translateToLocal("tooltip.freqCard.isValid")
-			        + " "
-			        + (isValid ? StatCollector.translateToLocal("other.true")
-			                : StatCollector.translateToLocal("other.false")));
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltips, boolean adv) {
+		NBTHelper.checkNBT(stack);
+		if (stack.getTagCompound().hasKey(BlockLocation.BLOCK_LOCATION_NBT)) {
+			boolean isValid = isValid(stack);
+			BlockLocation location = BlockLocation.readFromNBT(stack.getTagCompound());
+			tooltips.add(I18n.format("tooltip.freqCard.location") + " " + location);
+			tooltips.add(I18n.format("tooltip.freqCard.isValid") + " " +
+					(isValid ? I18n.format("other.true") : I18n.format("other.false")));
 		}
 	}
 
 	public static boolean isValid(ItemStack stack) {
 		if (hasCardData(stack)) {
-			BlockLocation loc = BlockLocation.readFromNBT(stack
-			        .getTagCompound());
+			BlockLocation loc = BlockLocation.readFromNBT(stack.getTagCompound());
 			if (BlockLocation.isDimIdValid(loc.getDimId())) {
 				WorldServer w = DimensionManager.getWorld(loc.getDimId());
-
-				if (w.getBlockId(loc.getX(), loc.getY(), loc.getZ()) == LSBlockItemList.blockWlessConductor.blockID)
+				if (w.getBlockState(loc.toBlockPos()).getBlock() == LSBlockItemList.blockWlessConductor)
 					return true;
-
 			}
 		}
 		return false;
@@ -87,46 +74,46 @@ public class ItemFrequencyCard extends Item implements IHasRecipe {
 	 * just if you want to easier get rid of invalid cards
 	 */
 	@Override
-	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World,
-	        EntityPlayer par3EntityPlayer) {
-		if (!par2World.isRemote) {
-			if (par1ItemStack != null) {
-				if (par3EntityPlayer.isSneaking()) {
-					NBTHelper.checkNBT(par1ItemStack);
-					if (!isValid(par1ItemStack)) {
-						par1ItemStack = new ItemStack(
-						        LSBlockItemList.itemFreqCard);
-						NBTHelper.checkNBT(par1ItemStack);
+	public ActionResult<ItemStack> onItemRightClick(net.minecraft.item.ItemStack itemStack, World world, EntityPlayer player, EnumHand hand) {
+		if (!world.isRemote) {
+			if (itemStack != null) {
+				if (player.isSneaking()) {
+					NBTHelper.checkNBT(itemStack);
+					if (!isValid(itemStack)) {
+						itemStack = new ItemStack(LSBlockItemList.itemFreqCard);
+						NBTHelper.checkNBT(itemStack);
 					}
 				}
 			}
 		}
-		return par1ItemStack;
+		return ActionResult.newResult(EnumActionResult.SUCCESS, itemStack);
 	}
 
+
+
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world,
-	        int x, int y, int z, int par7, float par8, float par9, float par10) {
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+									  EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
-			if (world.getBlockId(x, y, z) == LSBlockItemList.blockWlessConductor.blockID) {
+			if (world.getBlockState(pos).getBlock() == LSBlockItemList.blockWlessConductor) {
 				NBTHelper.checkNBT(stack);
-				BlockLocation loc = new BlockLocation(
-				        world.provider.dimensionId, x, y, z);
-				BlockLocation.writeToNBT(stack.stackTagCompound, loc);
+				BlockLocation loc = new BlockLocation(world.provider.getDimension(), pos);
+				BlockLocation.writeToNBT(stack.getTagCompound(), loc);
+				return EnumActionResult.SUCCESS;
 			}
 		}
-		return false;
+		return EnumActionResult.FAIL;
 	}
 
 	public static boolean hasCardData(ItemStack stack) {
-		NBTTagCompound cardNBT = stack.stackTagCompound;
+		NBTTagCompound cardNBT = stack.getTagCompound();
 		return cardNBT.hasKey(BlockLocation.BLOCK_LOCATION_NBT);
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister
 		        .registerIcon(ClientProxy.FREQUENCY_CARD_TEXTURE);
-	}
+	}*/
 }

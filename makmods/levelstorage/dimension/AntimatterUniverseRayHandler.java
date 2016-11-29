@@ -1,6 +1,5 @@
 package makmods.levelstorage.dimension;
 
-import java.util.EnumSet;
 import java.util.Random;
 
 import makmods.levelstorage.logic.util.CommonHelper;
@@ -8,15 +7,15 @@ import makmods.levelstorage.network.packet.PacketTeslaRay;
 import makmods.levelstorage.network.packet.PacketTypeHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.fml.common.ITickHandler;
-import net.minecraftforge.fml.common.TickType;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.PacketDispatcher;
 
-public class AntimatterUniverseRayHandler implements ITickHandler {
+public class AntimatterUniverseRayHandler {
 
 	public static final int MAX_STARTPOINT_DEVIATION = 256;
 
@@ -24,11 +23,11 @@ public class AntimatterUniverseRayHandler implements ITickHandler {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onFall(LivingHurtEvent event) {
 		try {
-			if (event.source.equals(DamageSource.fall)
-					&& event.entityLiving.worldObj.provider.dimensionId == LSDimensions.ANTIMATTER_UNIVERSE_DIMENSION_ID)
+			if (event.getSource().equals(DamageSource.fall)
+					&& event.getEntityLiving().worldObj.provider.getDimension() == LSDimensions.ANTIMATTER_UNIVERSE_DIMENSION_ID)
 				event.setCanceled(true);
 		} catch (Exception e) {
 		}
@@ -82,7 +81,7 @@ public class AntimatterUniverseRayHandler implements ITickHandler {
 		}
 		}
 		for (int i = 256; i >= 0; i--) {
-			if (!world.isAirBlock(coordinateX, i, coordinateZ)) {
+			if (!world.isAirBlock(new BlockPos(coordinateX, i, coordinateZ))) {
 				coordinateY = i;
 				break;
 			}
@@ -97,17 +96,16 @@ public class AntimatterUniverseRayHandler implements ITickHandler {
 		ptr.tZ = coordinateZ;
 		PacketDispatcher.sendPacketToAllInDimension(
 				PacketTypeHandler.populatePacket(ptr),
-				world.provider.dimensionId);
+				world.provider.getDimension());
 		CommonHelper.spawnLightning(world, coordinateX, coordinateY,
 				coordinateZ, false);
 		 }
 	}
 
-	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		if (!(tickData[0] instanceof World))
+	public void tickStart(TickEvent.WorldTickEvent event) {
+		if (event.phase != TickEvent.Phase.START)
 			return;
-		World w = (World) tickData[0];
+		World w = event.world;
 		if (w.provider instanceof WorldProviderAntimatterUniverse) {
 			if (w.playerEntities.size() > 0) {
 				spawnDirtyTricks(w);
@@ -128,7 +126,7 @@ public class AntimatterUniverseRayHandler implements ITickHandler {
 			}
 		}
 	}
-
+/*
 	@Override
 	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
 
@@ -142,6 +140,6 @@ public class AntimatterUniverseRayHandler implements ITickHandler {
 	@Override
 	public String getLabel() {
 		return "Antimatter Universe Dirty Tricks Handler";
-	}
+	}*/
 
 }

@@ -3,70 +3,38 @@ package makmods.levelstorage.proxy;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.EnumSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraft.util.StatCollector;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
 import com.google.common.collect.Maps;
 
-import net.minecraftforge.fml.client.registry.KeyBindingRegistry;
-import net.minecraftforge.fml.common.ITickHandler;
-import net.minecraftforge.fml.common.TickType;
-import net.minecraftforge.fml.common.network.PacketDispatcher;
-import net.minecraftforge.fml.common.registry.TickRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-
-public class LSKeyboardClient extends LSKeyboard implements ITickHandler {
+public class LSKeyboardClient extends LSKeyboard {
 
 	public Map<String, Boolean> keyStatus = Maps.newHashMap();
 
 	public Map<String, KeyBinding> modBindings = Maps.newHashMap();
 
+	public static final String LS_KEY = "level_storage_key";
+
+	public static final KeyBinding RANGE = new KeyBinding("key.range", Keyboard.KEY_V, LS_KEY);
+	public static final KeyBinding RAY_SHOOT = new KeyBinding("key.shoot", Keyboard.KEY_R, LS_KEY);
+	public static final KeyBinding JETPACK_SWITCH = new KeyBinding("key.jetpackSwitch", Keyboard.KEY_F, LS_KEY);
+	public static final KeyBinding ANTIMATTER_BOOTS_FLIGHT = new KeyBinding("key.antimatterBoots", Keyboard.KEY_G, LS_KEY);
+
 	public LSKeyboardClient() {
-
-		modBindings.put(RANGE_KEY_NAME,
-				new KeyBinding(StatCollector.translateToLocal("key.range"),
-						Keyboard.KEY_V));
-		modBindings.put(RAY_SHOOT_KEY_NAME,
-				new KeyBinding(StatCollector.translateToLocal("key.shoot"),
-						Keyboard.KEY_R));
-		modBindings
-				.put(JETPACK_SWITCH_KEY_NAME,
-						new KeyBinding(StatCollector
-								.translateToLocal("key.jetpackSwitch"),
-								Keyboard.KEY_F));
-		//modBindings.put(ANTIMATTER_BOOTS_SPECIAL_FLIGHT, new KeyBinding(
-		//		StatCollector.translateToLocal("key.antimatterBoots"),
-		//		Keyboard.KEY_G));
-		KeyBinding[] bsInternal = (KeyBinding[]) modBindings.values().toArray(
-				new KeyBinding[modBindings.values().size()]);
-		KeyBindingRegistry
-				.registerKeyBinding(new KeyBindingRegistry.KeyHandler(
-						bsInternal) {
-					public String getLabel() {
-						return "LevelStorageKeyHandler";
-					}
-
-					public EnumSet<TickType> ticks() {
-						return EnumSet.of(TickType.CLIENT);
-					}
-
-					public void keyUp(EnumSet<TickType> types, KeyBinding kb,
-							boolean tickEnd) {
-					}
-
-					public void keyDown(EnumSet<TickType> types, KeyBinding kb,
-							boolean tickEnd, boolean isRepeat) {
-					}
-				});
-		TickRegistry.registerTickHandler(this, Side.CLIENT);
+		// Doing this will let ide be quiet - will be removed soon (tm)
+		modBindings.put(RANGE_KEY_NAME, RANGE);
+		modBindings.put(RAY_SHOOT_KEY_NAME, RAY_SHOOT);
+		modBindings.put(JETPACK_SWITCH_KEY_NAME, JETPACK_SWITCH));
+		modBindings.put(ANTIMATTER_BOOTS_SPECIAL_FLIGHT, ANTIMATTER_BOOTS_FLIGHT);
+		MinecraftForge.EVENT_BUS.register(this); //TODO: make it client side only
 	}
 
 	public void initiateKeyChange(String id, EntityPlayer player,
@@ -89,12 +57,12 @@ public class LSKeyboardClient extends LSKeyboard implements ITickHandler {
 	}
 
 	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		if (!(tickData[0] instanceof EntityPlayer))
+	public void tickStart(TickEvent.PlayerTickEvent event) {
+		if (!(event.phase == TickEvent.Phase.START))
 			return;
-		EntityPlayer player = (EntityPlayer) tickData[0];
+		EntityPlayer player = event.player;
 		for (Entry<String, KeyBinding> entry : modBindings.entrySet()) {
-			boolean isActive = entry.getValue().pressed;
+			boolean isActive = entry.getValue().isPressed();
 			if (!keyStatus.containsKey(entry.getKey())) {
 				keyStatus.put(entry.getKey(), isActive);
 				initiateKeyChange(entry.getKey(), player, isActive);
@@ -108,18 +76,4 @@ public class LSKeyboardClient extends LSKeyboard implements ITickHandler {
 		}
 	}
 
-	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-		;
-	}
-
-	@Override
-	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.PLAYER);
-	}
-
-	@Override
-	public String getLabel() {
-		return "LevelStorageKeyboard";
-	}
 }

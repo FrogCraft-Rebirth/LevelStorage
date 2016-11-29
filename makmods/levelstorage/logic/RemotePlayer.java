@@ -1,5 +1,5 @@
 package makmods.levelstorage.logic;
-
+/*
 import makmods.levelstorage.lib.Reference;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -51,3 +51,4 @@ public class RemotePlayer extends EntityPlayer {
 	}
 
 }
+*/

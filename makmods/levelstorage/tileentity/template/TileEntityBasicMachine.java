@@ -43,8 +43,7 @@ public abstract class TileEntityBasicMachine extends TileEntityInventorySink {
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		return useSlotMappings ? itemstack.itemID == slotMapping.get(i).itemID
-		        : true;
+		return useSlotMappings ? itemstack.isItemEqual(inv[i]) : true;
 	}
 
 	public void addProgress(int amt) {
@@ -52,10 +51,10 @@ public abstract class TileEntityBasicMachine extends TileEntityInventorySink {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-		super.writeToNBT(par1NBTTagCompound);
+	public NBTTagCompound writeToNBT(NBTTagCompound par1NBTTagCompound) {
 		par1NBTTagCompound.setInteger("progress", progress);
 		par1NBTTagCompound.setShort("facing", facing);
+		return super.writeToNBT(par1NBTTagCompound);
 	}
 
 	@Override
@@ -65,10 +64,6 @@ public abstract class TileEntityBasicMachine extends TileEntityInventorySink {
 		this.facing = par1NBTTagCompound.getShort("facing");
 	}
 
-	public short getFacing() {
-		return (short) this.facing;
-	}
-	
 	public abstract int getMaxProgress();
 
 	/**
@@ -101,20 +96,16 @@ public abstract class TileEntityBasicMachine extends TileEntityInventorySink {
 	}
 
 	@Override
-	public void setFacing(short newF) {
-		this.facing = newF;
-	}
-
-	@Override
 	public boolean explodes() {
 		return true;
 	}
 
-	public void updateEntity() {
-		super.updateEntity();
+	@Override
+	public void update() {
+		super.update();
 		rerenderInterval++;
 		if (rerenderInterval > 20) {
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
 			rerenderInterval = 0;
 		}
 	}

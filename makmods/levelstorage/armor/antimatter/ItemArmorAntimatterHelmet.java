@@ -8,8 +8,9 @@ import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.item.SimpleItems.SimpleItemShortcut;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenDesert;
+import net.minecraft.world.biome.BiomeDesert;
 
 public class ItemArmorAntimatterHelmet extends ItemArmorAntimatterBase
 		implements IHasRecipe {
@@ -19,9 +20,8 @@ public class ItemArmorAntimatterHelmet extends ItemArmorAntimatterBase
 	}
 
 	@Override
-	public void onArmorTickUpdate(World world, EntityPlayer player,
-			ItemStack itemStack) {
-		super.onArmorTickUpdate(world, player, itemStack);
+	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
+		super.onArmorTick(world, player, itemStack);
 		int toCharge = 0;
 
 		if (isSunVisible(player.worldObj, (int) player.posX,
@@ -51,9 +51,9 @@ public class ItemArmorAntimatterHelmet extends ItemArmorAntimatterBase
 
 	public static boolean isSunVisible(World world, int x, int y, int z) {
 		return (world.isDaytime())
-				&& (!world.provider.hasNoSky)
-				&& (world.canBlockSeeTheSky(x, y, z))
-				&& (((world.getWorldChunkManager().getBiomeGenAt(x, z) instanceof BiomeGenDesert)) || ((!world
+				&& (!world.provider.getHasNoSky())
+				&& (world.canBlockSeeSky(new BlockPos(x, y, z)))
+				&& (((world.getBiomeForCoordsBody(new BlockPos(x, 60, z)) instanceof BiomeDesert)) || ((!world
 						.isRaining()) && (!world.isThundering())));
 	}
 

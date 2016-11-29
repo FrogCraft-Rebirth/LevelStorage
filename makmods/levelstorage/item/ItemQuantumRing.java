@@ -15,7 +15,6 @@ import makmods.levelstorage.armor.ItemArmorTeslaHelmet;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.lib.IC2Items;
 import makmods.levelstorage.proxy.ClientProxy;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,12 +22,11 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -39,8 +37,12 @@ public class ItemQuantumRing extends Item implements IElectricItem, IHasRecipe {
 	// Energy per 1 damage
 	public static final int ENERGY_PER_DAMAGE = 400;
 
+	static {
+		MinecraftForge.EVENT_BUS.register(ItemQuantumRing.class);
+	}
+
 	public ItemQuantumRing(int id) {
-		super(id);
+		super();
 
 		this.setMaxDamage(27);
 		this.setNoRepair();
@@ -48,19 +50,18 @@ public class ItemQuantumRing extends Item implements IElectricItem, IHasRecipe {
 			this.setCreativeTab(LSCreativeTab.instance);
 		}
 		this.setMaxStackSize(1);
-		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@ForgeSubscribe
-	public void onDamage(LivingHurtEvent event) {
+	@SubscribeEvent
+	public static void onDamage(LivingHurtEvent event) {
 		// if (event.source.isUnblockable() && event.source ==
 		// DamageSource.fall))
 		// return;
-		if (event.entityLiving instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) event.entityLiving;
+		if (event.getEntityLiving() instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) event.getEntityLiving();
 			ItemStack ring = getRing(player);
 			if (ring != null) {
-				int energy = (int) (event.ammount * ENERGY_PER_DAMAGE);
+				int energy = (int) (event.getAmount() * ENERGY_PER_DAMAGE);
 				if (ElectricItem.manager.canUse(ring, energy)) {
 					ElectricItem.manager.use(ring, energy, player);
 					event.setCanceled(true);
@@ -85,17 +86,7 @@ public class ItemQuantumRing extends Item implements IElectricItem, IHasRecipe {
 	}
 
 	@Override
-	public int getChargedItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getEmptyItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getMaxCharge(ItemStack itemStack) {
+	public double getMaxCharge(ItemStack itemStack) {
 		return STORAGE;
 	}
 
@@ -105,10 +96,10 @@ public class ItemQuantumRing extends Item implements IElectricItem, IHasRecipe {
 	}
 
 	@Override
-	public int getTransferLimit(ItemStack itemStack) {
+	public double getTransferLimit(ItemStack itemStack) {
 		return 100000;
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
@@ -121,12 +112,12 @@ public class ItemQuantumRing extends Item implements IElectricItem, IHasRecipe {
 			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
 		par3List.add("\247b"
 				+ StatCollector.translateToLocal("tooltip.quantumring"));
-	}
+	}*/
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public EnumRarity getRarity(ItemStack stack) {
-		return EnumRarity.epic;
+		return EnumRarity.EPIC;
 	}
 
 	public boolean chargeItem(ItemStack stack, ItemStack ring) {
@@ -137,10 +128,9 @@ public class ItemQuantumRing extends Item implements IElectricItem, IHasRecipe {
 		IElectricItem item = (IElectricItem) stack.getItem();
 		if (!ElectricItem.manager.canUse(ring, item.getTransferLimit(stack)))
 			return false;
-		int chargeSt = ElectricItem.manager.charge(stack,
+		double chargeSt = ElectricItem.manager.charge(stack,
 				item.getTransferLimit(stack), 4, false, false);
-		int dischSt = ElectricItem.manager.discharge(ring, chargeSt, 4, true,
-				false);
+		double dischSt = ElectricItem.manager.discharge(ring, chargeSt, 4, true, false, false);
 		return chargeSt > 0 && dischSt > 0;
 	}
 
@@ -194,12 +184,11 @@ public class ItemQuantumRing extends Item implements IElectricItem, IHasRecipe {
 	}
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
+	public void getSubItems(Item item, CreativeTabs tab,
+			List<ItemStack> list) {
 		ItemStack var4 = new ItemStack(this, 1);
-		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE,
-				true, false);
-		par3List.add(var4);
-		par3List.add(new ItemStack(this, 1, this.getMaxDamage()));
+		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE, true, false);
+		list.add(var4);
+		list.add(new ItemStack(this, 1, this.getMaxDamage()));
 	}
 }

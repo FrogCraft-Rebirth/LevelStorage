@@ -7,7 +7,7 @@ import makmods.levelstorage.tileentity.TileEntityMassMelter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -58,17 +58,13 @@ public class ContainerMassMelter extends Container {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 
-		for (int i = 0; i < this.crafters.size(); i++) {
-			ICrafting icrafting = (ICrafting) this.crafters.get(i);
+		for (int i = 0; i < this.listeners.size(); i++) {
+			IContainerListener listener = this.listeners.get(i);
 
-			icrafting.sendProgressBarUpdate(this, 4,
-					this.tileEntity.getStored());
-			icrafting.sendProgressBarUpdate(this, 5, this.tileEntity
-					.getFluidTank().getFluidAmount());
-			icrafting.sendProgressBarUpdate(this, 6,
-					this.tileEntity.getProgress());
-			icrafting.sendProgressBarUpdate(this, 7,
-					tileEntity.getMaxProgress());
+			listener.sendProgressBarUpdate(this, 4, this.tileEntity.getStored());
+			listener.sendProgressBarUpdate(this, 5, this.tileEntity.getFluidTank().getFluidAmount());
+			listener.sendProgressBarUpdate(this, 6, this.tileEntity.getProgress());
+			listener.sendProgressBarUpdate(this, 7, tileEntity.getMaxProgress());
 		}
 	}
 

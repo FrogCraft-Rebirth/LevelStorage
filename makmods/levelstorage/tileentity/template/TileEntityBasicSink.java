@@ -1,22 +1,27 @@
 package makmods.levelstorage.tileentity.template;
 
-import ic2.api.Direction;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergyEmitter;
 import ic2.api.energy.tile.IEnergySink;
-import ic2.api.energy.tile.IEnergyTile;
 import ic2.api.tile.IEnergyStorage;
 import ic2.api.tile.IWrenchable;
 import makmods.levelstorage.LevelStorage;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * More like an API, for basic sinks. Contains Energy Storage, Basic Energy
@@ -27,24 +32,22 @@ import net.minecraftforge.common.MinecraftForge;
  * 
  */
 public abstract class TileEntityBasicSink extends TileEntity implements
-		IEnergyTile, IEnergySink, IWrenchable, IEnergyStorage {
+		ITickable, IEnergySink, IWrenchable, IEnergyStorage {
 
 	private boolean addedToENet = false;
 	private int stored;
 	public static final String NBT_STORED = "stored";
 
 	@Override
-	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
-		super.readFromNBT(par1NBTTagCompound);
-		stored = par1NBTTagCompound.getInteger(NBT_STORED);
+	public void readFromNBT(NBTTagCompound tag) {
+		super.readFromNBT(tag);
+		stored = tag.getInteger(NBT_STORED);
 
 	}
 
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-		super.writeToNBT(par1NBTTagCompound);
-
-		par1NBTTagCompound.setInteger(NBT_STORED, stored);
-
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+		tag.setInteger(NBT_STORED, stored);
+		return super.writeToNBT(tag);
 	}
 
 	public boolean canUse(int amount) {
@@ -56,58 +59,46 @@ public abstract class TileEntityBasicSink extends TileEntity implements
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound tagCompound = new NBTTagCompound();
 		this.writeToNBT(tagCompound);
-		return new Packet132TileEntityData(this.xCoord, this.yCoord,
-				this.zCoord, 5, tagCompound);
+		return new SPacketUpdateTileEntity(getPos(), this.getBlockMetadata(), tagCompound);
 	}
 
 	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
-		this.readFromNBT(pkt.data);
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+		this.readFromNBT(pkt.getNbtCompound());
 	}
 
 	@Override
 	public void setStored(int energy) {
 		this.stored = energy;
-
 	}
 
 	// IWrenchable stuff
 
-	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) {
+	@Override
+	public EnumFacing getFacing(World world, BlockPos pos) {
+		return null; //per ForgeDirection.UNKNOWN
+	}
+
+	public boolean setFacing(World world, BlockPos pos, EnumFacing newDirection, EntityPlayer player) {
 		return false;
 	}
 
-	public short getFacing() {
-		return (short) EnumFacing.UNKNOWN.flag;
-	}
-
-	public void setFacing(short facing) {
-		;
-		// Do nothing here
-	}
-
-	public boolean wrenchCanRemove(EntityPlayer entityPlayer) {
+	public boolean wrenchCanRemove(World world, BlockPos pos, EntityPlayer player) {
 		return true;
 	}
 
-	public float getWrenchDropRate() {
-		return 0.5f;
-	}
-
 	@Override
-	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
-		return new ItemStack(worldObj.getBlockId(xCoord, yCoord, zCoord), 1,
-				worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
+	public List<ItemStack> getWrenchDrops(World world, BlockPos pos, IBlockState state, TileEntity te, EntityPlayer player, int fortune) {
+		return Arrays.asList(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)));
 	}
 
 	// End of IWrenchable
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
 		if (LevelStorage.isSimulating())
 			if (!addedToENet) {
 				MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
@@ -146,12 +137,9 @@ public abstract class TileEntityBasicSink extends TileEntity implements
 
 	public abstract boolean explodes();
 
-	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction) {
+	@Override
+	public boolean acceptsEnergyFrom(IEnergyEmitter emitter, EnumFacing direction) {
 		return true;
-	}
-
-	public int getMaxSafeInput() {
-		return getMaxInput();
 	}
 
 	@Override
@@ -172,22 +160,21 @@ public abstract class TileEntityBasicSink extends TileEntity implements
 		return this.stored;
 	}
 
-	public boolean isTeleporterCompatible(Direction side) {
+	public boolean isTeleporterCompatible(EnumFacing side) {
 		return false;
 	}
 
 	@Override
-	public double demandedEnergyUnits() {
+	public double getDemandedEnergy() {
 		return getCapacity() - getStored();
 	}
 
-	@Override
-	public double injectEnergyUnits(EnumFacing directionFrom, double amount) {
+	@Override //TODO: investigate that whether ic2 will handle explode or not
+	public double injectEnergy(EnumFacing directionFrom, double amount, double voltage) {
 		if (amount > getMaxInput() && explodes()) {
 			this.invalidate();
-			this.worldObj.setBlockToAir(this.xCoord, this.yCoord, this.zCoord);
-			this.worldObj.createExplosion(null, this.xCoord, this.yCoord,
-					this.zCoord, 2F, false);
+			this.worldObj.setBlockToAir(this.getPos());
+			this.worldObj.createExplosion(null, this.getPos().getX(), this.getPos().getY(), this.getPos().getZ(), 2F, false);
 		}
 		if ((this.getCapacity() - this.getStored()) > amount) {
 			this.addEnergy((int) amount);
@@ -203,11 +190,6 @@ public abstract class TileEntityBasicSink extends TileEntity implements
 	@Override
 	public double getOutputEnergyUnitsPerTick() {
 		return 0;
-	}
-
-	@Override
-	public boolean isTeleporterCompatible(EnumFacing side) {
-		return false;
 	}
 
 	@Override

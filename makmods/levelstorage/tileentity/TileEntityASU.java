@@ -2,6 +2,8 @@ package makmods.levelstorage.tileentity;
 
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergyAcceptor;
+import ic2.api.energy.tile.IEnergyEmitter;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import ic2.api.item.ElectricItem;
@@ -16,31 +18,35 @@ import makmods.levelstorage.gui.logicslot.LogicSlot;
 import makmods.levelstorage.network.packet.PacketReRender;
 import makmods.levelstorage.tileentity.template.ITEHasGUI;
 import makmods.levelstorage.tileentity.template.TileEntityInventory;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.network.PacketDispatcher;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class TileEntityASU extends TileEntityInventory implements IWrenchable,
-		IEnergySource, IEnergySink, IEnergyStorage, ITEHasGUI {
+		IEnergySource, IEnergySink, IEnergyStorage, ITEHasGUI, ITickable {
 
 	public static final long EU_STORAGE = 2000000000L;
 	public static final int EU_PER_TICK = 8192;
 	public static final int TIER = 5;
 	public LogicSlot chargeSlot;
 	public LogicSlot dischargeSlot;
-	public int oldFacing;
+	public EnumFacing oldFacing;
 	private boolean addedToENet;
 
 	public TileEntityASU() {
@@ -49,11 +55,11 @@ public class TileEntityASU extends TileEntityInventory implements IWrenchable,
 		dischargeSlot = new LogicSlot(this, 1);
 	}
 
-	public int facing;
+	public EnumFacing facing;
 	public long stored;
 
 	@Override
-	public String getInvName() {
+	public String getName() {
 		return "ASU";
 	}
 
@@ -72,13 +78,12 @@ public class TileEntityASU extends TileEntityInventory implements IWrenchable,
 				return;
 			this.stored += ElectricItem.manager.discharge(ls.get(),
 					(int) Math.min(Integer.MAX_VALUE, EU_STORAGE - stored),
-					TIER, false, false);
+					TIER, false, false, false);
 		}
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
 		if (this.worldObj.isRemote)
 			return;
 		charge(chargeSlot, true);
@@ -95,16 +100,15 @@ public class TileEntityASU extends TileEntityInventory implements IWrenchable,
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound tagCompound = new NBTTagCompound();
 		this.writeToNBT(tagCompound);
-		return new Packet132TileEntityData(this.xCoord, this.yCoord,
-				this.zCoord, 5, tagCompound);
+		return new SPacketUpdateTileEntity(this.getPos(), 5, tagCompound);
 	}
 
 	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
-		this.readFromNBT(pkt.data);
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+		this.readFromNBT(pkt.getNbtCompound());
 	}
 
 	@Override
@@ -125,58 +129,56 @@ public class TileEntityASU extends TileEntityInventory implements IWrenchable,
 	}
 
 	@Override
-	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) {
-		return facing != side;
+	public EnumFacing getFacing(World world, BlockPos pos) {
+		return facing;
 	}
 
-	@Override
-	public short getFacing() {
-		return (short) facing;
+	public boolean setFacing(World world, BlockPos pos, EnumFacing newDirection, EntityPlayer player) {
+		this.oldFacing = facing;
+		this.facing = newDirection;
+		return true;
 	}
 
-	@Override
-	public void setFacing(short facing) {
-		this.facing = facing;
-	}
-
-	@Override
-	public boolean wrenchCanRemove(EntityPlayer entityPlayer) {
+	public boolean wrenchCanRemove(World world, BlockPos pos, EntityPlayer player) {
 		return true;
 	}
 
 	@Override
-	public float getWrenchDropRate() {
-		return 0.25F;
+	public List<ItemStack> getWrenchDrops(World world, BlockPos pos, IBlockState state, TileEntity te, EntityPlayer player, int fortune) {
+		return Arrays.asList(new ItemStack(LSBlockItemList.blockASU, 1, state.getBlock().getMetaFromState(state)));
 	}
-
 	@Override
-	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
-		return new ItemStack(LSBlockItemList.blockASU);
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-		super.writeToNBT(par1NBTTagCompound);
-		par1NBTTagCompound.setInteger("facing", facing);
+	public NBTTagCompound writeToNBT(NBTTagCompound par1NBTTagCompound) {
+		par1NBTTagCompound.setInteger("facing", facing.ordinal());
 		par1NBTTagCompound.setLong("stored", stored);
+		return super.writeToNBT(par1NBTTagCompound);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
-		super.readFromNBT(par1NBTTagCompound);
-		facing = par1NBTTagCompound.getInteger("facing");
-		stored = par1NBTTagCompound.getLong("stored");
+	public void readFromNBT(NBTTagCompound tag) {
+		super.readFromNBT(tag);
+		facing = EnumFacing.VALUES[tag.getInteger("facing")];
+		stored = tag.getLong("stored");
 	}
 
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, EnumFacing direction) {
-		return direction.ordinal() == facing;
+	public boolean emitsEnergyTo(IEnergyAcceptor receiver, EnumFacing direction) {
+		return direction == facing;
 	}
 
 	@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter,
-			EnumFacing direction) {
-		return direction.ordinal() != facing;
+	public boolean acceptsEnergyFrom(IEnergyEmitter emitter, EnumFacing direction) {
+		return direction != facing;
+	}
+
+	@Override
+	public int getSinkTier() {
+		return TIER;
+	}
+
+	@Override
+	public int getSourceTier() {
+		return TIER;
 	}
 
 	@Override
@@ -212,7 +214,7 @@ public class TileEntityASU extends TileEntityInventory implements IWrenchable,
 
 	@Override
 	public boolean isTeleporterCompatible(EnumFacing side) {
-		return side.ordinal() == facing;
+		return side == facing;
 	}
 
 	private void unloadFromENet() {
@@ -224,21 +226,16 @@ public class TileEntityASU extends TileEntityInventory implements IWrenchable,
 	}
 
 	@Override
-	public double demandedEnergyUnits() {
+	public double getDemandedEnergy() {
 		return EU_STORAGE - stored;
 	}
 
 	@Override
-	public double injectEnergyUnits(EnumFacing directionFrom, double amount) {
+	public double injectEnergy(EnumFacing directionFrom, double amount, double voltage) {
 		if (this.stored > EU_STORAGE)
 			return amount;
 		this.stored += (long) amount;
 		return 0;
-	}
-
-	@Override
-	public int getMaxSafeInput() {
-		return Integer.MAX_VALUE;
 	}
 
 	@Override

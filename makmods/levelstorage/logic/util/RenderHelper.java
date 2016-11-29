@@ -5,9 +5,12 @@ import java.util.List;
 import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidTank;
 
@@ -43,10 +46,13 @@ public class RenderHelper {
 		yOffset -= 1;
 		RenderHelper.bindTexture(ClientProxy.GUI_ELEMENTS);
 		// background
-		drawTexturedModalRect(xOffset + x, yOffset + y, 0, 0, 18, 62);
+		Minecraft.getMinecraft().currentScreen.drawTexturedModalRect(xOffset + x, yOffset + y,
+				0, 0, 18, 62);
+		//drawTexturedModalRect(xOffset + x, yOffset + y, 0, 0, 18, 62);
 		// liquid
 		if (tank.getFluidAmount() > 0) {
-			Icon fluidIcon = tank.getFluid().getFluid().getIcon();
+			TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(
+					tank.getFluid().getFluid().getStill().toString());
 
 			if (fluidIcon != null) {
 				Minecraft.getMinecraft().renderEngine
@@ -59,17 +65,20 @@ public class RenderHelper {
 		}
 		RenderHelper.bindTexture(ClientProxy.GUI_ELEMENTS);
 		// gauge
-		drawTexturedModalRect(xOffset + x, yOffset + y, 18, 0, 18, 62);
+		//drawTexturedModalRect(xOffset + x, yOffset + y, 18, 0, 18, 62);
+		Minecraft.getMinecraft().currentScreen.drawTexturedModalRect(xOffset + x, yOffset + y,
+				18, 0, 18, 62);
 	}
 
 	private static double zLevel = 0.0D;
-
+/* This method seems to have an vanilla equivalent. Why bothering inventing wheel.
 	public static void drawTexturedModalRect(int par1, int par2, int par3,
 			int par4, int par5, int par6) {
 		float f = 0.00390625F;
 		float f1 = 0.00390625F;
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
+		Tessellator tessellator = Tessellator.getInstance();
+		//Not sure about the format. Will change if it breaks
+		tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_NORMAL);
 		tessellator.addVertexWithUV((double) (par1 + 0),
 				(double) (par2 + par6), (double) zLevel,
 				(double) ((float) (par3 + 0) * f),
@@ -86,15 +95,15 @@ public class RenderHelper {
 				(double) zLevel, (double) ((float) (par3 + 0) * f),
 				(double) ((float) (par4 + 0) * f1));
 		tessellator.draw();
-	}
+	}*/
 
-	public static void drawFluidWise(Icon icon, double x, double y,
+	public static void drawFluidWise(TextureAtlasSprite icon, double x, double y,
 			double width, double height, double z) {
 		double iconWidthStep = (icon.getMaxU() - icon.getMinU()) / 16.0D;
 		double iconHeightStep = (icon.getMaxV() - icon.getMinV()) / 16.0D;
 
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
+		Tessellator tessellator = Tessellator.getInstance();
+		tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_NORMAL);
 
 		for (double cy = y; cy < y + height; cy += 16.0D) {
 			double quadHeight = Math.min(16.0D, height + y - cy);
@@ -105,18 +114,21 @@ public class RenderHelper {
 				double quadWidth = Math.min(16.0D, width + x - cx);
 				double maxX = cx + quadWidth;
 				double maxU = icon.getMinU() + iconWidthStep * quadWidth;
-
+				/* For test rewrite, see below
 				tessellator.addVertexWithUV(cx, maxY, z, icon.getMinU(), maxV);
 				tessellator.addVertexWithUV(maxX, maxY, z, maxU, maxV);
 				tessellator.addVertexWithUV(maxX, cy, z, maxU, icon.getMinV());
-				tessellator.addVertexWithUV(cx, cy, z, icon.getMinU(),
-						icon.getMinV());
+				tessellator.addVertexWithUV(cx, cy, z, icon.getMinU(), icon.getMinV());*/
+				tessellator.getBuffer().pos(cx, maxY, z).tex(icon.getMinU(), maxV);
+				tessellator.getBuffer().pos(maxX, maxY, z).tex(maxU, maxV);
+				tessellator.getBuffer().pos(maxX, cy, z).tex(maxU, icon.getMinV());
+				tessellator.getBuffer().pos(cx, cy, z).tex(icon.getMinU(), icon.getMinV());
 			}
 		}
 
 		tessellator.draw();
 	}
-
+/* Due to absence of IIcon, This method has been removed temporarily
 	public static void renderIcon(Icon icon, double size, double z, float nx,
 			float ny, float nz) {
 		renderIcon(icon, 0.0D, 0.0D, size, size, z, nx, ny, nz);
@@ -125,8 +137,7 @@ public class RenderHelper {
 	public static void renderIcon(Icon icon, double xStart, double yStart,
 			double xEnd, double yEnd, double z, float nx, float ny, float nz) {
 		if (icon == null) {
-			LogHelper
-					.severe("[RenderHelper] renderIcon: icon is null, that's a bug!");
+			LogHelper.severe("[RenderHelper] renderIcon: icon is null, that's a bug!");
 			return;
 		}
 
@@ -156,15 +167,16 @@ public class RenderHelper {
 		}
 
 		tessellator.draw();
-	}
+	}*/
 
 	public static void renderTooltip(int x, int y, List<String> tooltipData) {
 		int color = 0x505000ff;
 		int color2 = 0xf0100010;
 
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-		net.minecraft.client.renderer.RenderHelper
-				.disableStandardItemLighting();
+		// RenderHelper.disableStandardItemLighting();
+		// Not sure if GlStateManager#disableLighting is the correct replacement
+		GlStateManager.disableLighting();
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
@@ -172,7 +184,7 @@ public class RenderHelper {
 			int var5 = 0;
 			int var6;
 			int var7;
-			FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+			FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 			for (var6 = 0; var6 < tooltipData.size(); ++var6) {
 				var7 = fontRenderer.getStringWidth(tooltipData.get(var6));
 				if (var7 > var5)
@@ -228,15 +240,18 @@ public class RenderHelper {
 		GL11.glDisable(GL11.GL_ALPHA_TEST);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glShadeModel(GL11.GL_SMOOTH);
-		Tessellator var15 = Tessellator.instance;
-		var15.startDrawingQuads();
-		var15.setColorRGBA_F(var8, var9, var10, var7);
-		var15.addVertex(par3, par2, z);
-		var15.addVertex(par1, par2, z);
-		var15.setColorRGBA_F(var12, var13, var14, var11);
-		var15.addVertex(par1, par4, z);
-		var15.addVertex(par3, par4, z);
-		var15.draw();
+		Tessellator t = Tessellator.getInstance();
+		VertexBuffer vbuf = t.getBuffer();
+		//color -> colorRGBA_F, pos -> addVertex
+		vbuf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+		vbuf.color(var8, var9, var10, var7);
+		vbuf.pos(par3, par2, z);
+		vbuf.pos(par1, par2, z);
+		vbuf.color(var12, var13, var14, var11);
+		vbuf.pos(par1, par4, z);
+		vbuf.pos(par3, par4, z);
+		vbuf.endVertex();
+		t.draw();
 		GL11.glShadeModel(GL11.GL_FLAT);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);

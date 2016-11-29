@@ -59,6 +59,10 @@ public class AdvBlockFinder {
 		findContinuation(initialBlock);
 	}
 
+	public AdvBlockFinder(World w, BlockPos pos, String targetName) {
+		this(w, pos.getX(), pos.getY(), pos.getZ(), targetName);
+	}
+
 	/**
 	 * Quite self-descriptive.
 	 * 

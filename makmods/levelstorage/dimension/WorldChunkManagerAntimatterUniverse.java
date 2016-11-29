@@ -5,14 +5,16 @@ import java.util.List;
 import java.util.Random;
 
 import makmods.levelstorage.proxy.CommonProxy;
-import net.minecraft.world.ChunkPosition;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.WorldChunkManager;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeProvider;
+@Deprecated
 // Copied from WolrdChunkManagerNether
-public class WorldChunkManagerAntimatterUniverse extends WorldChunkManager
+// So use BiomeProviderSingle instead...
+public class WorldChunkManagerAntimatterUniverse extends BiomeProvider
 {
     /** this is the sole biome to utilize for this world */
-    private BiomeGenBase biomeToUse = CommonProxy.biomeAntimatterField;
+    private Biome biomeToUse = CommonProxy.biomeAntimatterField;
     private float hellTemperature;
 
     /** The rainfall in the world */
@@ -22,7 +24,7 @@ public class WorldChunkManagerAntimatterUniverse extends WorldChunkManager
         super();
     }
     
-    public List getBiomesToSpawnIn()
+    public List<Biome> getBiomesToSpawnIn()
     {
         return Arrays.asList(biomeToUse);
     }
@@ -30,23 +32,28 @@ public class WorldChunkManagerAntimatterUniverse extends WorldChunkManager
     /**
      * Returns the BiomeGenBase related to the x, z position on the world.
      */
-    public BiomeGenBase getBiomeGenAt(int par1, int par2)
+    public Biome getBiomeGenAt(int x, int z)
     {
-        return this.biomeToUse;
+        return getBiome(new BlockPos(x, 0, z));
+    }
+    
+    public Biome getBiome(BlockPos pos) {
+    	return this.biomeToUse;
     }
 
     /**
      * Returns an array of biomes for the location input.
      */
-    public BiomeGenBase[] getBiomesForGeneration(BiomeGenBase[] par1ArrayOfBiomeGenBase, int par2, int par3, int par4, int par5)
+    @Override
+    public Biome[] getBiomesForGeneration(Biome[] biomes, int x, int z, int width, int height)
     {
-        if (par1ArrayOfBiomeGenBase == null || par1ArrayOfBiomeGenBase.length < par4 * par5)
+        if (biomes == null || biomes.length < width * height)
         {
-            par1ArrayOfBiomeGenBase = new BiomeGenBase[par4 * par5];
+            biomes = new Biome[width * height];
         }
 
-        Arrays.fill(par1ArrayOfBiomeGenBase, 0, par4 * par5, this.biomeToUse);
-        return par1ArrayOfBiomeGenBase;
+        Arrays.fill(biomes, 0, width * height, this.biomeToUse);
+        return biomes;
     }
 
     /**
@@ -81,11 +88,11 @@ public class WorldChunkManagerAntimatterUniverse extends WorldChunkManager
      * Returns biomes to use for the blocks and loads the other data like temperature and humidity onto the
      * WorldChunkManager Args: oldBiomeList, x, z, width, depth
      */
-    public BiomeGenBase[] loadBlockGeneratorData(BiomeGenBase[] par1ArrayOfBiomeGenBase, int par2, int par3, int par4, int par5)
+    public Biome[] loadBlockGeneratorData(Biome[] par1ArrayOfBiomeGenBase, int par2, int par3, int par4, int par5)
     {
         if (par1ArrayOfBiomeGenBase == null || par1ArrayOfBiomeGenBase.length < par4 * par5)
         {
-            par1ArrayOfBiomeGenBase = new BiomeGenBase[par4 * par5];
+            par1ArrayOfBiomeGenBase = new Biome[par4 * par5];
         }
 
         Arrays.fill(par1ArrayOfBiomeGenBase, 0, par4 * par5, this.biomeToUse);
@@ -96,25 +103,27 @@ public class WorldChunkManagerAntimatterUniverse extends WorldChunkManager
      * Return a list of biomes for the specified blocks. Args: listToReuse, x, y, width, length, cacheFlag (if false,
      * don't check biomeCache to avoid infinite loop in BiomeCacheBlock)
      */
-    public BiomeGenBase[] getBiomeGenAt(BiomeGenBase[] par1ArrayOfBiomeGenBase, int par2, int par3, int par4, int par5, boolean par6)
+    public Biome[] getBiomeGenAt(Biome[] biomes, int par2, int par3, int par4, int par5, boolean par6)
     {
-        return this.loadBlockGeneratorData(par1ArrayOfBiomeGenBase, par2, par3, par4, par5);
+        return this.loadBlockGeneratorData(biomes, par2, par3, par4, par5);
     }
 
     /**
      * Finds a valid position within a range, that is in one of the listed biomes. Searches {par1,par2} +-par3 blocks.
      * Strongly favors positive y positions.
      */
-    public ChunkPosition findBiomePosition(int par1, int par2, int par3, List par4List, Random par5Random)
+    @Override
+    public BlockPos findBiomePosition(int x, int z, int range, List<Biome> biomes, Random random)
     {
-        return par4List.contains(this.biomeToUse) ? new ChunkPosition(par1 - par3 + par5Random.nextInt(par3 * 2 + 1), 0, par2 - par3 + par5Random.nextInt(par3 * 2 + 1)) : null;
+        return biomes.contains(this.biomeToUse) ? new BlockPos(x - range + random.nextInt(range * 2 + 1), 0, z - range + random.nextInt(range * 2 + 1)) : null;
     }
 
     /**
      * checks given Chunk's Biomes against List of allowed ones
      */
-    public boolean areBiomesViable(int par1, int par2, int par3, List par4List)
+    @Override
+    public boolean areBiomesViable(int x, int z, int radius, List<Biome> biomes)
     {
-        return par4List.contains(this.biomeToUse);
+        return biomes.contains(this.biomeToUse);
     }
 }

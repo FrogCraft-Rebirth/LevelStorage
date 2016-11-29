@@ -5,9 +5,9 @@ import makmods.levelstorage.logic.util.RenderHelper;
 import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.registry.ConductorType;
 import makmods.levelstorage.tileentity.TileEntityWirelessConductor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
@@ -26,7 +26,7 @@ public class WirelessConductorRender extends TileEntitySpecialRenderer {
 
 	@Override
 	public void renderTileEntityAt(TileEntity te, double x, double y, double z,
-	        float scale) {
+	        float partialTicks, int destoryState) {
 		// The PushMatrix tells the renderer to "start" doing something.
 
 		GL11.glPushMatrix();
@@ -53,11 +53,11 @@ public class WirelessConductorRender extends TileEntitySpecialRenderer {
 			if (cnd.getType() == ConductorType.SOURCE) {
 				if (cnd.safePair != null) {
 					if (cnd.safePair.getDimId() == cnd.getDimId()) {
-						EnergyRayFX p = new EnergyRayFX(cnd.worldObj,
+						EnergyRayFX p = new EnergyRayFX(cnd.getWorld(),
 						        cnd.getX(), cnd.getY(), cnd.getZ(),
 						        cnd.safePair.getX(), cnd.safePair.getY(),
 						        cnd.safePair.getZ(), 48, 141, 255, 10);
-						ModLoader.getMinecraftInstance().effectRenderer
+						Minecraft.getMinecraft().effectRenderer
 						        .addEffect(p);
 					}
 				}

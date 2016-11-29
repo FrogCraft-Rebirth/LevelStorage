@@ -1,10 +1,8 @@
 package makmods.levelstorage.tileentity;
-
+import java.util.List;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
-import ic2.api.energy.tile.IEnergySink;
-import ic2.api.energy.tile.IEnergySource;
-import ic2.api.energy.tile.IEnergyTile;
+import ic2.api.energy.tile.*;
 import ic2.api.tile.IWrenchable;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LevelStorage;
@@ -16,21 +14,27 @@ import makmods.levelstorage.registry.ConductorType;
 import makmods.levelstorage.registry.IWirelessConductor;
 import makmods.levelstorage.registry.WirelessConductorRegistry;
 import makmods.levelstorage.tileentity.template.IHasButtons;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.Property;
+
+import java.util.Arrays;
 
 public class TileEntityWirelessConductor extends TileEntity implements
-		IWirelessConductor, IInventory, IEnergyTile, IEnergySink, IWrenchable,
+		IWirelessConductor, IInventory, ITickable, IEnergySink, IWrenchable,
 		IEnergySource, IHasButtons {
 
 	public static final String INVENTORY_NAME = "Wireless Conductor";
@@ -45,12 +49,12 @@ public class TileEntityWirelessConductor extends TileEntity implements
 		Property p = LevelStorage.configuration.get(
 				Configuration.CATEGORY_GENERAL, "conductorsSpawnLightnings",
 				true);
-		p.comment = "If set to false, wireless conductors will stop spawning lightnings";
+		p.setComment("If set to false, wireless conductors will stop spawning lightnings");
 		ENABLE_LIGHTNINGS = p.getBoolean(true);
 		Property p2 = LevelStorage.configuration
 				.get(Configuration.CATEGORY_GENERAL, "conducorsSpawnParticles",
 						true);
-		p2.comment = "If set to false, conductors will stop spawning particles (useful on servers, because every 40 ticks server will send 180 packets to all the clients)";
+		p2.setComment("If set to false, conductors will stop spawning particles (useful on servers, because every 40 ticks server will send 180 packets to all the clients)");
 		ENABLE_PARTICLES = p2.getBoolean(true);
 	}
 
@@ -64,8 +68,8 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	public IWirelessConductor pair = null;
 
 	@Override
-	public ItemStack getWrenchDrop(EntityPlayer p) {
-		return new ItemStack(LSBlockItemList.blockWlessConductor);
+	public List<ItemStack> getWrenchDrops(World world, BlockPos pos, IBlockState state, TileEntity te, EntityPlayer player, int fortune) {
+		return Arrays.asList(new ItemStack(LSBlockItemList.blockWlessConductor));
 	}
 
 	@Override
@@ -81,47 +85,37 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	}
 
 	@Override
-	public void setFacing(short f) {
-
-	}
-
-	@Override
-	public float getWrenchDropRate() {
-		return 0.75F;
-	}
-
-	@Override
-	public boolean emitsEnergyTo(TileEntity te, EnumFacing dir) {
-		return true;
-	}
-
-	@Override
-	public boolean wrenchCanRemove(EntityPlayer p) {
-		return true;
-	}
-
-	@Override
-	public boolean acceptsEnergyFrom(TileEntity te, EnumFacing dir) {
-		return true;
-	}
-
-	@Override
-	public int getMaxSafeInput() {
-		return MAX_PACKET_SIZE;
-	}
-
-	@Override
-	public short getFacing() {
-		return (short) EnumFacing.NORTH.ordinal();
-	}
-
-	@Override
-	public boolean wrenchCanSetFacing(EntityPlayer p, int s) {
+	public boolean setFacing(World world, BlockPos pos, EnumFacing newDirection, EntityPlayer player) {
 		return false;
 	}
 
 	@Override
-	public double demandedEnergyUnits() {
+	public boolean emitsEnergyTo(IEnergyAcceptor te, EnumFacing dir) {
+		return true;
+	}
+
+	@Override
+	public boolean wrenchCanRemove(World world, BlockPos pos, EntityPlayer player) {
+		return true;
+	}
+
+	@Override
+	public boolean acceptsEnergyFrom(IEnergyEmitter te, EnumFacing dir) {
+		return true;
+	}
+
+	@Override
+	public int getSinkTier() {
+		return 4;
+	}
+
+	@Override
+	public EnumFacing getFacing(World world, BlockPos pos) {
+		return EnumFacing.NORTH;
+	}
+
+	@Override
+	public double getDemandedEnergy() {
 		if (this.type == ConductorType.SOURCE) {
 			if (this.safePair != null) {
 				if (this.safePair.canReceive(MAX_PACKET_SIZE))
@@ -131,8 +125,8 @@ public class TileEntityWirelessConductor extends TileEntity implements
 		return 0;
 	}
 
-	@Override
-	public double injectEnergyUnits(EnumFacing directionFrom, double amount) {
+	@Override //TODO: clean up logic, avoiding using BlockLocation
+	public double injectEnergy(EnumFacing directionFrom, double amount, double voltage) {
 		if (this.type == ConductorType.SOURCE) {
 			if (this.safePair != null) {
 				BlockLocation thisTe = new BlockLocation(this.getDimId(),
@@ -163,8 +157,7 @@ public class TileEntityWirelessConductor extends TileEntity implements
 			if (this.elapsedReceives > 600 && amount > 128) {
 
 				if (ENABLE_LIGHTNINGS) {
-					CommonHelper.spawnLightning(this.worldObj, this.xCoord,
-							this.yCoord, this.zCoord, false);
+					CommonHelper.spawnLightning(this.worldObj, getX(), getY(), getZ(), false);
 				}
 				this.elapsedReceives = 0;
 			}
@@ -189,28 +182,33 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	}
 
 	@Override
+	public int getSourceTier() {
+		return 4;
+	}
+
+	@Override
 	public IWirelessConductor getPair() {
 		return this.pair;
 	}
 
 	@Override
 	public int getDimId() {
-		return this.worldObj.provider.dimensionId;
+		return this.worldObj.provider.getDimension();
 	}
 
 	@Override
 	public int getX() {
-		return this.xCoord;
+		return this.getPos().getX();
 	}
 
 	@Override
 	public int getY() {
-		return this.yCoord;
+		return this.getPos().getY();
 	}
 
 	@Override
 	public int getZ() {
-		return this.zCoord;
+		return this.getPos().getZ();
 	}
 
 	public TileEntityWirelessConductor() {
@@ -248,11 +246,10 @@ public class TileEntityWirelessConductor extends TileEntity implements
 		if (stack != null) {
 			if (ItemFrequencyCard.isValid(stack)) {
 				BlockLocation devLocation = BlockLocation
-						.readFromNBT(stack.stackTagCompound);
+						.readFromNBT(stack.getTagCompound());
 				WorldServer world = DimensionManager.getWorld(devLocation
 						.getDimId());
-				TileEntity te = world.getBlockTileEntity(devLocation.getX(),
-						devLocation.getY(), devLocation.getZ());
+				TileEntity te = world.getTileEntity(devLocation.toBlockPos());
 				if (te != null) {
 					if (te instanceof IWirelessConductor) {
 						if (te != this) {
@@ -274,7 +271,7 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	public IWirelessConductor safePair;
 
 	@Override
-	public void updateEntity() {
+	public void update() {
 		this.particleTime++;
 		if (!this.addedToENet) {
 			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
@@ -302,9 +299,9 @@ public class TileEntityWirelessConductor extends TileEntity implements
 		this.type = par1NBTTagCompound.getInteger(NBT_TYPE) == 0 ? ConductorType.SINK
 				: ConductorType.SOURCE;
 		this.energyToSend = par1NBTTagCompound.getInteger("toSend");
-		NBTTagList tagList = par1NBTTagCompound.getTagList("Inventory");
+		NBTTagList tagList = par1NBTTagCompound.getTagList("Inventory", 9);
 		for (int i = 0; i < tagList.tagCount(); i++) {
-			NBTTagCompound tag = (NBTTagCompound) tagList.tagAt(i);
+			NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
 			byte slot = tag.getByte("Slot");
 			if (slot >= 0 && slot < this.inv.length) {
 				this.inv[slot] = ItemStack.loadItemStackFromNBT(tag);
@@ -313,26 +310,25 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-		par1NBTTagCompound.setInteger(NBT_TYPE,
-				(this.type == ConductorType.SINK ? 0 : 1));
-		par1NBTTagCompound.setInteger("toSend", energyToSend);
-		super.writeToNBT(par1NBTTagCompound);
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+		tag.setInteger(NBT_TYPE, (this.type == ConductorType.SINK ? 0 : 1));
+		tag.setInteger("toSend", energyToSend);
 		NBTTagList itemList = new NBTTagList();
 		for (int i = 0; i < this.inv.length; i++) {
 			ItemStack stack = this.inv[i];
 			if (stack != null) {
-				NBTTagCompound tag = new NBTTagCompound();
-				tag.setByte("Slot", (byte) i);
-				stack.writeToNBT(tag);
-				itemList.appendTag(tag);
+				NBTTagCompound tagStack = new NBTTagCompound();
+				tagStack.setByte("Slot", (byte) i);
+				stack.writeToNBT(tagStack);
+				itemList.appendTag(tagStack);
 			}
 		}
-		par1NBTTagCompound.setTag("Inventory", itemList);
+		tag.setTag("Inventory", itemList);
+		return super.writeToNBT(tag);
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
+	public ItemStack removeStackFromSlot(int slot) {
 		ItemStack stack = this.getStackInSlot(slot);
 		if (stack != null) {
 			this.setInventorySlotContents(slot, null);
@@ -347,18 +343,17 @@ public class TileEntityWirelessConductor extends TileEntity implements
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord,
-				this.zCoord) == this
-				&& player.getDistanceSq(this.xCoord + 0.5, this.yCoord + 0.5,
-						this.zCoord + 0.5) < 64;
+		return this.worldObj.getTileEntity(getPos()) == this
+				&& player.getDistanceSq(this.getX() + 0.5, this.getY() + 0.5,
+						this.getZ() + 0.5) < 64;
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
@@ -400,17 +395,33 @@ public class TileEntityWirelessConductor extends TileEntity implements
 		return stack;
 	}
 
+	public int getField(int id) {
+		return 0;
+	}
+
+	public void setField(int id, int value) {
+
+	}
+
+	public int getFieldCount() {
+		return 0;
+	}
+
+	public void clear() {
+
+	}
+
 	ItemStack[] inv;
 
 	public int particleTime = 0;
 
 	@Override
-	public String getInvName() {
+	public String getName() {
 		return INVENTORY_NAME;
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
+	public boolean hasCustomName() {
 		return true;
 	}
 }

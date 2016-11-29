@@ -1,14 +1,5 @@
 package makmods.levelstorage.registry;
 
-import java.util.Map;
-
-import makmods.levelstorage.proxy.ClientProxy;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
-import net.minecraft.util.EnumFacing;
-
-import com.google.common.collect.Maps;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -21,7 +12,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @author mak326428
  */
 public class BlockTextureRegistry {
-
+	// Apologize. As we have JSON format now, this class has finished his tasks.
+	/*
 	public static final BlockTextureRegistry instance = new BlockTextureRegistry();
 
 	private Map<String, SimpleBlockTexture> textures = Maps.newHashMap();
@@ -98,5 +90,5 @@ public class BlockTextureRegistry {
 			this.downIcon = downIcon;
 		}
 	}
-
+*/
 }

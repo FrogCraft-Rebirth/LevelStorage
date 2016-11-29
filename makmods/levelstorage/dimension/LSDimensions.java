@@ -2,14 +2,17 @@ package makmods.levelstorage.dimension;
 
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.logic.util.LogHelper;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
+import net.minecraft.world.WorldType;
 import net.minecraftforge.common.DimensionManager;
 
 public class LSDimensions {
 	public static int ANTIMATTER_UNIVERSE_DIMENSION_ID;
 	
+	public static final WorldType ANTIMATTER_UNIVERSE = new WorldType("antimatter");
+	
 	public static String getAntimatterUniverseDimName() {
-		return StatCollector.translateToLocal("dimension.antimatterUniverse.name");
+		return I18n.translateToLocal("dimension.antimatterUniverse.name");
 	}
 
 	public static void init() {
@@ -21,5 +24,6 @@ public class LSDimensions {
 				WorldProviderAntimatterUniverse.class, false);
 		DimensionManager.registerDimension(ANTIMATTER_UNIVERSE_DIMENSION_ID,
 				ANTIMATTER_UNIVERSE_DIMENSION_ID);
+		
 	}
 }

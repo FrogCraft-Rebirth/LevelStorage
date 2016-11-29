@@ -10,11 +10,13 @@ import makmods.levelstorage.dimension.worldgen.WorldGeneratorContinent;
 import makmods.levelstorage.dimension.worldgen.WorldGeneratorPillar;
 import makmods.levelstorage.dimension.worldgen.WorldGeneratorUUMFountain;
 import makmods.levelstorage.proxy.CommonProxy;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -28,7 +30,7 @@ import net.minecraftforge.event.terraingen.ChunkProviderEvent;
 public class AntimatterUniverseChunkProvider implements IChunkProvider {
 	private World worldObj;
 	private Random random;
-	private final List structureGenerators = new ArrayList();
+	private final List<?> structureGenerators = new ArrayList<>();
 	private final boolean hasDecoration;
 	private final boolean hasDungeons;
 	private WorldGenLakes waterLakeGenerator;
@@ -72,7 +74,7 @@ public class AntimatterUniverseChunkProvider implements IChunkProvider {
 		return this.provideChunk(par1, par2);
 	}
 
-	public static final int BLOCK_ID_TO_GENERATE = LSBlockItemList.blockAntimatterStone.blockID;
+	public static final IBlockState BLOCK_ID_TO_GENERATE = LSBlockItemList.blockAntimatterStone.getDefaultState();
 	public static final int BLOCK_METADATA_TO_GENERATE = 0;
 
 	/**
@@ -111,7 +113,7 @@ public class AntimatterUniverseChunkProvider implements IChunkProvider {
 		byte[] abyte1 = chunk.getBiomeArray();
 
 		for (int k = 0; k < abyte1.length; ++k) {
-			abyte1[k] = (byte) CommonProxy.biomeAntimatterField.biomeID;
+			abyte1[k] = (byte) Biome.getIdForBiome(CommonProxy.biomeAntimatterField);
 		}
 
 		chunk.generateSkylightMap();
@@ -132,11 +134,11 @@ public class AntimatterUniverseChunkProvider implements IChunkProvider {
 
 						if (chunk.getBlockStorageArray()[l] == null) {
 							chunk.getBlockStorageArray()[l] = new ExtendedBlockStorage(
-									l << 4, !w.provider.hasNoSky);
+									l << 4, !w.provider.getHasNoSky());
 						}
-
-						chunk.getBlockStorageArray()[l].setExtBlockID(x,
-								y & 15, z, id);
+						chunk.getBlockStorageArray()[l].set(x, y & 15, z, null);;
+						//chunk.getBlockStorageArray()[l].setExtBlockID(x,
+						//		y & 15, z, id);
 					}
 				}
 			}
@@ -433,5 +435,11 @@ public class AntimatterUniverseChunkProvider implements IChunkProvider {
 		}
 
 		return par1ArrayOfDouble;
+	}
+
+	@Override
+	public Chunk getLoadedChunk(int x, int z) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
