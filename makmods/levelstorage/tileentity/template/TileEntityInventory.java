@@ -22,6 +22,11 @@ public abstract class TileEntityInventory extends TileEntity implements IInvento
 	}
 
 	@Override
+	public String getName() {
+		return "";
+	}
+
+	@Override
 	public int getSizeInventory() {
 		return this.inv.length;
 	}
@@ -116,15 +121,11 @@ public abstract class TileEntityInventory extends TileEntity implements IInvento
 		return 0;
 	}
 
-	public void setField(int id, int value) {
-
-	}
+	public void setField(int id, int value) {}
 
 	public int getFieldCount() {
 		return 0;
 	}
 
-	public void clear() {
-
-	}
+	public void clear() {}
 }

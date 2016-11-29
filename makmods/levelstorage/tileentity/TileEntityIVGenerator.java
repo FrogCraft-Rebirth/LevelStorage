@@ -16,17 +16,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityIVGenerator extends TileEntityInventory implements IFluidHandler, ITEHasGUI {
+public class TileEntityIVGenerator extends TileEntityInventory implements IFluidHandler, ITEHasGUI, ITickable {
 	public boolean sunIsUp, skyIsVisible, noSunWorld, wetBiome, initialized;
 	public static int IV_PER_TICK = 20;
 	public int ticker = 0;
@@ -44,12 +43,12 @@ public class TileEntityIVGenerator extends TileEntityInventory implements IFluid
 		IV_PER_TICK = Config.getInt(LSConfigCategory.IV, "IVGenerator_Rate", 20, "Speed at which IV Generators produce IV. (per tick)");
 	}
 
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-		super.writeToNBT(par1NBTTagCompound);
+	public NBTTagCompound writeToNBT(NBTTagCompound par1NBTTagCompound) {
 		par1NBTTagCompound.setDouble("ivInternal", internalIVTicker);
 		NBTTagCompound fluidTankTag = new NBTTagCompound();
 		this.tank.writeToNBT(fluidTankTag);
 		par1NBTTagCompound.setTag("fluidTank", fluidTankTag);
+		return super.writeToNBT(par1NBTTagCompound);
 	}
 
 	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
@@ -72,13 +71,12 @@ public class TileEntityIVGenerator extends TileEntityInventory implements IFluid
 
 	/* IFluidHandler */
 	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+	public int fill(FluidStack resource, boolean doFill) {
 		return tank.fill(resource, doFill);
 	}
 
 	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource,
-			boolean doDrain) {
+	public FluidStack drain(FluidStack resource, boolean doDrain) {
 		if (resource == null || !resource.isFluidEqual(tank.getFluid())) {
 			return null;
 		}
@@ -88,29 +86,18 @@ public class TileEntityIVGenerator extends TileEntityInventory implements IFluid
 	public FluidTank tank = new FluidTank(16 * 1000);
 
 	@Override
-	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(int maxDrain, boolean doDrain) {
 		return tank.drain(maxDrain, doDrain);
 	}
 
 	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		return false;
-	}
-
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		return true;
-	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		return new FluidTankInfo[] { tank.getInfo() };
+	public IFluidTankProperties[] getTankProperties() {
+		return tank.getTankProperties();
 	}
 
 	public void initialize() {
-		wetBiome = worldObj.getWorldChunkManager()
-				.getBiomeGenAt(xCoord, zCoord).getIntRainfall() > 0;
-		noSunWorld = worldObj.provider.hasNoSky;
+		wetBiome = worldObj.getBiome(this.getPos()).getRainfall() > 0;
+		noSunWorld = worldObj.provider.getHasNoSky();
 		updateVisibility();
 		initialized = true;
 	}
@@ -125,8 +112,7 @@ public class TileEntityIVGenerator extends TileEntityInventory implements IFluid
 			sunIsUp = true;
 		}
 
-		if (!worldObj.canBlockSeeTheSky(xCoord, yCoord + 1, zCoord)
-				|| (noSunWorld)) {
+		if (!worldObj.canSeeSky(this.getPos()) || (noSunWorld)) {
 			skyIsVisible = false;
 		} else {
 			skyIsVisible = true;
@@ -137,8 +123,7 @@ public class TileEntityIVGenerator extends TileEntityInventory implements IFluid
 		return 20;
 	}
 
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
 		if (worldObj.isRemote)
 			return;
 		if (!initialized)
@@ -172,7 +157,7 @@ public class TileEntityIVGenerator extends TileEntityInventory implements IFluid
 	}
 
 	@Override
-	public String getInvName() {
+	public String getName() {
 		return "IV Generator";
 	}
 

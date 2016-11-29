@@ -1,8 +1,8 @@
 package makmods.levelstorage.item;
 
 import ic2.api.item.ElectricItem;
+import ic2.api.item.IC2Items;
 import ic2.api.item.IElectricItem;
-import ic2.api.item.Items;
 import ic2.api.recipe.Recipes;
 
 import java.util.List;
@@ -10,18 +10,13 @@ import java.util.List;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.proxy.ClientProxy;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemPocketRefrigerant extends Item implements IElectricItem, IHasRecipe {
 
@@ -31,39 +26,28 @@ public class ItemPocketRefrigerant extends Item implements IElectricItem, IHasRe
 	public static final int TIER = 1;
 
 	public ItemPocketRefrigerant(int id) {
-		super(id);
+		super();
 
 		this.setMaxDamage(27);
 		this.setNoRepair();
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			this.setCreativeTab(LSCreativeTab.instance);
-		}
+		this.setCreativeTab(LSCreativeTab.instance);
 		this.setMaxStackSize(1);
 	}
 
 	public void addCraftingRecipe() {
-		Recipes.advRecipes
-		        .addShapelessRecipe(new ItemStack(
-		                LSBlockItemList.itemPocketRefrigerant), new ItemStack(
-		                Block.ice), new ItemStack(Block.ice), new ItemStack(
-		                Block.ice), new ItemStack(Block.ice), Items
-		                .getItem("advancedCircuit"), Items.getItem("reBattery"));
-		Recipes.advRecipes.addShapelessRecipe(new ItemStack(
-		        LSBlockItemList.itemPocketRefrigerant),
-		        new ItemStack(Block.ice), new ItemStack(Block.ice),
-		        new ItemStack(Block.ice), new ItemStack(Block.ice), Items
-		                .getItem("advancedCircuit"), Items
-		                .getItem("chargedReBattery"));
-
+		Recipes.advRecipes.addShapelessRecipe(new ItemStack(LSBlockItemList.itemPocketRefrigerant),
+				new ItemStack(Blocks.ICE), new ItemStack(Blocks.ICE), new ItemStack(Blocks.ICE),
+				new ItemStack(Blocks.ICE), IC2Items.getItem("advancedCircuit"), IC2Items.getItem("reBattery"));
+		Recipes.advRecipes.addShapelessRecipe(new ItemStack(LSBlockItemList.itemPocketRefrigerant),
+				new ItemStack(Blocks.ICE), new ItemStack(Blocks.ICE), new ItemStack(Blocks.ICE),
+				new ItemStack(Blocks.ICE), IC2Items.getItem("advancedCircuit"), IC2Items.getItem("chargedReBattery"));
 	}
 
 	@Override
-	public void onUpdate(ItemStack par1ItemStack, World par2World,
-	        Entity par3Entity, int par4, boolean par5) {
+	public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5) {
 		if (par3Entity.isBurning()) {
 			if (ElectricItem.manager.canUse(par1ItemStack, ENERGY_PER_USE)) {
-				ElectricItem.manager.use(par1ItemStack, ENERGY_PER_USE,
-				        (EntityLivingBase) par3Entity);
+				ElectricItem.manager.use(par1ItemStack, ENERGY_PER_USE, (EntityLivingBase) par3Entity);
 				par3Entity.extinguish();
 			}
 		}
@@ -75,17 +59,7 @@ public class ItemPocketRefrigerant extends Item implements IElectricItem, IHasRe
 	}
 
 	@Override
-	public int getChargedItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getEmptyItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getMaxCharge(ItemStack itemStack) {
+	public double getMaxCharge(ItemStack itemStack) {
 		return STORAGE;
 	}
 
@@ -95,26 +69,24 @@ public class ItemPocketRefrigerant extends Item implements IElectricItem, IHasRe
 	}
 
 	@Override
-	public int getTransferLimit(ItemStack itemStack) {
+	public double getTransferLimit(ItemStack itemStack) {
 		return 10000;
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister
 		        .registerIcon(ClientProxy.POCKET_REFRIGERANT_TEXTURE);
-	}
+	}*/
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-	        List par3List) {
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 		ItemStack var4 = new ItemStack(this, 1);
 		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE,
 		        true, false);
-		par3List.add(var4);
-		par3List.add(new ItemStack(this, 1, this.getMaxDamage()));
-
+		list.add(var4);
+		list.add(new ItemStack(this, 1, this.getMaxDamage()));
 	}
 
 }

@@ -8,10 +8,11 @@ import makmods.levelstorage.armor.ItemArmorTeslaHelmet;
 import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.logic.util.OreDictHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -24,23 +25,23 @@ public class RenderOreRadar {
 
 	public static int currFresh = 0;
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void radarRender(DrawBlockHighlightEvent event) {
 		currFresh++;
-		if (ItemArmorTeslaHelmet.playerGetArmor(event.player) != null) {
+		if (ItemArmorTeslaHelmet.playerGetArmor(event.getPlayer()) != null) {
 			// REFRESHING
 			if (currFresh > REFRESH_RATE) {
 				currFresh = 0;
 				oreLoc.clear();
-				int initialPosX = (int) event.player.posX;
-				int initialPosY = (int) event.player.posY;
-				int initialPosZ = (int) event.player.posZ;
+				int initialPosX = (int) event.getPlayer().posX;
+				int initialPosY = (int) event.getPlayer().posY;
+				int initialPosZ = (int) event.getPlayer().posZ;
 
 				for (int x = -RENDER_DISTANCE; x < RENDER_DISTANCE; x++) {
 					for (int y = -RENDER_DISTANCE; y < RENDER_DISTANCE; y++) {
 						for (int z = -RENDER_DISTANCE; z < RENDER_DISTANCE; z++) {
 							try {
-								World w = event.player.worldObj;
+								World w = event.getPlayer().worldObj;
 								int currX = initialPosX + x;
 								int currY = initialPosY + y;
 								int currZ = initialPosZ + z;
@@ -70,14 +71,13 @@ public class RenderOreRadar {
 			HashMap<Integer, Integer> ores = new HashMap<Integer, Integer>();
 
 			for (BlockLocation bl : oreLoc) {
-				int blockId = event.player.worldObj.getBlockId(bl.getX(),
-				        bl.getY(), bl.getZ());
-				if (!ores.containsKey(blockId)) {
-					ores.put(blockId, 1);
+				IBlockState bs = event.getPlayer().worldObj.getBlockState(bl.toBlockPos());
+				if (!ores.containsKey(bs)) {
+					ores.put(bs, 1);
 				} else {
-					int prevAmount = ores.get(blockId);
-					ores.remove(blockId);
-					ores.put(blockId, prevAmount + 1);
+					int prevAmount = ores.get(bs);
+					ores.remove(bs);
+					ores.put(bs, prevAmount + 1);
 				}
 			}
 

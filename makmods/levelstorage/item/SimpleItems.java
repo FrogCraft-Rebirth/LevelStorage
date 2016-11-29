@@ -59,32 +59,22 @@ public class SimpleItems extends Item {
 		INGOT_OSMIUM(8, "ingotOsmium", EnumRarity.RARE, false), // 4
 		INGOT_IRIDIUM(16, "ingotIridium", EnumRarity.UNCOMMON, false), // 5
 		ULTIMATE_CIRCUIT(32, "itemUltimateCircuit", EnumRarity.RARE, false), // 6
-		ENERGIZED_NETHER_STAR(64, "itemEnergizedStar", EnumRarity.EPIC,
-				true), // 7
-		ANTIMATTER_MOLECULE(128, "itemAntimatterMolecule",
-				EnumRarity.RARE, false), // 8
-		ANTMATTER_TINY_PILE(192, "itemAntimatterTinyPile",
-				EnumRarity.EPIC, false), // 9
+		ENERGIZED_NETHER_STAR(64, "itemEnergizedStar", EnumRarity.EPIC, true), // 7
+		ANTIMATTER_MOLECULE(128, "itemAntimatterMolecule", EnumRarity.RARE, false), // 8
+		ANTMATTER_TINY_PILE(192, "itemAntimatterTinyPile", EnumRarity.EPIC, false), // 9
 		ANTIMATTER_GLOB(256, "itemAntimatterGlob", EnumRarity.EPIC, false), // 10
-		JETPACK_ACCELERATOR(384, "itemJetpackAccelerator",
-				EnumRarity.UNCOMMON, false), // 11
-		DUST_TINY_CHROME(512, "itemDustTinyChrome", EnumRarity.COMMON,
-				false), // 13
+		JETPACK_ACCELERATOR(384, "itemJetpackAccelerator", EnumRarity.UNCOMMON, false), // 11
+		DUST_TINY_CHROME(512, "itemDustTinyChrome", EnumRarity.COMMON, false), // 13
 		DUST_CHROME(513, "itemDustChrome", EnumRarity.COMMON, false), // 14
-		CRUSHED_CHROME_ORE(514, "crushedChromiteOre", EnumRarity.COMMON,
-				false), // 15
-		PURIFIED_CHROME_ORE(515, "purifiedCrushedChromiteOre",
-				EnumRarity.COMMON, false), // 16
+		CRUSHED_CHROME_ORE(514, "crushedChromiteOre", EnumRarity.COMMON, false), // 15
+		PURIFIED_CHROME_ORE(515, "purifiedCrushedChromiteOre", EnumRarity.COMMON, false), // 16
 		INGOT_CHROME(516, "ingotChrome", EnumRarity.COMMON, false), // 17
-		PLATE_CHROME(517, "plateChrome", EnumRarity.COMMON, false), TINY_IRIDIUM_DUST(
-				600, "dustTinyIridium", EnumRarity.COMMON, false), // 18
-		PLATE_ANTIMATTER_IRIDIUM(518, "plateAntimatterIridium",
-				EnumRarity.EPIC, false),
-		IV_GENERATOR_UPGRADE(700,
-				"craftingUpgradeIVGenerator", EnumRarity.EPIC, false,
+		PLATE_CHROME(517, "plateChrome", EnumRarity.COMMON, false),
+		TINY_IRIDIUM_DUST(600, "dustTinyIridium", EnumRarity.COMMON, false), // 18
+		PLATE_ANTIMATTER_IRIDIUM(518, "plateAntimatterIridium", EnumRarity.EPIC, false),
+		IV_GENERATOR_UPGRADE(700, "craftingUpgradeIVGenerator", EnumRarity.EPIC, false,
 				stack -> Arrays.asList("Increases IV Generator's speed by "
-										+ (TileEntityIVGenerator.BUFF_IV_T * stack.stackSize)
-										+ " IV/t.")
+						+ (TileEntityIVGenerator.BUFF_IV_T * stack.stackSize) + " IV/t.")
 				);
 		final String name;
 		final boolean hasEffect;
@@ -92,8 +82,7 @@ public class SimpleItems extends Item {
 		final int metadata;
 		ITooltipSensitive tooltipHandler;
 
-		private SimpleItemShortcut(int metadata, String name,
-				EnumRarity rarity, boolean hasEffect) {
+		SimpleItemShortcut(int metadata, String name, EnumRarity rarity, boolean hasEffect) {
 			this.name = name;
 			this.rarity = rarity;
 			this.metadata = metadata;
@@ -101,9 +90,7 @@ public class SimpleItems extends Item {
 			tooltipHandler = null;
 		}
 
-		private SimpleItemShortcut(int metadata, String name,
-				EnumRarity rarity, boolean hasEffect,
-				ITooltipSensitive tooltipHandler) {
+		SimpleItemShortcut(int metadata, String name, EnumRarity rarity, boolean hasEffect, ITooltipSensitive tooltipHandler) {
 			this(metadata, name, rarity, hasEffect);
 			this.tooltipHandler = tooltipHandler;
 		}

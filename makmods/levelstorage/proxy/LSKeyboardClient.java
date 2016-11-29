@@ -32,7 +32,7 @@ public class LSKeyboardClient extends LSKeyboard {
 		// Doing this will let ide be quiet - will be removed soon (tm)
 		modBindings.put(RANGE_KEY_NAME, RANGE);
 		modBindings.put(RAY_SHOOT_KEY_NAME, RAY_SHOOT);
-		modBindings.put(JETPACK_SWITCH_KEY_NAME, JETPACK_SWITCH));
+		modBindings.put(JETPACK_SWITCH_KEY_NAME, JETPACK_SWITCH);
 		modBindings.put(ANTIMATTER_BOOTS_SPECIAL_FLIGHT, ANTIMATTER_BOOTS_FLIGHT);
 		MinecraftForge.EVENT_BUS.register(this); //TODO: make it client side only
 	}

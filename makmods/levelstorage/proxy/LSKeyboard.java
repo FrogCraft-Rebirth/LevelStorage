@@ -49,7 +49,7 @@ public class LSKeyboard {
 	public void printKeys() {
 		for (Entry<EntityPlayer, Map<String, Boolean>> entry : keys.entrySet()) {
 			System.out.println();
-			System.out.println("Player: " + entry.getKey().username);
+			System.out.println("Player: " + entry.getKey().getGameProfile().getName());
 			for (Entry<String, Boolean> entry2 : entry.getValue().entrySet()) {
 				System.out.println("    Key");
 				System.out.println("        Name: " + entry2.getKey());
