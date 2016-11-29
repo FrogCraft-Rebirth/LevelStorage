@@ -1,6 +1,5 @@
 package makmods.levelstorage.item;
 
-import ic2.api.item.Items;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.init.IHasRecipe;
@@ -8,13 +7,16 @@ import makmods.levelstorage.lib.IC2Items;
 import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -24,16 +26,14 @@ public class ItemElectricLighter extends ItemBasicElectric implements IHasRecipe
 		super(id, 2, 100000, 1000, 500);
 	}
 
-	public boolean addFire(World world, int x, int y, int z, int sideHit) {
+	public boolean addFire(World world, int x, int y, int z, EnumFacing sideHit) {
 		boolean addedFire = false;
 		BlockLocation currBlockLocation = new BlockLocation(x, y, z);
-		BlockLocation shifted = currBlockLocation.move(
-				EnumFacing.getOrientation(sideHit), 1);
-		if (!world.isAirBlock(shifted.getX(), shifted.getY(), shifted.getZ())) {
+		BlockLocation shifted = currBlockLocation.move(sideHit, 1);
+		if (!world.isAirBlock(shifted.toBlockPos())) {
 			return false;
 		}
-		world.setBlock(shifted.getX(), shifted.getY(), shifted.getZ(),
-				Block.fire.blockID);
+		world.setBlockState(shifted.toBlockPos(), Blocks.FIRE.getDefaultState());
 		addedFire = true;
 		return addedFire;
 	}
@@ -41,38 +41,37 @@ public class ItemElectricLighter extends ItemBasicElectric implements IHasRecipe
 	public void addCraftingRecipe() {
 		Recipes.advRecipes.addShapelessRecipe(new ItemStack(
 				LSBlockItemList.itemElectricLighter),
-				Items.getItem("powerunitsmall").copy(), new ItemStack(
-						Item.flintAndSteel), IC2Items.ADV_CIRCUIT);
+				ic2.api.item.IC2Items.getItem("powerunitsmall").copy(), new ItemStack(
+					net.minecraft.init.Items.FLINT_AND_STEEL), IC2Items.ADV_CIRCUIT);
 	}
 
 	@Override
-	public boolean onBlockClick(ItemStack item, World world,
-			EntityPlayer player, int x, int y, int z, int side) {
-		int blockID = world.getBlockId(x, y, z);
-		if (blockID == 0)
+	public boolean onBlockClick(ItemStack item, World world, EntityPlayer player, int x, int y, int z, int side) {
+		BlockPos pos = new BlockPos(x, y, z);
+		
+		if (world.isAirBlock(pos))
 			return addFire(world, x, y, z, side);
-		int blockMeta = world.getBlockMetadata(x, y, z);
-		ItemStack smResult = FurnaceRecipes.smelting().getSmeltingResult(
-				new ItemStack(blockID, 1, blockMeta));
+		
+		IBlockState bs = world.getBlockState(pos);
+		ItemStack smResult = FurnaceRecipes.instance().getSmeltingResult(new ItemStack(bs.getBlock(), 1, bs.getBlock().getMetaFromState(bs)));
 		if (smResult == null)
 			return addFire(world, x, y, z, side);
 		if (smResult.getItem() instanceof ItemBlock)
-			world.setBlock(x, y, z, smResult.itemID, smResult.getItemDamage(),
-					3);
+			world.setBlockState(new BlockPos(x, y, z), ((ItemBlock)smResult.getItem()).block.getDefaultState(), 3);
 		else
 			return addFire(world, x, y, z, side);
 		return true;
 	}
 
 	@Override
-	public boolean onRightClick(ItemStack item, World world, EntityPlayer player) {
-		return false;
-	}
-
-	@Override
 	@SideOnly(Side.CLIENT)
 	public String getItemTexture() {
 		return ClientProxy.ELECTRIC_LIGHTER_TEXTURE;
+	}
+
+	@Override
+	public boolean onRightClick(ItemStack item, World world, EntityPlayer player) {
+		return false;
 	}
 
 }

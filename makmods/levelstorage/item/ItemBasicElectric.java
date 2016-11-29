@@ -6,7 +6,6 @@ import ic2.api.item.IElectricItem;
 import java.util.List;
 
 import makmods.levelstorage.LSCreativeTab;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -76,7 +75,7 @@ public abstract class ItemBasicElectric extends Item implements IElectricItem {
 
 	public ItemBasicElectric(int id, int tier, int storage, int transferLimit,
 			int energyPerUse) {
-		super(id);
+		super();
 		this.setMaxDamage(27);
 		this.setNoRepair();
 		if (FMLCommonHandler.instance().getSide().isClient()) {
@@ -114,13 +113,12 @@ public abstract class ItemBasicElectric extends Item implements IElectricItem {
 	}
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 		ItemStack var4 = new ItemStack(this, 1);
 		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE,
 				true, false);
-		par3List.add(var4);
-		par3List.add(new ItemStack(this, 1, this.getMaxDamage()));
+		list.add(var4);
+		list.add(new ItemStack(this, 1, this.getMaxDamage()));
 
 	}
 
@@ -130,17 +128,7 @@ public abstract class ItemBasicElectric extends Item implements IElectricItem {
 	}
 
 	@Override
-	public int getChargedItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getEmptyItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getMaxCharge(ItemStack itemStack) {
+	public double getMaxCharge(ItemStack itemStack) {
 		return this.storage;
 	}
 
@@ -150,13 +138,13 @@ public abstract class ItemBasicElectric extends Item implements IElectricItem {
 	}
 
 	@Override
-	public int getTransferLimit(ItemStack itemStack) {
+	public double getTransferLimit(ItemStack itemStack) {
 		return this.transferLimit;
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
 		this.itemIcon = iconRegister.registerIcon(getItemTexture());
-	}
+	}*/
 }

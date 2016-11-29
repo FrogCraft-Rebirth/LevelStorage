@@ -2,7 +2,6 @@ package makmods.levelstorage.item;
 
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
-import ic2.api.item.Items;
 import ic2.api.recipe.Recipes;
 
 import java.util.List;
@@ -24,20 +23,22 @@ import makmods.levelstorage.network.packet.PacketTypeHandler;
 import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.proxy.LSKeyboard;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 
 import com.google.common.collect.Lists;
 
@@ -57,16 +58,11 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 	public static int MAX_LENGTH = 7;
 
 	public ItemAtomicDisassembler(int id) {
-		super(id);
+		super();
 		this.setMaxDamage(27);
 		this.setNoRepair();
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			this.setCreativeTab(LSCreativeTab.instance);
-		}
-		MAX_LENGTH = LevelStorage.configuration
-				.get(LevelStorage.BALANCE_CATEGORY,
-						"atomicDisassemblerMaxLength",
-						7,
+		this.setCreativeTab(LSCreativeTab.instance);
+		MAX_LENGTH = LevelStorage.configuration.get(LevelStorage.BALANCE_CATEGORY, "atomicDisassemblerMaxLength", 7,
 						"Maximum tunnel length for Atomic Disassemblers (power of 2, default = 7 = 128)")
 				.getInt(7);
 		this.setMaxStackSize(1);
@@ -78,17 +74,7 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 	}
 
 	@Override
-	public int getChargedItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getEmptyItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getMaxCharge(ItemStack itemStack) {
+	public double getMaxCharge(ItemStack itemStack) {
 		return STORAGE;
 	}
 
@@ -98,23 +84,22 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 	}
 
 	@Override
-	public int getTransferLimit(ItemStack itemStack) {
+	public double getTransferLimit(ItemStack itemStack) {
 		return 10000;
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister
 				.registerIcon(ClientProxy.DESTRUCTOR_TEXTURE);
-	}
+	}*/
 
 	public static boolean DEAL_DAMAGE;
 	public static boolean DEAL_DAMAGE_TO_OTHERS;
 
 	static {
-		DEAL_DAMAGE = LevelStorage.configuration.get(
-				Configuration.CATEGORY_GENERAL,
+		DEAL_DAMAGE = LevelStorage.configuration.get(Configuration.CATEGORY_GENERAL,
 				"atomicDisassemblersEnableDamage", true).getBoolean(true);
 	}
 
@@ -147,12 +132,10 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world,
-			int x, int y, int z, int side, float par8, float par9, float par10) {
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		// TODO: check this, if everything goes the way it should,
 		// leave it as is, if not then fallback to !world.isRemote
 		if (LevelStorage.isSimulating()) {
-			EnumFacing hitFrom = EnumFacing.VALID_DIRECTIONS[side];
 			int length = (int) Math.pow(2, getChargeFor(stack));
 			int maxDamage = (int) (length / 4 * 1.5);
 			int damage = player.worldObj.rand.nextInt(maxDamage + 1);
@@ -160,28 +143,24 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 				player.attackEntityFrom(LSDamageSource.disassembled, damage);
 			List<ParticleInternal> toSend = Lists.newArrayList();
 			for (int curr = 0; curr < length; curr++) {
-
-				BlockLocation loc = new BlockLocation(x, y, z).move(
-						hitFrom.getOpposite(), curr);
-				mineThreeByThree(stack, hitFrom, loc, world, player, toSend);
+				BlockLocation loc = new BlockLocation(world.provider.getDimension(), pos).move(facing.getOpposite(), curr);
+				mineThreeByThree(stack, facing, loc, world, player, toSend);
 			}
 			PacketParticles packet = new PacketParticles();
 			packet.particles = toSend;
-			Packet250CustomPayload p = (Packet250CustomPayload) PacketTypeHandler
-					.populatePacket(packet);
-			PacketDispatcher.sendPacketToAllAround(x, y, z, 128,
-					world.provider.dimensionId, p);
-			return true;
+			Packet250CustomPayload p = (Packet250CustomPayload) PacketTypeHandler.populatePacket(packet);
+			PacketDispatcher.sendPacketToAllAround(x, y, z, 128, world.provider.dimensionId, p);
+			return EnumActionResult.SUCCESS;
 		}
-		return true;
+		return EnumActionResult.PASS;
 	}
 
-	public static List<Integer> bulkItemsToDelete = Lists.newArrayList();
+	public static List<Block> bulkItemsToDelete = Lists.newArrayList();
 
 	static {
-		bulkItemsToDelete.add(Block.cobblestone.blockID);
-		bulkItemsToDelete.add(Block.dirt.blockID);
-		bulkItemsToDelete.add(Block.gravel.blockID);
+		bulkItemsToDelete.add(Blocks.COBBLESTONE);
+		bulkItemsToDelete.add(Blocks.DIRT);
+		bulkItemsToDelete.add(Blocks.GRAVEL);
 	}
 
 	public void mineThreeByThree(ItemStack device, EnumFacing hitFrom,
@@ -327,10 +306,8 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 			return;
 		for (BlockLocation blockLoc : removeBlocks) {
 			if (blockLoc != null) {
-				Block b = Block.blocksList[par2World.getBlockId(
-						blockLoc.getX(), blockLoc.getY(), blockLoc.getZ())];
-				int aimBlockMeta = par2World.getBlockMetadata(blockLoc.getX(),
-						blockLoc.getY(), blockLoc.getZ());
+				Block b = par2World.getBlockState(blockLoc.toBlockPos()).getBlock();
+				int aimBlockMeta = b.getMetaFromState(par2World.getBlockState(blockLoc.toBlockPos()));
 				if (b != null) {
 					if (b.getBlockHardness(par2World, blockLoc.getX(),
 							blockLoc.getY(), blockLoc.getZ()) > 0.0F) {
@@ -343,7 +320,7 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 									aimBlockMeta, 0);
 							for (ItemStack drop : drops) {
 								ParticleInternal particle = new ParticleInternal();
-								particle.name = "tilecrack_" + b.blockID + "_"
+								particle.name = "tilecrack_" + b + "_"
 										+ aimBlockMeta;
 								particle.x = blockLoc.getX();
 								particle.y = blockLoc.getY();
@@ -352,7 +329,7 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 								particle.velY = 0.5f;
 								particle.velZ = 0.0f;
 								particles.add(particle);
-								if (!bulkItemsToDelete.contains(drop.itemID)) {
+								if (!bulkItemsToDelete.contains(drop)) {
 
 									CommonHelper.dropBlockInWorld_exact(
 											par2World, player.posX,
@@ -398,19 +375,16 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 	}
 
 	@Override
-	public void addInformation(ItemStack par1ItemStack,
-			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
-		String[] lines = StatCollector.translateToLocal(
-				"tooltip.atomicDisassembler").split("\n");
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltips, boolean adv) {
+		String[] lines = I18n.format("tooltip.atomicDisassembler").split("\n");
 		for (String line : lines) {
-			par3List.add("\247c" + line);
+			tooltips.add("\247c" + line);
 		}
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
 	public EnumRarity getRarity(ItemStack stack) {
-		return EnumRarity.rare;
+		return EnumRarity.RARE;
 	}
 
 	public void addCraftingRecipe() {
@@ -422,22 +396,18 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 		// LSBlockItemList.itemEnhDiamondDrill));
 		Recipes.advRecipes.addRecipe(new ItemStack(
 				LSBlockItemList.itemAtomicDisassembler), "ccc", "lda", "ccc",
-				Character.valueOf('c'), IC2Items.CARBON_PLATE, Character
-						.valueOf('l'), Items.getItem("miningLaser"), Character
-						.valueOf('d'), new ItemStack(
-						LSBlockItemList.itemEnhDiamondDrill), Character
-						.valueOf('a'), IC2Items.ADV_CIRCUIT);
+					'c', IC2Items.CARBON_PLATE, 
+					'l', ic2.api.item.IC2Items.getItem("miningLaser"), 
+					'd', new ItemStack(LSBlockItemList.itemEnhDiamondDrill), 
+					'a', IC2Items.ADV_CIRCUIT);
 	}
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 		ItemStack var4 = new ItemStack(this, 1);
-		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE,
-				true, false);
-		par3List.add(var4);
-		par3List.add(new ItemStack(this, 1, this.getMaxDamage()));
-
+		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE, true, false);
+		list.add(var4);
+		list.add(new ItemStack(this, 1, this.getMaxDamage()));
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package makmods.levelstorage.compat.nei;
+/*package makmods.levelstorage.compat.nei;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -42,12 +42,12 @@ public class DrillEnhancementHandler extends TemplateRecipeHandler {
 					recipe.getRecipeOutput());
 		}
 
-		/**
+		*//**
 		 * @param width
 		 * @param height
 		 * @param items
 		 *            an ItemStack[] or ItemStack[][]
-		 */
+		 *//*
 		public void setIngredients(int width, int height, Object[] items) {
 			for (int x = 0; x < width; x++) {
 				for (int y = 0; y < height; y++) {
@@ -96,7 +96,7 @@ public class DrillEnhancementHandler extends TemplateRecipeHandler {
 				.translateToLocal("other.drillEnhancementRecipeNEI");
 	}
 
-	/*
+	
 	 * @Override public void loadCraftingRecipes(String outputId, Object...
 	 * results) { if (outputId.equals("crafting")) { List<IRecipe> allrecipes =
 	 * CraftingManager.getInstance() .getRecipeList(); for (IRecipe irecipe :
@@ -107,7 +107,7 @@ public class DrillEnhancementHandler extends TemplateRecipeHandler {
 	 * 
 	 * recipe.computeVisuals(); arecipes.add(recipe); } } else {
 	 * super.loadCraftingRecipes(outputId, results); } }
-	 */
+	 
 
 	public ItemStack createEnchantedBook(Enchantment ench, int level) {
 		if (ench == null)
@@ -207,3 +207,4 @@ public class DrillEnhancementHandler extends TemplateRecipeHandler {
 	}
 
 }
+*/

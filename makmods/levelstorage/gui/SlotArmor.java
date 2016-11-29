@@ -1,21 +1,18 @@
 package makmods.levelstorage.gui;
 
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SlotArmor extends Slot
 {
   private final InventoryPlayer inventory;
-  private final int armorType;
+  private final EntityEquipmentSlot armorType;
 
-  public SlotArmor(InventoryPlayer inventory, int armorType, int xDisplayPosition, int yDisplayPosition)
+  public SlotArmor(InventoryPlayer inventory, EntityEquipmentSlot armorType, int xDisplayPosition, int yDisplayPosition)
   {
-    super(inventory, 36 + (3 - armorType), xDisplayPosition, yDisplayPosition);
+    super(inventory, 36 + (3 - armorType.ordinal()), xDisplayPosition, yDisplayPosition);
 
     this.inventory = inventory;
     this.armorType = armorType;
@@ -25,10 +22,10 @@ public class SlotArmor extends Slot
   {
     return itemStack.getItem().isValidArmor(itemStack, this.armorType, this.inventory.player);
   }
-
+/*
   @SideOnly(Side.CLIENT)
   public Icon getBackgroundIconIndex()
   {
     return ItemArmor.func_94602_b(this.armorType);
-  }
+  }*/
 }

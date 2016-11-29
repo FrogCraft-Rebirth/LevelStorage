@@ -1,4 +1,4 @@
-package makmods.levelstorage.compat.nei;
+/*package makmods.levelstorage.compat.nei;
 
 import java.util.List;
 
@@ -30,3 +30,4 @@ public class XPRegistryHandler implements IContainerTooltipHandler {
 	    return tip;
     }
 }
+*/

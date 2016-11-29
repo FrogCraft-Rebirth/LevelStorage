@@ -2,7 +2,6 @@ package makmods.levelstorage.logic.util;
 
 import java.util.ArrayList;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
@@ -15,8 +14,8 @@ public class OreFinder {
 	public int initialY;
 	public int initialZ;
 
-	public int aimBlockId;
-	public int aimBlockMeta;
+	//Use BlockState. So yah. 
+	public IBlockState aimBlockState;
 
 	// Unused, but what the heck, let it be here.
 	public World world;
@@ -25,8 +24,7 @@ public class OreFinder {
 		initialX = x;
 		initialY = y;
 		initialZ = z;
-		BlockLocation initialBlock = new BlockLocation(
-		        world.provider.getDimension(), x, y, z);
+		BlockLocation initialBlock = new BlockLocation(world.provider.getDimension(), x, y, z);
 		// foundOre.add(initialBlock);
 		findContinuation(initialBlock);
 	}
@@ -48,22 +46,15 @@ public class OreFinder {
 				int currY = newTh.getY();
 				int currZ = newTh.getZ();
 
-				Block currBlock = this.world.getBlockState(new BlockPos(
-						currX, currY, currZ)).getBlock();
+				IBlockState currBlock = this.world.getBlockState(new BlockPos(currX, currY, currZ));
 				if (currBlock != null) {
-					if (currBlock.blockId == aimBlockId) {
-						IBlockState state = this.world.getBlockState(new BlockPos(
-								currX, currY, currZ));
-						int currMeta = state.getBlock().getMetaFromState(state);
-						if (currMeta == aimBlockMeta) {
-							// Recursion, very dangerous, but i hope nobody
-							// will
-							// use
-							// this on stone...
-							findContinuation(new BlockLocation(
-							        this.world.provider.getDimension(), currX,
-							        currY, currZ));
-						}
+					if (currBlock.equals(aimBlockState)) {
+						IBlockState state = this.world.getBlockState(new BlockPos(currX, currY, currZ));
+						// Recursion, very dangerous, but i hope nobody
+						// will
+						// use
+						// this on stone...
+						findContinuation(new BlockLocation(this.world.provider.getDimension(), currX, currY, currZ));
 					}
 				}
 			}

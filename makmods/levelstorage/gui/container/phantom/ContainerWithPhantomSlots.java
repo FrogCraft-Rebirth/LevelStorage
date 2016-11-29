@@ -2,6 +2,7 @@ package makmods.levelstorage.gui.container.phantom;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -14,23 +15,23 @@ public class ContainerWithPhantomSlots extends Container {
 	}
 
 	@Override
-	public ItemStack slotClick(int slotNum, int mouseButton, int modifier,
+	public ItemStack slotClick(int slotNum, int dragType, ClickType clickType,
 			EntityPlayer player) {
 		Slot slot = slotNum < 0 ? null : (Slot) this.inventorySlots
 				.get(slotNum);
 		if (slot instanceof PhantomSlot) {
-			return slotClickPhantom(slot, mouseButton, modifier, player);
+			return slotClickPhantom(slot,dragType, clickType, player);
 		}
-		return super.slotClick(slotNum, mouseButton, modifier, player);
+		return super.slotClick(slotNum, dragType, clickType, player);
 	}
 
-	private ItemStack slotClickPhantom(Slot slot, int mouseButton,
-			int modifier, EntityPlayer player) {
+	private ItemStack slotClickPhantom(Slot slot, int dragType,
+			ClickType clickType, EntityPlayer player) {
 		ItemStack stack = null;
 
-		if (mouseButton == 2) {
+		if (dragType == 2) {
 			slot.putStack(null);
-		} else if (mouseButton == 0 || mouseButton == 1) {
+		} else if (dragType == 0 || dragType == 1) {
 			InventoryPlayer playerInv = player.inventory;
 			slot.onSlotChanged();
 			ItemStack stackSlot = slot.getStack();
@@ -42,7 +43,7 @@ public class ContainerWithPhantomSlots extends Container {
 
 			// if (stackSlot == null) {
 			if (stackHeld != null) {
-				fillPhantomSlot(slot, stackHeld, mouseButton, modifier);
+				fillPhantomSlot(slot, stackHeld, dragType, clickType);
 			}
 			if (stackHeld == null) {
 				// adjustPhantomSlot(slot, mouseButton, modifier);
@@ -54,7 +55,7 @@ public class ContainerWithPhantomSlots extends Container {
 	}
 
 	protected void fillPhantomSlot(Slot slot, ItemStack stackHeld,
-			int mouseButton, int modifier) {
+			int dragType, ClickType clickType) {
 		if (!slot.isItemValid(stackHeld))
 			return;
 		if (!(slot instanceof PhantomSlot))
@@ -63,7 +64,7 @@ public class ContainerWithPhantomSlots extends Container {
 		if (((PhantomSlot) slot).isUnstackable())
 			stackSize = 1;
 		else
-			stackSize = mouseButton == 0 ? stackHeld.stackSize : 1;
+			stackSize = dragType == 0 ? stackHeld.stackSize : 1;
 		if (stackSize > slot.getSlotStackLimit()) {
 			stackSize = slot.getSlotStackLimit();
 		}

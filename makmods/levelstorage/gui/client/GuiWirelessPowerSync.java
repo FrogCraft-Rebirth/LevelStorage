@@ -16,8 +16,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import net.minecraftforge.fml.common.network.PacketDispatcher;
-
 public class GuiWirelessPowerSync extends GuiContainer {
 
 	protected TileEntityWirelessPowerSynchronizer tileEntity;

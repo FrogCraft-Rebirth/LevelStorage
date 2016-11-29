@@ -64,8 +64,6 @@ public enum PacketTypeHandler {
 
 		byte[] data = packetLV.populate();
 
-
-
 		CPacketCustomPayload packet250 = new CPacketCustomPayload();
 		packet250.channel = Reference.MOD_ID;
 		packet250.data = data;

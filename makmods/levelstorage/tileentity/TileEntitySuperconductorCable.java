@@ -8,10 +8,11 @@ import ic2.api.energy.tile.IEnergyEmitter;
 import makmods.levelstorage.logic.util.BlockLocation;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.common.MinecraftForge;
 
 public class TileEntitySuperconductorCable extends TileEntity implements
-        IEnergyConductor {
+        IEnergyConductor, ITickable {
 
 	public int connectivity;
 
@@ -61,7 +62,7 @@ public class TileEntitySuperconductorCable extends TileEntity implements
 	public boolean needsUpdate = true;
 
 	@Override
-	public void updateEntity() {
+	public void update() {
 		if (!this.worldObj.isRemote) {
 			if (!addedToENet) {
 				MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
@@ -96,16 +97,13 @@ public class TileEntitySuperconductorCable extends TileEntity implements
 
 		int mask = 1;
 
-		for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.VALUES) {
 			// TileEntity neighbor = EnergyNet.getForWorld(this.worldObj)
 			// .getNeighbor(this, direction);
 			BlockLocation currLocation = new BlockLocation(
-			        this.worldObj.provider.dimensionId, this.xCoord,
-			        this.yCoord, this.zCoord);
-			BlockLocation nextLoc = currLocation.move(
-			        direction, 1);
-			TileEntity neighbor = worldObj.getBlockTileEntity(nextLoc.getX(),
-			        nextLoc.getY(), nextLoc.getZ());
+			        this.worldObj.provider.getDimension(), this.getPos());
+			BlockLocation nextLoc = currLocation.move(direction, 1);
+			TileEntity neighbor = worldObj.getTileEntity(nextLoc.toBlockPos());
 
 			if ((((neighbor instanceof IEnergyAcceptor)) && (((IEnergyAcceptor) neighbor)
 			        .acceptsEnergyFrom(this, direction.getOpposite())))
@@ -140,17 +138,17 @@ public class TileEntitySuperconductorCable extends TileEntity implements
 	}
 
 	@Override
-	public int getInsulationEnergyAbsorption() {
+	public double getInsulationEnergyAbsorption() {
 		return Integer.MAX_VALUE;
 	}
 
 	@Override
-	public int getInsulationBreakdownEnergy() {
+	public double getInsulationBreakdownEnergy() {
 		return Integer.MAX_VALUE;
 	}
 
 	@Override
-	public int getConductorBreakdownEnergy() {
+	public double getConductorBreakdownEnergy() {
 		return Integer.MAX_VALUE;
 	}
 
@@ -165,13 +163,12 @@ public class TileEntitySuperconductorCable extends TileEntity implements
 	}
 
 	@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter,
-	        EnumFacing direction) {
+	public boolean acceptsEnergyFrom(IEnergyEmitter emitter, EnumFacing direction) {
 		return true;
 	}
 
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, EnumFacing direction) {
+	public boolean emitsEnergyTo(IEnergyAcceptor receiver, EnumFacing direction) {
 		return true;
 	}
 }

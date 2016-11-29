@@ -6,7 +6,7 @@ import makmods.levelstorage.tileentity.TileEntityASU;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -18,9 +18,10 @@ public class ContainerASU extends Container {
 		
 		int height = 196;
 
-		for (int col = 0; col < 4; col++) {
-			addSlotToContainer(new SlotArmor(inventoryPlayer, col,
-					8 + col * 18, 84));
+		//This is wrong - EntityEquipmentSlot also has MAINHAND and OFFHAND
+		//This is kept as this for convenience, and WILL be changed for accuracy
+		for (EntityEquipmentSlot col : EntityEquipmentSlot.values()) {
+			addSlotToContainer(new SlotArmor(inventoryPlayer, col, 8 + col.ordinal() * 18, 84));
 		}
 
 		addSlotToContainer(new SlotChecked(tileEntity, 0, 56, 17));
@@ -30,12 +31,10 @@ public class ContainerASU extends Container {
 				addSlotToContainer(new Slot(inventoryPlayer, col + row * 9 + 9,
 						8 + col * 18, height + -82 + row * 18));
 			}
-
 		}
 
 		for (int col = 0; col < 9; col++)
-			addSlotToContainer(new Slot(inventoryPlayer, col, 8 + col * 18,
-					height + -24));
+			addSlotToContainer(new Slot(inventoryPlayer, col, 8 + col * 18, height + -24));
 	}
 
 	@Override
@@ -46,12 +45,7 @@ public class ContainerASU extends Container {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 
-		for (int i = 0; i < this.crafters.size(); i++) {
-			ICrafting icrafting = (ICrafting) this.crafters.get(i);
-
-			icrafting.sendProgressBarUpdate(this, 4,
-					this.tileEntity.getStored());
-		}
+		listeners.forEach(listener -> listener.sendProgressBarUpdate(this, 4, this.tileEntity.getStored()));
 	}
 
 	public void updateProgressBar(int index, int value) {

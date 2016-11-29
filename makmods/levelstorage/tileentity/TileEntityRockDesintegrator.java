@@ -7,12 +7,13 @@ import makmods.levelstorage.gui.logicslot.LogicSlot;
 import makmods.levelstorage.logic.util.LogHelper;
 import makmods.levelstorage.tileentity.template.ITEHasGUI;
 import makmods.levelstorage.tileentity.template.TileEntityInventorySink;
-import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -45,24 +46,23 @@ public class TileEntityRockDesintegrator extends TileEntityInventorySink
 	}
 
 	@Override
-	public String getInvName() {
+	public String getName() {
 		return "Rock Desintegrator";
 	}
 
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 		int antiDeadlock = 0;
 		while (canUse(EU_PER_BLOCK)) {
 			antiDeadlock++;
 			// since I am using while statement, some deadlocks may happen and
 			// freeze up the world
 			if (antiDeadlock >= 100) {
-				LogHelper
-						.severe("[Rock Desintegrator] Deadlock happened! Awful! Report to LS immediately!");
+				LogHelper.severe("[Rock Desintegrator] Deadlock happened! Awful! Report to LS immediately!");
 				antiDeadlock = 0;
 				break;
 			}
-			boolean inserted = insertIfPossible(new ItemStack(Block.cobblestone));
+			boolean inserted = insertIfPossible(new ItemStack(Blocks.COBBLESTONE));
 			if (!inserted)
 				break;
 			else
@@ -75,7 +75,6 @@ public class TileEntityRockDesintegrator extends TileEntityInventorySink
 		return false;
 	}
 
-	@Override
 	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
 		return new ItemStack(LSBlockItemList.blockRockDesintegrator);
 	}
@@ -104,17 +103,17 @@ public class TileEntityRockDesintegrator extends TileEntityInventorySink
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int var1) {
+	public int[] getSlotsForFace(EnumFacing facing) {
 		return new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 	}
 
 	@Override
-	public boolean canInsertItem(int i, ItemStack itemstack, int j) {
+	public boolean canInsertItem(int slot, ItemStack itemstack, EnumFacing facing) {
 		return false;
 	}
 
 	@Override
-	public boolean canExtractItem(int i, ItemStack itemstack, int j) {
+	public boolean canExtractItem(int slot, ItemStack itemstack, EnumFacing facing) {
 		return true;
 	}
 

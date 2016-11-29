@@ -1,13 +1,10 @@
 package makmods.levelstorage.tileentity.template;
 
-import ic2.api.energy.tile.IEnergyEmitter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 
 public abstract class TileEntityInventorySink extends TileEntityBasicSink
         implements IInventory {
@@ -115,8 +112,16 @@ public abstract class TileEntityInventorySink extends TileEntityBasicSink
 		}
 	}
 	
-	@Override
-	public boolean acceptsEnergyFrom(IEnergyEmitter emitter, EnumFacing direction) {
-	    return true;
+	public int getField(int id) {
+		return 0;
 	}
+
+	public void setField(int id, int value) {}
+
+	public int getFieldCount() {
+		return 0;
+	}
+
+	public void clear() {}
+	
 }

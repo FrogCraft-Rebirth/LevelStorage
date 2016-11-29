@@ -6,7 +6,6 @@ import makmods.levelstorage.init.LSFluids;
 import makmods.levelstorage.tileentity.TileEntityParticleAccelerator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -35,17 +34,13 @@ public class ContainerParticleAccelerator extends ContainerWithPhantomSlots {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 
-		for (int i = 0; i < this.crafters.size(); i++) {
-			ICrafting icrafting = (ICrafting) this.crafters.get(i);
-
-			icrafting.sendProgressBarUpdate(this, 4,
-					this.tileEntity.getStored());
-			icrafting.sendProgressBarUpdate(this, 5, tileEntity.mode);
-			icrafting.sendProgressBarUpdate(this, 6, tileEntity.getProgress());
-			icrafting.sendProgressBarUpdate(this, 7, tileEntity.maxProgress);
-			icrafting.sendProgressBarUpdate(this, 8, tileEntity.getFluidTank()
-					.getFluidAmount());
-		}
+		listeners.forEach(listener -> {
+			listener.sendProgressBarUpdate(this, 4, tileEntity.getStored());
+			listener.sendProgressBarUpdate(this, 5, tileEntity.mode);
+			listener.sendProgressBarUpdate(this, 6, tileEntity.getProgress());
+			listener.sendProgressBarUpdate(this, 7, tileEntity.maxProgress);
+			listener.sendProgressBarUpdate(this, 8, tileEntity.getFluidTank().getFluidAmount());
+		});
 	}
 
 	public void updateProgressBar(int index, int value) {

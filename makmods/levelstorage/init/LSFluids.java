@@ -19,7 +19,6 @@ public class LSFluids {
 		this.fluidIV = new FluidIV();
 		FluidRegistry.registerFluid(this.fluidIV);
 		this.blockFluidIV = new BlockFluidIV();
-		GameRegistry.registerBlock(this.blockFluidIV,
-				"fluidIV");
+		GameRegistry.register(this.blockFluidIV.setRegistryName("fluidIV"));
 	}
 }

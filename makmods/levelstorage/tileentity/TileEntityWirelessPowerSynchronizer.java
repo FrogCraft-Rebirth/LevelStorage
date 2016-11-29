@@ -110,22 +110,12 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 	}
 
 	@Override
-	public boolean wrenchCanRemove(EntityPlayer entityPlayer) {
-		return true;
-	}
-
-	@Override
-	public float getWrenchDropRate() {
-		return 0.75F;
-	}
-
-	@Override
 	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
 		return new ItemStack(LSBlockItemList.blockWlessPowerSync);
 	}
 
 	@Override
-	public double demandedEnergyUnits() {
+	public double getDemandedEnergy() {
 		if (this.deviceType.equals(SyncType.RECEIVER)) {
 			return 0;
 		} else {
@@ -148,7 +138,7 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 	}
 
 	@Override
-	public double injectEnergy(EnumFacing directionFrom, double amount) {
+	public double injectEnergy(EnumFacing directionFrom, double amount, double voltage) {
 		if (this.deviceType.equals(SyncType.RECEIVER))
 			return amount;
 		List<Object> mutableRightSyncList = Lists.newArrayList();
@@ -170,11 +160,6 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 			notUsedUp -= forEach;
 		}
 		return notUsedUp;
-	}
-
-	@Override
-	public int getMaxSafeInput() {
-		return Integer.MAX_VALUE;
 	}
 
 	@Override

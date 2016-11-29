@@ -18,7 +18,7 @@ public class MassInfuserRender extends TileEntitySpecialRenderer {
 
 	@Override
 	public void renderTileEntityAt(TileEntity te, double x, double y, double z,
-	        float scale) {
+	        float particalTick, int what) {
 		// The PushMatrix tells the renderer to "start" doing something.
 
 		GL11.glPushMatrix();

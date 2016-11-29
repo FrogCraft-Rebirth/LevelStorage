@@ -1,25 +1,19 @@
 package makmods.levelstorage.registry;
 
-import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.api.XpStack;
 import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.logic.util.CommonHelper;
 import makmods.levelstorage.logic.util.LogHelper;
-import net.minecraft.block.Block;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.oredict.OreDictionary;
-
-import com.google.common.collect.Lists;
 
 import net.minecraftforge.fml.common.FMLLog;
 
@@ -112,7 +106,7 @@ public class XpStackRegistry {
 	public void printRegistry() {
 		LogHelper.info("Starting printing the xp registry contents");
 		for (XpStack s : this.entries) {
-			LogHelper.info("\t#" + s.stack.itemID + ":"
+			LogHelper.info("\t#" + s.stack.getItem() + ":"
 					+ s.stack.getItemDamage() + " - "
 					+ s.stack.getDisplayName() + " - " + s.value + " (1 "
 					+ s.stack.getDisplayName() + " = " + s.value + " XP)");
@@ -120,7 +114,7 @@ public class XpStackRegistry {
 	}
 
 	public void pushToRegistry(XpStack stack) {
-		FMLLog.log(Level.INFO, "Adding #" + stack.stack.itemID + ":"
+		FMLLog.info("Adding #" + stack.stack.getItem() + ":"
 				+ stack.stack.getItemDamage() + " to the Xp Registry, value: "
 				+ stack.value);
 		this.entries.add(stack);
@@ -140,7 +134,7 @@ public class XpStackRegistry {
 					+ " is disabled");
 			return;
 		}
-		FMLLog.log(Level.INFO, "Adding #" + stack.stack.itemID + ":"
+		FMLLog.info("Adding #" + stack.stack.getItem() + ":"
 				+ stack.stack.getItemDamage() + " to the Xp Registry, value: "
 				+ stack.value);
 		this.entries.add(new XpStack(stack.stack, value));

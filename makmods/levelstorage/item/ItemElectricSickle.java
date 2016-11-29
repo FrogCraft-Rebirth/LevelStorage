@@ -7,6 +7,8 @@ import ic2.api.recipe.Recipes;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableSet;
+
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.init.IHasRecipe;
@@ -15,14 +17,18 @@ import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockTallGrass;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.EnumToolMaterial;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -38,14 +44,11 @@ public class ItemElectricSickle extends ItemTool implements IElectricItem, IHasR
 	public static final int RADIUS_LEAVES = 6;
 
 	public ItemElectricSickle(int id) {
-		super(id, 0, EnumToolMaterial.IRON, new Block[] { Block.leaves,
-		        Block.tallGrass });
+		super(ToolMaterial.IRON, ImmutableSet.of(Blocks.LEAVES, Blocks.LEAVES2, Blocks.TALLGRASS));
 
 		this.setMaxDamage(27);
 		this.setNoRepair();
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			this.setCreativeTab(LSCreativeTab.instance);
-		}
+		this.setCreativeTab(LSCreativeTab.instance);
 		this.setMaxStackSize(1);
 	}
 
@@ -53,12 +56,7 @@ public class ItemElectricSickle extends ItemTool implements IElectricItem, IHasR
 	public boolean canProvideEnergy(ItemStack itemStack) {
 		return false;
 	}
-
-	@Override
-	public int getChargedItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
+/*
 	public float getStrVsBlock(ItemStack par1ItemStack, Block par2Block) {
 		if (par2Block != null) {
 			if (par2Block.isLeaves(null, 0, 0, 0)
@@ -67,18 +65,15 @@ public class ItemElectricSickle extends ItemTool implements IElectricItem, IHasR
 			}
 		}
 		return 1.0F;
-	}
+	}*/
 
-	public boolean onBlockDestroyed(ItemStack par1ItemStack, World par2World,
-	        int blockId, int x, int y, int z,
-	        EntityLivingBase par7EntityLivingBase) {
-		if (!par2World.isRemote) {
-			if (ElectricItem.manager.canUse(par1ItemStack, ENERGY_PER_BLOCK)) {
-				ElectricItem.manager.use(par1ItemStack, ENERGY_PER_BLOCK,
-				        par7EntityLivingBase);
-				if (par7EntityLivingBase instanceof EntityPlayer) {
-					EntityPlayer player = (EntityPlayer) par7EntityLivingBase;
-					Block blockBroken = Block.blocksList[blockId];
+	public boolean onBlockDestroyed(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
+		if (!world.isRemote) {
+			if (ElectricItem.manager.canUse(stack, ENERGY_PER_BLOCK)) {
+				ElectricItem.manager.use(stack, ENERGY_PER_BLOCK, entityLiving);
+				if (entityLiving instanceof EntityPlayer) {
+					EntityPlayer player = (EntityPlayer) entityLiving;
+					Block blockBroken = state.getBlock();
 					if (blockBroken != null) {
 						if (blockBroken instanceof IPlantable) {
 							// System.out
@@ -87,37 +82,26 @@ public class ItemElectricSickle extends ItemTool implements IElectricItem, IHasR
 							for (int xCurr = -(RADIUS / 2); xCurr < (RADIUS / 2); xCurr++) {
 								for (int zCurr = -(RADIUS / 2); zCurr < (RADIUS / 2); zCurr++) {
 									// System.out.println("adding!");
-									blocksToBreak
-									        .add(new BlockLocation(
-									                player.worldObj.provider.dimensionId,
-									                x + xCurr, y, z + zCurr));
+									blocksToBreak.add(new BlockLocation(player.worldObj.provider.getDimension(), pos.add(xCurr, 0, zCurr)));
 								}
 							}
 							for (BlockLocation curr : blocksToBreak) {
 								// System.out.println("breakingblock");
-								Block currBlock = Block.blocksList[par2World
-								        .getBlockId(curr.getX(), curr.getY(),
-								                curr.getZ())];
+								Block currBlock = world.getBlockState(curr.toBlockPos()).getBlock();
 								if (currBlock != null) {
 									// System.out.println(currBlock.getClass()
 									// .getName());
 									if (currBlock instanceof BlockTallGrass
 									        || currBlock instanceof IPlantable) {
 										// System.out.println("breakingblock");
-										if (currBlock
-										        .removeBlockByPlayer(
+										if (currBlock.removeBlockByPlayer(
 										                par2World,
 										                (EntityPlayer) par7EntityLivingBase,
 										                curr.getX(),
 										                curr.getY(),
 										                curr.getZ())) {
-											if (ElectricItem.manager.canUse(
-											        par1ItemStack,
-											        ENERGY_PER_BLOCK))
-												ElectricItem.manager.use(
-												        par1ItemStack,
-												        ENERGY_PER_BLOCK,
-												        player);
+											if (ElectricItem.manager.canUse(stack, ENERGY_PER_BLOCK))
+												ElectricItem.manager.use(stack, ENERGY_PER_BLOCK, player);
 											else {
 												break;
 											}
@@ -140,8 +124,7 @@ public class ItemElectricSickle extends ItemTool implements IElectricItem, IHasR
 								for (int xCurr = -(RADIUS_LEAVES / 2); xCurr < (RADIUS_LEAVES / 2); xCurr++) {
 									for (int zCurr = -(RADIUS_LEAVES / 2); zCurr < (RADIUS_LEAVES / 2); zCurr++) {
 										// System.out.println("adding!");
-										blocksToBreak
-										        .add(new BlockLocation(
+										blocksToBreak.add(new BlockLocation(
 										                player.worldObj.provider.dimensionId,
 										                x + xCurr, y + yCurr, z
 										                        + zCurr));
@@ -149,37 +132,21 @@ public class ItemElectricSickle extends ItemTool implements IElectricItem, IHasR
 								}
 							}
 							for (BlockLocation curr : blocksToBreak) {
-								Block currBlock = Block.blocksList[par2World
-								        .getBlockId(curr.getX(), curr.getY(),
-								                curr.getZ())];
+								Block currBlock = world.getBlockState(curr.toBlockPos()).getBlock();
 								if (currBlock != null) {
-									if (currBlock.isLeaves(par2World,
-									        curr.getX(), curr.getY(),
-									        curr.getZ())) {
-										if (currBlock
-										        .removeBlockByPlayer(
-										                par2World,
-										                (EntityPlayer) par7EntityLivingBase,
+									if (currBlock.isLeaves(state, world, pos) {
+										if (currBlock.removeBlockByPlayer(
+										                world,
+										                (EntityPlayer) entityLiving,
 										                curr.getX(),
 										                curr.getY(),
 										                curr.getZ())) {
-											if (ElectricItem.manager.canUse(
-											        par1ItemStack,
-											        ENERGY_PER_BLOCK))
-												ElectricItem.manager.use(
-												        par1ItemStack,
-												        ENERGY_PER_BLOCK,
-												        player);
+											if (ElectricItem.manager.canUse(stack, ENERGY_PER_BLOCK))
+												ElectricItem.manager.use(stack, ENERGY_PER_BLOCK, player);
 											else {
 												break;
 											}
-											currBlock.dropBlockAsItem(
-											        par2World, curr.getX(),
-											        curr.getY(), curr.getZ(),
-											        par2World.getBlockMetadata(
-											                curr.getX(),
-											                curr.getY(),
-											                curr.getZ()), 2);
+											currBlock.dropBlockAsItem(world, curr.toBlockPos(), world.getBlockState(curr.toBlockPos()), 2);
 										}
 									}
 								}
@@ -194,12 +161,7 @@ public class ItemElectricSickle extends ItemTool implements IElectricItem, IHasR
 	}
 
 	@Override
-	public int getEmptyItemId(ItemStack itemStack) {
-		return this.itemID;
-	}
-
-	@Override
-	public int getMaxCharge(ItemStack itemStack) {
+	public double getMaxCharge(ItemStack itemStack) {
 		return STORAGE;
 	}
 
@@ -209,51 +171,40 @@ public class ItemElectricSickle extends ItemTool implements IElectricItem, IHasR
 	}
 
 	@Override
-	public int getTransferLimit(ItemStack itemStack) {
+	public double getTransferLimit(ItemStack itemStack) {
 		return 100;
 	}
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister
 		        .registerIcon(ClientProxy.ELECTRIC_SICKLE_TEXTURE);
-	}
-
-	@Override
-	public void addInformation(ItemStack par1ItemStack,
-	        EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
-
-	}
+	}*/
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public EnumRarity getRarity(ItemStack stack) {
-		return EnumRarity.common;
+		return EnumRarity.COMMON;
 	}
 
 	public void addCraftingRecipe() {
-
-		Recipes.advRecipes.addRecipe(new ItemStack(
-		        LSBlockItemList.itemElectricSickle), "  i", "eii", "r  ",
-		        Character.valueOf('i'), IC2Items.REFINED_IRON, Character
-		                .valueOf('e'), IC2Items.BASIC_CIRCUIT, Character
-		                .valueOf('r'), IC2Items.RE_BATTERY);
-		Recipes.advRecipes.addRecipe(new ItemStack(
-		        LSBlockItemList.itemElectricSickle), "  i", "eii", "r  ",
-		        Character.valueOf('i'), IC2Items.REFINED_IRON, Character
-		                .valueOf('e'), IC2Items.BASIC_CIRCUIT, Character
-		                .valueOf('r'), IC2Items.RE_BATTERY_CHARGED);
-
+		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.itemElectricSickle), "  i", "eii", "r  ",
+		        'i', IC2Items.REFINED_IRON, 
+				'e', IC2Items.BASIC_CIRCUIT, 
+				'r', IC2Items.RE_BATTERY);
+		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.itemElectricSickle), "  i", "eii", "r  ",
+		        'i', IC2Items.REFINED_IRON, 
+		        'e', IC2Items.BASIC_CIRCUIT, 
+				'r', IC2Items.RE_BATTERY_CHARGED);
 	}
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-	        List par3List) {
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 		ItemStack var4 = new ItemStack(this, 1);
 		ElectricItem.manager.charge(var4, Integer.MAX_VALUE, Integer.MAX_VALUE,
 		        true, false);
-		par3List.add(var4);
-		par3List.add(new ItemStack(this, 1, this.getMaxDamage()));
+		list.add(var4);
+		list.add(new ItemStack(this, 1, this.getMaxDamage()));
 	}
 }

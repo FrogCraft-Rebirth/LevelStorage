@@ -5,8 +5,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
 
 public class TileEntityInventoryModule implements IInventory {
 
@@ -18,7 +17,7 @@ public class TileEntityInventoryModule implements IInventory {
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
+	public boolean hasCustomName() {
 		return true;
 	}
 
@@ -57,7 +56,7 @@ public class TileEntityInventoryModule implements IInventory {
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
+	public ItemStack removeStackFromSlot(int slot) {
 		ItemStack stack = this.getStackInSlot(slot);
 		if (stack != null) {
 			this.setInventorySlotContents(slot, null);
@@ -76,11 +75,11 @@ public class TileEntityInventoryModule implements IInventory {
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
@@ -98,9 +97,9 @@ public class TileEntityInventoryModule implements IInventory {
 	}
 
 	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
-		NBTTagList tagList = par1NBTTagCompound.getTagList("Inventory");
+		NBTTagList tagList = par1NBTTagCompound.getTagList("Inventory", 9);
 		for (int i = 0; i < tagList.tagCount(); i++) {
-			NBTTagCompound tag = (NBTTagCompound) tagList.tagAt(i);
+			NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
 			byte slot = tag.getByte("Slot");
 			if (slot >= 0 && slot < this.inv.length) {
 				this.inv[slot] = ItemStack.loadItemStackFromNBT(tag);
@@ -109,21 +108,40 @@ public class TileEntityInventoryModule implements IInventory {
 	}
 
 	@Override
-	public String getInvName() {
-		// TODO Auto-generated method stub
+	public String getName() {
 		return null;
 	}
 
 	@Override
-	public void onInventoryChanged() {
-		// TODO Auto-generated method stub
-		
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+		return false;
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
-		return false;
+	public ITextComponent getDisplayName() {
+		return null;
+	}
+
+	@Override
+	public void markDirty() {
+	}
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
 	}
 
 }

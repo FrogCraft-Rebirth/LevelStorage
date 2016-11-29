@@ -5,7 +5,6 @@ import makmods.levelstorage.tileentity.TileEntityRockDesintegrator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -26,8 +25,7 @@ public class ContainerRockDesintegrator extends Container {
 
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
-				this.addSlotToContainer(new SlotChecked(te, j + i * 4, baseX
-						+ j * 18, baseY + i * 18));
+				this.addSlotToContainer(new SlotChecked(te, j + i * 4, baseX + j * 18, baseY + i * 18));
 			}
 		}
 	}
@@ -39,14 +37,7 @@ public class ContainerRockDesintegrator extends Container {
 
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-
-		for (int i = 0; i < this.crafters.size(); i++) {
-			ICrafting icrafting = (ICrafting) this.crafters.get(i);
-
-			icrafting.sendProgressBarUpdate(this, 4,
-					this.tileEntity.getStored());
-
-		}
+		listeners.forEach(listener -> listener.sendProgressBarUpdate(this, 4, this.tileEntity.getStored()));
 	}
 
 	public void updateProgressBar(int index, int value) {

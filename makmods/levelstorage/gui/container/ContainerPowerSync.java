@@ -5,7 +5,6 @@ import makmods.levelstorage.tileentity.TileEntityWirelessPowerSynchronizer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -36,13 +35,10 @@ public class ContainerPowerSync extends Container {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-
-		for (int i = 0; i < this.crafters.size(); i++) {
-			ICrafting icrafting = (ICrafting) this.crafters.get(i);
-			icrafting.sendProgressBarUpdate(this, 0, this.tileEntity.frequency);
-			icrafting.sendProgressBarUpdate(this, 1,
-			        this.tileEntity.deviceType.ordinal());
-		}
+		listeners.forEach(listener -> {
+			listener.sendProgressBarUpdate(this, 0, this.tileEntity.frequency);
+			listener.sendProgressBarUpdate(this, 1, this.tileEntity.deviceType.ordinal());
+		});
 	}
 
 	@Override

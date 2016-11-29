@@ -1,4 +1,4 @@
-package makmods.levelstorage.compat.nei;
+/*package makmods.levelstorage.compat.nei;
 
 import makmods.levelstorage.lib.Reference;
 import codechicken.nei.api.API;
@@ -26,3 +26,4 @@ public class NEILSConfig implements IConfigureNEI {
 	    return Reference.VERSION;
     }
 }
+*/

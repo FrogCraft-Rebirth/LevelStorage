@@ -1,5 +1,5 @@
 package makmods.levelstorage.logic;
-
+/*
 import makmods.levelstorage.lib.Reference;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
@@ -14,11 +14,12 @@ public class DummyPlayer extends EntityPlayer {
 	public boolean canCommandSenderUseCommand(int i, String s) {
 		return false;
 	}
-/*
+
 	public ChunkPos getPlayerCoordinates() {
 		return null;
-	}*/
+	}
 
 	public void addChatComponentMessage(ITextComponent chatComponent) {
 	}
 }
+*/

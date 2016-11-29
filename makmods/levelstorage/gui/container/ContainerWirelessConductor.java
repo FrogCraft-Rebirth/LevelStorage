@@ -6,7 +6,7 @@ import makmods.levelstorage.tileentity.TileEntityWirelessConductor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -31,8 +31,8 @@ public class ContainerWirelessConductor extends Container {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 
-		for (int i = 0; i < this.crafters.size(); i++) {
-			ICrafting icrafting = (ICrafting) this.crafters.get(i);
+		for (int i = 0; i < this.listeners.size(); i++) {
+			IContainerListener icrafting = this.listeners.get(i);
 			int mode = this.tileEntity.type == ConductorType.SINK ? 0 : 1;
 			icrafting.sendProgressBarUpdate(this, 0, mode);
 		}

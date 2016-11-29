@@ -14,13 +14,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class SimpleRecipeAdder {
-
-	public final static int SIMPLE_ITEM_ID = SimpleItems.instance.itemID;
 
 	public static void add3by3(ItemStack output, ItemStack input) {
 		ItemStack ci = input.copy();
@@ -29,7 +27,7 @@ public class SimpleRecipeAdder {
 	}
 
 	public static void addChromeRecipes() {
-		FurnaceRecipes.smelting().addSmelting(SIMPLE_ITEM_ID,
+		FurnaceRecipes.instance().addSmelting(SimpleItems.instance,
 				SimpleItemShortcut.DUST_CHROME.getMetadata(),
 				SimpleItemShortcut.INGOT_CHROME.getItemStack().copy(), 10.0F);
 		add3by3(SimpleItemShortcut.DUST_CHROME.getItemStack(),
@@ -37,10 +35,10 @@ public class SimpleRecipeAdder {
 		Recipes.macerator.addRecipe(new RecipeInputItemStack(
 				SimpleItemShortcut.INGOT_CHROME.getItemStack().copy()), null,
 				SimpleItemShortcut.DUST_CHROME.getItemStack());
-		FurnaceRecipes.smelting().addSmelting(SIMPLE_ITEM_ID,
+		FurnaceRecipes.instance().addSmelting(SimpleItems.instance,
 				SimpleItemShortcut.CRUSHED_CHROME_ORE.getMetadata(),
 				SimpleItemShortcut.INGOT_CHROME.getItemStack().copy(), 10.0F);
-		FurnaceRecipes.smelting().addSmelting(SIMPLE_ITEM_ID,
+		FurnaceRecipes.instance().addSmelting(SimpleItems.instance,
 				SimpleItemShortcut.PURIFIED_CHROME_ORE.getMetadata(),
 				SimpleItemShortcut.INGOT_CHROME.getItemStack().copy(), 10.0F);
 		// 3 outputs

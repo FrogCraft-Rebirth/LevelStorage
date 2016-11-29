@@ -3,21 +3,16 @@ package makmods.levelstorage.armor;
 import ic2.api.item.ElectricItem;
 import ic2.api.util.Keys;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Random;
 
 import makmods.levelstorage.api.event.BootsFlyingEvent;
-import makmods.levelstorage.api.event.TeslaRayEvent;
 import makmods.levelstorage.armor.antimatter.ItemArmorAntimatterBase;
 import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.logic.LSDamageSource;
 import makmods.levelstorage.logic.util.BlockLocation;
-import makmods.levelstorage.logic.util.CommonHelper;
 import makmods.levelstorage.logic.util.EntityUtil;
 import makmods.levelstorage.network.packet.PacketTeslaRay;
-import makmods.levelstorage.network.packet.PacketTypeHandler;
 import makmods.levelstorage.proxy.LSKeyboard;
 import makmods.levelstorage.registry.FlightRegistry;
 import makmods.levelstorage.registry.FlightRegistry.Flight;
@@ -26,13 +21,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.network.PacketDispatcher;
 
 /**
  * Refactored armor functions
@@ -133,10 +128,8 @@ public class ArmorFunctions {
 			EntityPlayer player, ItemStack armor) {
 		if (world.isRemote)
 			return;
-		if (LSKeyboard.getInstance().isKeyDown(player,
-				LSKeyboard.RAY_SHOOT_KEY_NAME)
+		if (LSKeyboard.getInstance().isKeyDown(player,LSKeyboard.RAY_SHOOT_KEY_NAME)
 				&& player.isSneaking()) {
-			int x = 0, y = 0, z = 0;
 			RayTraceResult mop = getMovingObjectPositionFromPlayer(world,
 					player, true);
 			if (mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK) {
@@ -146,12 +139,9 @@ public class ArmorFunctions {
 							ItemArmorAntimatterBase.EU_PER_TELEPORT,
 							Integer.MAX_VALUE, true, false, false);
 				}
-				x = mop.blockX;
-				y = mop.blockY;
-				z = mop.blockZ;
-				int sideHit = mop.sideHit;
-				BlockLocation bl = new BlockLocation(x, y, z);
-				bl = bl.move(EnumFacing.getOrientation(sideHit), 1);
+				EnumFacing sideHit = mop.sideHit;
+				BlockLocation bl = new BlockLocation(world.provider.getDimension(), new BlockPos(mop.hitVec));
+				bl = bl.move(sideHit, 1);
 				player.setPositionAndUpdate(bl.getX(), bl.getY(), bl.getZ());
 			}
 		}

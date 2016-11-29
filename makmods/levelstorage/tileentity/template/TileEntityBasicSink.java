@@ -196,4 +196,9 @@ public abstract class TileEntityBasicSink extends TileEntity implements
 	public int getOutput() {
 		return 0;
 	}
+	
+	@Override
+	public int getSinkTier() {
+		return 1;
+	}
 }

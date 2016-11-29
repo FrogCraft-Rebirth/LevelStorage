@@ -34,7 +34,7 @@ public class NBTInventory implements IInventory {
 	public ItemStack[] inv;
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
+	public ItemStack removeStackFromSlot(int slot) {
 		ItemStack stack = this.getStackInSlot(slot);
 		if (stack != null) {
 			this.setInventorySlotContents(slot, null);
@@ -54,12 +54,12 @@ public class NBTInventory implements IInventory {
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory(EntityPlayer player) {
 		this.readFromNBT();
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory(EntityPlayer player) {
 		this.saveToNBT();
 
 	}
@@ -95,7 +95,7 @@ public class NBTInventory implements IInventory {
 	}
 
 	@Override
-	public void onInventoryChanged() {
+	public void markDirty() {
 		this.saveToNBT();
 		// System.out.println(boundTagCompound);
 	}
@@ -160,7 +160,7 @@ public class NBTInventory implements IInventory {
 	}
 
 	@Override
-	public String getInvName() {
+	public String getName() {
 		return INVENTORY_NAME;
 	}
 
@@ -174,7 +174,7 @@ public class NBTInventory implements IInventory {
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
+	public boolean hasCustomName() {
 		return true;
 	}
 

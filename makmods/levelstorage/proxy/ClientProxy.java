@@ -13,6 +13,7 @@ import makmods.levelstorage.client.render.WirelessConductorRender;
 import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.tileentity.TileEntityWirelessConductor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -119,15 +120,6 @@ public class ClientProxy extends CommonProxy {
 	public static final ResourceLocation TESLA_RAY_1 = getResourceLocation("misc/tesla.png");
 	public static final ResourceLocation SUN_TEXTURE = getResourceLocation("misc/microstar.png");
 
-	@SideOnly(Side.CLIENT)
-	public static CreativeTabs getCreativeTab(String name) {
-		for (CreativeTabs t : CreativeTabs.creativeTabArray) {
-			if (t.getTabLabel() == name)
-				return t;
-		}
-		return null;
-	}
-
 	public int getArmorIndexFor(String forWhat) {
 		if (forWhat == SUPERSONIC_DUMMY)
 			return ARMOR_SUPERSONIC_RENDER_INDEX;
@@ -168,13 +160,12 @@ public class ClientProxy extends CommonProxy {
 		MinecraftForgeClient.registerItemRenderer(
 				LSBlockItemList.blockWlessConductor.blockID,
 				new ItemWirelessConductorRender());
-		MinecraftForgeClient.registerItemRenderer(LSBlockItemList.itemAtomicDisassembler.itemID, new ItemRendererAtomicDisassembler());
+		MinecraftForgeClient.registerItemRenderer(LSBlockItemList.itemAtomicDisassembler, new ItemRendererAtomicDisassembler());
 		// MinecraftForge.EVENT_BUS.register((new RenderOreRadar()));
 	}
 
 	@Override
 	public void messagePlayer(EntityPlayer player, String message, Object[] args) {
-		Minecraft.getMinecraft().ingameGUI.getChatGUI().addTranslatedMessage(
-				message, args);
+		Minecraft.getMinecraft().ingameGUI.getChatGUI().addToSentMessages(I18n.format(message, args));
 	}
 }

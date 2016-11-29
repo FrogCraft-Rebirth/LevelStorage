@@ -89,7 +89,7 @@ public class TileEntityMassMelter extends TileEntityInventorySinkWithFluid
 	}
 
 	@Override
-	public String getInvName() {
+	public String getName() {
 		return "Mass Melter";
 	}
 
@@ -119,8 +119,8 @@ public class TileEntityMassMelter extends TileEntityInventorySinkWithFluid
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 		if (!LevelStorage.isSimulating())
 			return;
 		if (progress == 0)
@@ -156,11 +156,9 @@ public class TileEntityMassMelter extends TileEntityInventorySinkWithFluid
 				this.ivBuffer += plusBuffer;
 			} else {
 				// consume energy to transfer one IV into 1 mB of liquid IV
-				int freeSpaceInTank = this.getFluidTank().getCapacity()
-						- this.getFluidTank().getFluidAmount();
+				int freeSpaceInTank = this.getFluidTank().getCapacity() - this.getFluidTank().getFluidAmount();
 				if (freeSpaceInTank >= 0) {
-					if (this.fill(EnumFacing.UNKNOWN, new FluidStack(
-							LSFluids.instance.fluidIV,
+					if (this.fill(null, new FluidStack(LSFluids.instance.fluidIV,
 							IVRegistry.IV_TO_FLUID_CONVERSION.getValue()), true) != 0) {
 						use(EU_PER_IV);
 						this.ivBuffer -= IVRegistry.IV_TO_FLUID_CONVERSION
@@ -181,21 +179,20 @@ public class TileEntityMassMelter extends TileEntityInventorySinkWithFluid
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int var1) {
+	public int[] getSlotsFromSide(EnumFacing facing) {
 		return new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 	}
 
 	@Override
-	public boolean canInsertItem(int slot, ItemStack itemstack, int side) {
-		EnumFacing dir = EnumFacing.getOrientation(side);
-		if (dir == EnumFacing.UP)
+	public boolean canInsertItem(int slot, ItemStack itemstack, EnumFacing facing) {
+		if (facing == EnumFacing.UP)
 			return isItemValidForSlot(slot, itemstack);
 		return false;
 	}
 
 	@Override
-	public boolean canExtractItem(int slot, ItemStack itemstack, int side) {
-		return slot == 2 && side != EnumFacing.UP.ordinal();
+	public boolean canExtractItem(int slot, ItemStack itemstack, EnumFacing facing) {
+		return slot == 2 && facing != EnumFacing.UP;
 	}
 
 	@Override

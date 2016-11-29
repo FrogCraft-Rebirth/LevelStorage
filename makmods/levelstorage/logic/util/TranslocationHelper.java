@@ -26,7 +26,7 @@ public class TranslocationHelper {
 			int dimension, ChunkPos spawn, float yaw) {
 		Entity mount = entity.getRidingEntity();
 		if (entity.getRidingEntity() != null) {
-			entity.mountEntity(null);
+			entity.dismountRidingEntity();
 			mount = teleportEntity(newworld, mount, dimension, spawn, yaw);
 		}
 		boolean changingworlds = entity.worldObj != newworld;
@@ -93,23 +93,12 @@ public class TranslocationHelper {
 		if (((entity instanceof EntityPlayerMP)) && (changingworlds)) {
 			EntityPlayerMP player = (EntityPlayerMP) entity;
 			player.theItemInWorldManager.setWorld((WorldServer) newworld);
-			player.mcServer.getConfigurationManager()
-					.updateTimeAndWeatherForPlayer(player,
-							(WorldServer) newworld);
-			player.mcServer.getConfigurationManager().syncPlayerInventory(
-					player);
-			Iterator iter = player.getActivePotionEffects().iterator();
-
-			while (iter.hasNext()) {
-				PotionEffect effect = (PotionEffect) iter.next();
-				player.playerNetServerHandler
-						.sendPacketToPlayer(new Packet41EntityEffect(
-								player.entityId, effect));
-			}
-			player.playerNetServerHandler
-					.sendPacketToPlayer(new Packet43Experience(
-							player.experience, player.experienceTotal,
-							player.experienceLevel));
+			player.mcServer.getConfigurationManager().updateTimeAndWeatherForPlayer(player, (WorldServer) newworld);
+			player.mcServer.getConfigurationManager().syncPlayerInventory(player);
+			player.getActivePotionEffects().forEach(effect -> player.playerNetServerHandler
+					.sendPacketToPlayer(new Packet41EntityEffect(player.entityId, effect)));
+			player.playerNetServerHandler.sendPacketToPlayer(new Packet43Experience(
+					player.experience, player.experienceTotal, player.experienceLevel));
 		}
 		entity.setLocationAndAngles(spawn.posX + 0.5D, spawn.posY,
 				spawn.posZ + 0.5D, yaw, entity.rotationPitch);

@@ -6,14 +6,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.Constants;
 
 public abstract class TileEntityInventory extends TileEntity implements IInventory {
 	public ItemStack[] inv;
+	private final int size;
 
 	public TileEntityInventory(int inventorySize) {
 		super();
 		inv = new ItemStack[inventorySize];
+		size = inventorySize;
 	}
 
 	@Override
@@ -28,7 +29,7 @@ public abstract class TileEntityInventory extends TileEntity implements IInvento
 
 	@Override
 	public int getSizeInventory() {
-		return this.inv.length;
+		return this.size;
 	}
 
 	@Override

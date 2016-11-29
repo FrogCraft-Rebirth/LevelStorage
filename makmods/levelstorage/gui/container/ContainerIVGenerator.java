@@ -1,16 +1,13 @@
 package makmods.levelstorage.gui.container;
 
 import makmods.levelstorage.gui.SlotChecked;
-import makmods.levelstorage.gui.SlotFrequencyCard;
 import makmods.levelstorage.init.LSFluids;
 import makmods.levelstorage.tileentity.TileEntityIVGenerator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 public class ContainerIVGenerator extends Container {
@@ -45,14 +42,10 @@ public class ContainerIVGenerator extends Container {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 
-		for (int i = 0; i < this.crafters.size(); i++) {
-			ICrafting icrafting = (ICrafting) this.crafters.get(i);
-
-			icrafting.sendProgressBarUpdate(this, 4,
-					this.tileEntity.latestSpeed);
-			icrafting.sendProgressBarUpdate(this, 5, this.tileEntity
-					.getFluidTank().getFluidAmount());
-		}
+		listeners.forEach(listener -> {
+			listener.sendProgressBarUpdate(this, 4, this.tileEntity.latestSpeed);
+			listener.sendProgressBarUpdate(this, 5, this.tileEntity.getFluidTank().getFluidAmount());
+		});
 	}
 
 	public void updateProgressBar(int index, int value) {
