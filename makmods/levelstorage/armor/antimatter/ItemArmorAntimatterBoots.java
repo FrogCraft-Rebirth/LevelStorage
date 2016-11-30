@@ -6,7 +6,7 @@ import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.api.IFlyArmor;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.item.SimpleItems.SimpleItemShortcut;
-import makmods.levelstorage.lib.IC2Items;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -56,6 +56,6 @@ public class ItemArmorAntimatterBoots extends ItemArmorAntimatterBase implements
 						LSBlockItemList.itemAntimatterCrystal), 'a',
 				new ItemStack(LSBlockItemList.itemLevitationBoots), 'c', 
 				ic2.api.item.IC2Items.getItem("staticBoots"), 
-				'i', IC2Items.IRIDIUM_PLATE);
+				'i', IC2ItemsShortcut.IRIDIUM_PLATE);
 	}
 }

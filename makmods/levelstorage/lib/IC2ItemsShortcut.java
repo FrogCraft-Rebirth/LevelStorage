@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
  * 
  * @author mak326428
  */
-public class IC2Items {
+public class IC2ItemsShortcut {
 	public static final ItemStack IRIDIUM_PLATE = ic2.api.item.IC2Items.getItem("iridiumPlate");
 	public static final ItemStack LAPOTRON_CRYSTAL = ic2.api.item.IC2Items
 	        .getItem("lapotronCrystal");

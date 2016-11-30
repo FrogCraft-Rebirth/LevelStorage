@@ -132,7 +132,7 @@ public class ItemArmorLevitationBoots extends ItemArmor implements
 	public void addCraftingRecipe() {
 		Recipes.advRecipes.addRecipe(new ItemStack(
 				LSBlockItemList.itemLevitationBoots), "iii", "iqi", "lil",
-				Character.valueOf('i'), makmods.levelstorage.lib.IC2Items.IRIDIUM_PLATE, 
+				Character.valueOf('i'), makmods.levelstorage.lib.IC2ItemsShortcut.IRIDIUM_PLATE, 
 				Character.valueOf('q'), IC2Items.getItem("quantumBoots"), 
 				Character.valueOf('l'), new ItemStack(
 						LSBlockItemList.itemStorageFourtyMillion));

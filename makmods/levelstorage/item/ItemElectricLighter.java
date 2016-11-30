@@ -3,14 +3,11 @@ package makmods.levelstorage.item;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.lib.IC2Items;
-import makmods.levelstorage.logic.util.BlockLocation;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.proxy.ClientProxy;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -26,14 +23,13 @@ public class ItemElectricLighter extends ItemBasicElectric implements IHasRecipe
 		super(id, 2, 100000, 1000, 500);
 	}
 
-	public boolean addFire(World world, int x, int y, int z, EnumFacing sideHit) {
+	public boolean addFire(World world, BlockPos pos, EnumFacing sideHit) {
 		boolean addedFire = false;
-		BlockLocation currBlockLocation = new BlockLocation(x, y, z);
-		BlockLocation shifted = currBlockLocation.move(sideHit, 1);
-		if (!world.isAirBlock(shifted.toBlockPos())) {
+		BlockPos shifted = pos.add(sideHit.getDirectionVec()); //Vector addition
+		if (!world.isAirBlock(shifted)) {
 			return false;
 		}
-		world.setBlockState(shifted.toBlockPos(), Blocks.FIRE.getDefaultState());
+		world.setBlockState(shifted, Blocks.FIRE.getDefaultState());
 		addedFire = true;
 		return addedFire;
 	}
@@ -42,24 +38,22 @@ public class ItemElectricLighter extends ItemBasicElectric implements IHasRecipe
 		Recipes.advRecipes.addShapelessRecipe(new ItemStack(
 				LSBlockItemList.itemElectricLighter),
 				ic2.api.item.IC2Items.getItem("powerunitsmall").copy(), new ItemStack(
-					net.minecraft.init.Items.FLINT_AND_STEEL), IC2Items.ADV_CIRCUIT);
+					net.minecraft.init.Items.FLINT_AND_STEEL), IC2ItemsShortcut.ADV_CIRCUIT);
 	}
 
 	@Override
-	public boolean onBlockClick(ItemStack item, World world, EntityPlayer player, int x, int y, int z, int side) {
-		BlockPos pos = new BlockPos(x, y, z);
-		
+	public boolean onBlockClick(ItemStack item, World world, EntityPlayer player, BlockPos pos, EnumFacing side) {
 		if (world.isAirBlock(pos))
-			return addFire(world, x, y, z, side);
+			return addFire(world, pos, side);
 		
 		IBlockState bs = world.getBlockState(pos);
 		ItemStack smResult = FurnaceRecipes.instance().getSmeltingResult(new ItemStack(bs.getBlock(), 1, bs.getBlock().getMetaFromState(bs)));
 		if (smResult == null)
-			return addFire(world, x, y, z, side);
+			return addFire(world, pos, side);
 		if (smResult.getItem() instanceof ItemBlock)
-			world.setBlockState(new BlockPos(x, y, z), ((ItemBlock)smResult.getItem()).block.getDefaultState(), 3);
+			world.setBlockState(pos, ((ItemBlock)smResult.getItem()).block.getDefaultState(), 3);
 		else
-			return addFire(world, x, y, z, side);
+			return addFire(world, pos, side);
 		return true;
 	}
 

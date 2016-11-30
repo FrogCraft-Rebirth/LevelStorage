@@ -18,9 +18,9 @@ public class BlockLavaFabricator extends BlockMachineStandart implements IHasRec
 	public void addCraftingRecipe() {
 		Recipes.advRecipes.addRecipe(new ItemStack(
 				LSBlockItemList.blockLavaFabricator), "aca", "pgp", 
-				Character.valueOf('a'), makmods.levelstorage.lib.IC2Items.ADV_CIRCUIT, 
-				Character.valueOf('p'), makmods.levelstorage.lib.IC2Items.ADV_ALLOY, 
-				Character.valueOf('c'), makmods.levelstorage.lib.IC2Items.ADV_MACHINE, 
+				Character.valueOf('a'), makmods.levelstorage.lib.IC2ItemsShortcut.ADV_CIRCUIT, 
+				Character.valueOf('p'), makmods.levelstorage.lib.IC2ItemsShortcut.ADV_ALLOY, 
+				Character.valueOf('c'), makmods.levelstorage.lib.IC2ItemsShortcut.ADV_MACHINE, 
 				Character.valueOf('g'), IC2Items.getItem("geothermalGenerator"));
 	}
 

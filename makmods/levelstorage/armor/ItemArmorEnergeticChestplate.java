@@ -11,7 +11,7 @@ import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.lib.IC2Items;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -82,9 +82,9 @@ public class ItemArmorEnergeticChestplate extends ItemArmor implements
 		if (p.getBoolean(true)) {
 			Recipes.advRecipes.addRecipe(new ItemStack(
 					LSBlockItemList.itemArmorEnergeticChestplate), "ttt",
-					"iqi", "lil", Character.valueOf('t'), IC2Items.TESLA_COIL,
-					Character.valueOf('i'), IC2Items.IRIDIUM_PLATE, Character
-							.valueOf('q'), IC2Items.QUANTUM_CHESTPLATE,
+					"iqi", "lil", Character.valueOf('t'), IC2ItemsShortcut.TESLA_COIL,
+					Character.valueOf('i'), IC2ItemsShortcut.IRIDIUM_PLATE, Character
+							.valueOf('q'), IC2ItemsShortcut.QUANTUM_CHESTPLATE,
 					Character.valueOf('l'), new ItemStack(
 							LSBlockItemList.itemStorageFourtyMillion));
 

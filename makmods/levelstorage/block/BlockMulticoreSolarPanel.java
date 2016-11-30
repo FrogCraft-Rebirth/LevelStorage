@@ -6,7 +6,7 @@ import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.lib.IC2Items;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.logic.util.LogHelper;
 import makmods.levelstorage.tileentity.TileEntityMulticoreSolarPanel;
 import net.minecraft.block.SoundType;
@@ -37,7 +37,7 @@ public class BlockMulticoreSolarPanel extends BlockMachineStandart implements IH
 					.addRecipe(new ItemStack(
 							LSBlockItemList.blockMulticoreSolarPanel), "csc",
 							"sns", "csc", Character.valueOf('c'),
-							IC2Items.CARBON_PLATE.copy(), Character
+							IC2ItemsShortcut.CARBON_PLATE.copy(), Character
 									.valueOf('n'), "itemEnergizedStar",
 							Character.valueOf('s'), "solarPanelHV");
 		} catch (Throwable t) {
@@ -48,7 +48,7 @@ public class BlockMulticoreSolarPanel extends BlockMachineStandart implements IH
 					.addRecipe(new ItemStack(
 							LSBlockItemList.blockMulticoreSolarPanel), "csc",
 							"sns", "csc", Character.valueOf('c'),
-							IC2Items.CARBON_PLATE.copy(), Character
+							IC2ItemsShortcut.CARBON_PLATE.copy(), Character
 									.valueOf('n'), "itemEnergizedStar",
 							Character.valueOf('s'), "craftingSolarPanelHV");
 		} catch (Throwable t) {

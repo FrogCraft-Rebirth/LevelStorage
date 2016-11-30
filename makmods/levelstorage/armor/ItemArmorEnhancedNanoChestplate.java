@@ -60,13 +60,13 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 		Recipes.advRecipes.addRecipe(new ItemStack(
 				LSBlockItemList.itemArmorEnhancedNanoChestplate), "clc", "qnq",
 				"aja", Character.valueOf('c'), 
-				makmods.levelstorage.lib.IC2Items.CARBON_PLATE.copy(),
+				makmods.levelstorage.lib.IC2ItemsShortcut.CARBON_PLATE.copy(),
 				Character.valueOf('n'), IC2Items.getItem("nanoBodyarmor"),
 				Character.valueOf('l'), new ItemStack(
 						LSBlockItemList.itemEnhLappack),
 				Character.valueOf('j'),
 				IC2Items.getItem("electricJetpack").copy(),
-				Character.valueOf('a'), makmods.levelstorage.lib.IC2Items.ADV_CIRCUIT.copy(), 
+				Character.valueOf('a'), makmods.levelstorage.lib.IC2ItemsShortcut.ADV_CIRCUIT.copy(), 
 				Character.valueOf('q'), "itemJetpackAccelerator");
 	}
 

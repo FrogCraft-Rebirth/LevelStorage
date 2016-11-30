@@ -9,7 +9,7 @@ import java.util.List;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.lib.IC2Items;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
@@ -34,10 +34,10 @@ public class ItemEnergeticEnrichedMatterOrb extends Item implements
 	public void addCraftingRecipe() {
 		Recipes.advRecipes.addRecipe(new ItemStack(
 		        LSBlockItemList.itemStorageFourtyMillion), "lsl", "sis", "lsl",
-		        Character.valueOf('l'), IC2Items.LAPOTRON_CRYSTAL, Character
+		        Character.valueOf('l'), IC2ItemsShortcut.LAPOTRON_CRYSTAL, Character
 		                .valueOf('s'), new ItemStack(
 		                LSBlockItemList.itemSuperconductor).copy(), Character
-		                .valueOf('i'), IC2Items.IRIDIUM_PLATE);
+		                .valueOf('i'), IC2ItemsShortcut.IRIDIUM_PLATE);
 	}
 
 	@Override

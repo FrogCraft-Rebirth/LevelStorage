@@ -4,7 +4,7 @@ import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.item.SimpleItems.SimpleItemShortcut;
-import makmods.levelstorage.lib.IC2Items;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import net.minecraft.item.ItemStack;
 
 public class ItemArmorAntimatterLeggings extends ItemArmorAntimatterBase implements IHasRecipe {
@@ -21,6 +21,6 @@ public class ItemArmorAntimatterLeggings extends ItemArmorAntimatterBase impleme
 						.getItemStack(), 'e', new ItemStack(
 						LSBlockItemList.itemAntimatterCrystal), 'a',
 				new ItemStack(LSBlockItemList.itemSupersonicLeggings), 'c', ic2.api.item.IC2Items
-						.getItem("teleporter"), 'i', IC2Items.IRIDIUM_PLATE);
+						.getItem("teleporter"), 'i', IC2ItemsShortcut.IRIDIUM_PLATE);
 	}
 }

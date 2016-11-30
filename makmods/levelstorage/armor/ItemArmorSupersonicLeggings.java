@@ -11,7 +11,7 @@ import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.lib.IC2Items;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -72,8 +72,8 @@ public class ItemArmorSupersonicLeggings extends ItemArmor implements
 					LSBlockItemList.itemSupersonicLeggings), "ggg", "iqi",
 					"lil", Character.valueOf('g'), new ItemStack(
 							Blocks.GLOWSTONE), Character.valueOf('i'),
-					IC2Items.IRIDIUM_PLATE, Character.valueOf('q'),
-					IC2Items.QUANTUM_LEGGINGS, Character.valueOf('l'),
+					IC2ItemsShortcut.IRIDIUM_PLATE, Character.valueOf('q'),
+					IC2ItemsShortcut.QUANTUM_LEGGINGS, Character.valueOf('l'),
 					new ItemStack(LSBlockItemList.itemStorageFourtyMillion));
 		}
 

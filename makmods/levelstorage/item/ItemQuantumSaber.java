@@ -9,7 +9,7 @@ import java.util.List;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.lib.IC2Items;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -83,10 +83,10 @@ public class ItemQuantumSaber extends Item implements IElectricItem, IHasRecipe 
 	public void addCraftingRecipe() {
 		Recipes.advRecipes.addRecipe(new ItemStack(
 		        LSBlockItemList.itemQuantumSaber), "ai ", "ai ", "cnl",
-				'i', IC2Items.IRIDIUM_PLATE, 
-				'a', IC2Items.ADV_ALLOY,
-				'c', IC2Items.ADV_CIRCUIT, 
-				'l', IC2Items.LAPOTRON_CRYSTAL, 
+				'i', IC2ItemsShortcut.IRIDIUM_PLATE, 
+				'a', IC2ItemsShortcut.ADV_ALLOY,
+				'c', IC2ItemsShortcut.ADV_CIRCUIT, 
+				'l', IC2ItemsShortcut.LAPOTRON_CRYSTAL, 
 				'n', ic2.api.item.IC2Items.getItem("nanoSaber"));
 
 	}

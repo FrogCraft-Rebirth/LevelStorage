@@ -11,7 +11,7 @@ import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.api.IChargeable;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.lib.IC2Items;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.logic.LSDamageSource;
 import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.logic.util.CommonHelper;
@@ -396,10 +396,10 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 		// LSBlockItemList.itemEnhDiamondDrill));
 		Recipes.advRecipes.addRecipe(new ItemStack(
 				LSBlockItemList.itemAtomicDisassembler), "ccc", "lda", "ccc",
-					'c', IC2Items.CARBON_PLATE, 
+					'c', IC2ItemsShortcut.CARBON_PLATE, 
 					'l', ic2.api.item.IC2Items.getItem("miningLaser"), 
 					'd', new ItemStack(LSBlockItemList.itemEnhDiamondDrill), 
-					'a', IC2Items.ADV_CIRCUIT);
+					'a', IC2ItemsShortcut.ADV_CIRCUIT);
 	}
 
 	@Override

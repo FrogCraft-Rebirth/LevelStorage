@@ -56,10 +56,10 @@ public class ItemArmorEnhancedLappack extends ItemArmor implements
 		if (p.getBoolean(true)) {
 			Recipes.advRecipes.addRecipe(new ItemStack(
 			        LSBlockItemList.itemEnhLappack), "ccc", "lal", "apa",
-			        Character.valueOf('l'), makmods.levelstorage.lib.IC2Items.ENERGY_CRYSTAL,
-			        Character.valueOf('a'), makmods.levelstorage.lib.IC2Items.ADV_CIRCUIT, 
+			        Character.valueOf('l'), makmods.levelstorage.lib.IC2ItemsShortcut.ENERGY_CRYSTAL,
+			        Character.valueOf('a'), makmods.levelstorage.lib.IC2ItemsShortcut.ADV_CIRCUIT, 
 			        Character.valueOf('p'), IC2Items.getItem("lapPack"), 
-			        Character.valueOf('c'), makmods.levelstorage.lib.IC2Items.CARBON_PLATE);
+			        Character.valueOf('c'), makmods.levelstorage.lib.IC2ItemsShortcut.CARBON_PLATE);
 		}
 	}
 

@@ -5,7 +5,7 @@ import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.lib.IC2Items;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -37,7 +37,7 @@ public class ItemSuperconductor extends Item implements IHasRecipe {
 				LSBlockItemList.itemSuperconductor, pOutput.getInt(6)), "ccc",
 				"iai", "ccc", 
 				'c', ic2.api.item.IC2Items.getItem("glassFiberCableItem"),
-				'i', IC2Items.IRIDIUM_PLATE, 
+				'i', IC2ItemsShortcut.IRIDIUM_PLATE, 
 				'a', ic2.api.item.IC2Items.getItem("advancedMachine"));
 
 	}

@@ -13,7 +13,7 @@ import makmods.levelstorage.armor.ArmorFunctions;
 import makmods.levelstorage.armor.ItemArmorLevitationBoots;
 import makmods.levelstorage.armor.ItemArmorTeslaHelmet;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.lib.IC2Items;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -169,7 +169,7 @@ public class ItemQuantumRing extends Item implements IElectricItem, IHasRecipe {
 	public void addCraftingRecipe() {
 		Recipes.advRecipes.addRecipe(new ItemStack(
 				LSBlockItemList.itemQuantumRing), "hic", "iei", "bil",
-				Character.valueOf('i'), IC2Items.IRIDIUM_PLATE.copy(),
+				Character.valueOf('i'), IC2ItemsShortcut.IRIDIUM_PLATE.copy(),
 				Character.valueOf('e'), new ItemStack(
 						LSBlockItemList.itemStorageFourtyMillion), Character
 						.valueOf('h'), new ItemStack(
