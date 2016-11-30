@@ -1,31 +1,33 @@
 package makmods.levelstorage.tileentity;
 
-import ic2.api.energy.event.EnergyTileLoadEvent;
-import ic2.api.energy.event.EnergyTileUnloadEvent;
-import ic2.api.energy.tile.*;
-import ic2.api.tile.IEnergyStorage;
-import ic2.api.tile.IWrenchable;
-
-import java.util.EnumSet;
+import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergyAcceptor;
+import ic2.api.energy.tile.IEnergyEmitter;
+import ic2.api.energy.tile.IEnergySink;
+import ic2.api.energy.tile.IEnergySource;
+import ic2.api.tile.IEnergyStorage;
+import ic2.api.tile.IWrenchable;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LevelStorage;
-import makmods.levelstorage.lib.Reference;
-import makmods.levelstorage.logic.util.NBTHelper;
 import makmods.levelstorage.registry.SyncType;
 import makmods.levelstorage.tileentity.template.IHasButtons;
 import makmods.levelstorage.tileentity.template.IHasTextBoxes;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-
-import com.google.common.collect.Lists;
-
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -35,22 +37,24 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 
 	public static final int MAX_PACKET_SIZE = 2048;
 
-	static {
-		MinecraftForge.EVENT_BUS.register(PowerSyncRegistry.class);
-	}
-
-	public static class PowerSyncRegistry {
-		public static List<TileEntityWirelessPowerSynchronizer> registry = Lists
-				.newArrayList();
+	public static enum PowerSyncRegistry {
+		
+		INSTANCE;
+		
+		public List<TileEntityWirelessPowerSynchronizer> registry = Lists.newArrayList();
+		
+		private PowerSyncRegistry() {
+			MinecraftForge.EVENT_BUS.register(this);
+		}
 
 		@SubscribeEvent
-		public static void tickStart(TickEvent.WorldTickEvent event) {
+		public void tickStart(TickEvent.WorldTickEvent event) {
 			if (event.phase == TickEvent.Phase.START)
 				registry.clear();
 		}
 
 		@SubscribeEvent
-		public static void tickEnd(TickEvent.WorldTickEvent event) {
+		public void tickEnd(TickEvent.WorldTickEvent event) {
 			//if (event.phase == TickEvent.Phase.END)
 			// WChargerRegistry.instance.chargers.clear();
 		}
@@ -85,33 +89,30 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 		internalBuffer -= amount;
 	}
 
-	@Override
-	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) {
-		return false;
-	}
-
 	public void update() {
-		super.update();
 		if (!LevelStorage.isSimulating())
 			return;
-		PowerSyncRegistry.registry.add(this);
+		PowerSyncRegistry.INSTANCE.registry.add(this);
 		if (this.deviceType.equals(SyncType.RECEIVER))
 			return;
 	}
 
 	@Override
-	public short getFacing() {
-		return 0;
+	public EnumFacing getFacing(World world, BlockPos pos) {
+		return null; //per ForgeDirection.UNKNOWN
+	}
+
+	public boolean setFacing(World world, BlockPos pos, EnumFacing newDirection, EntityPlayer player) {
+		return false;
+	}
+
+	public boolean wrenchCanRemove(World world, BlockPos pos, EntityPlayer player) {
+		return true;
 	}
 
 	@Override
-	public void setFacing(short facing) {
-
-	}
-
-	@Override
-	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
-		return new ItemStack(LSBlockItemList.blockWlessPowerSync);
+	public List<ItemStack> getWrenchDrops(World world, BlockPos pos, IBlockState state, TileEntity te, EntityPlayer player, int fortune) {
+		return Arrays.asList(new ItemStack(LSBlockItemList.blockWlessPowerSync));
 	}
 
 	@Override
@@ -120,10 +121,9 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 			return 0;
 		} else {
 			int requiredForPairs = 0;
-			List objS = Lists.newArrayList();
-			for (TileEntityWirelessPowerSynchronizer pSync : PowerSyncRegistry.instance.registry) {
-				if (pSync.frequency == this.frequency
-						&& pSync.deviceType.equals(SyncType.RECEIVER)) {
+			List<TileEntityWirelessPowerSynchronizer> objS = Lists.newArrayList();
+			for (TileEntityWirelessPowerSynchronizer pSync : PowerSyncRegistry.INSTANCE.registry) {
+				if (pSync.frequency == this.frequency && pSync.deviceType.equals(SyncType.RECEIVER)) {
 					objS.add(pSync);
 				}
 			}
@@ -142,7 +142,7 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 		if (this.deviceType.equals(SyncType.RECEIVER))
 			return amount;
 		List<Object> mutableRightSyncList = Lists.newArrayList();
-		for (TileEntityWirelessPowerSynchronizer pSync : PowerSyncRegistry.instance.registry) {
+		for (TileEntityWirelessPowerSynchronizer pSync : PowerSyncRegistry.INSTANCE.registry) {
 			if (pSync.frequency == this.frequency
 					&& pSync.deviceType.equals(SyncType.RECEIVER)
 					&& (pSync.getCapacity() - pSync.getStored() > 0)) {
@@ -227,6 +227,11 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 	public boolean isTeleporterCompatible(EnumFacing side) {
 		return false;
 	}
+	
+	@Override
+	public int getSourceTier() {
+		return 4;
+	}
 
 	public void load() {
 		if (!LevelStorage.isSimulating())
@@ -255,6 +260,11 @@ public class TileEntityWirelessPowerSynchronizer extends TileEntity implements
 	public void validate() {
 		super.validate();
 		load();
+	}
+
+	@Override
+	public int getSinkTier() {
+		return 4;
 	}
 
 }

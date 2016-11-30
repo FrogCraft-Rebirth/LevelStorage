@@ -4,7 +4,6 @@ import ic2.api.item.IC2Items;
 
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -62,8 +61,7 @@ public class IVRegistry {
 				try {
 					if (DEBUG)
 						LogHelper.info("OreDict entry: " + s);
-					List<ItemStack> stacksForGiven = OreDictionary
-							.getOres(s);
+					List<ItemStack> stacksForGiven = OreDictionary.getOres(s);
 					for (ItemStack st : stacksForGiven) {
 						if (st == null)
 							continue;
@@ -73,14 +71,12 @@ public class IVRegistry {
 					}
 
 				} catch (Exception e) {
-					LogHelper
-							.severe("Exception trying to parse OreDict by IV registry. This is fatal error and unrecoverable.");
+					LogHelper.severe("Exception trying to parse OreDict by IV registry. This is fatal error and unrecoverable.");
 					throw new RuntimeException(e);
 				}
 			}
 		} catch (Throwable e) {
-			LogHelper
-					.severe("Exception when trying to dynamically allocate more ores to generate");
+			LogHelper.severe("Exception when trying to dynamically allocate more ores to generate");
 			e.printStackTrace();
 		}
 	}
@@ -355,8 +351,7 @@ public class IVRegistry {
 
 	public static boolean DO_CACHING = false;
 
-	private static Map<List<Integer>, Integer> itemStackCache = Maps
-			.newHashMap();
+	private static Map<ItemStack, Integer> itemStackCache = Maps.newHashMap();
 	private static Map<String, Integer> oreDictCache = Maps.newHashMap();
 
 	public static void clearCache() {
@@ -395,12 +390,9 @@ public class IVRegistry {
 			return oreDictCache.get(odName);
 		} else if (obj instanceof ItemStack) {
 			List<Integer> lst = Lists.newArrayList();
-			ItemStack objIS = (ItemStack) obj;
-			lst.add(objIS.itemID);
-			lst.add(objIS.getItemDamage());
-			if (!itemStackCache.containsKey(lst))
-				itemStackCache.put(lst, getValueFor_internal(objIS));
-			return itemStackCache.get(lst);
+			if (!itemStackCache.containsKey(lst)) //Impossible to pass this check: ItemStack does not override equals method, must manually iterate all entries
+				itemStackCache.put((ItemStack)obj, getValueFor_internal((ItemStack)obj));
+			return itemStackCache.get(obj);
 		} else if (obj instanceof Fluid) {
 			return getValueFor_internal((Fluid) obj);
 		} else

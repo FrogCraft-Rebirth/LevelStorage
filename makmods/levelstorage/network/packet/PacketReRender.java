@@ -4,11 +4,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import makmods.levelstorage.network.PacketDispatcher;
 import makmods.levelstorage.network.PacketLS;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.INetworkManager;
-import net.minecraftforge.fml.common.network.PacketDispatcher;
-import net.minecraftforge.fml.common.network.Player;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.NetworkManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -32,7 +32,7 @@ public class PacketReRender extends PacketLS {
 		prr.x = x;
 		prr.y = y;
 		prr.z = z;
-		PacketDispatcher.sendPacketToAllPlayers(PacketTypeHandler.populatePacket(prr));
+		PacketDispatcher.sendPacketToAll(prr);
 	}
 
 	@Override
@@ -44,8 +44,8 @@ public class PacketReRender extends PacketLS {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void execute(INetworkManager network, Player player) {
-		Minecraft.getMinecraft().theWorld.markBlockForRenderUpdate(x, y, z);
+	public void execute(NetworkManager network, EntityPlayer player) {
+		Minecraft.getMinecraft().theWorld.markBlockRangeForRenderUpdate(x, y, z, x, y, z);
 	}
 
 }

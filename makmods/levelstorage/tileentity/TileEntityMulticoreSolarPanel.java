@@ -25,7 +25,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
+
+/**
+ * Caution: This class is very dangerous, because it is from a non-open-source/non-free software.
+ * Overhaul required.
+ */
 
 // Used source from Advanced Solar Panels
 public class TileEntityMulticoreSolarPanel extends TileEntity implements
@@ -47,9 +53,7 @@ public class TileEntityMulticoreSolarPanel extends TileEntity implements
 	private boolean created;
 	private ItemStack[] chargeSlots;
 	public int fuel;
-	private int lastX;
-	private int lastY;
-	private int lastZ;
+	private BlockPos lastPos;
 	public int storage;
 	private int solarType;
 	public String panelName;
@@ -72,9 +76,7 @@ public class TileEntityMulticoreSolarPanel extends TileEntity implements
 		initialized = false;
 		production = 2048;
 		ticker = randomizer.nextInt(tickRate());
-		lastX = this.xCoord;
-		lastY = this.yCoord;
-		lastZ = this.zCoord;
+		lastPos = this.pos;
 	}
 
 	@Override
@@ -139,8 +141,8 @@ public class TileEntityMulticoreSolarPanel extends TileEntity implements
 		return true;
 	}
 
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (!initialized) {
 			intialize();

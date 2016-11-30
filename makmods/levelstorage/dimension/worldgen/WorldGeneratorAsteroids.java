@@ -12,8 +12,9 @@ import makmods.levelstorage.logic.IDMeta;
 import makmods.levelstorage.logic.util.LogHelper;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.oredict.OreDictionary;
@@ -66,8 +67,7 @@ public class WorldGeneratorAsteroids implements IWorldGenerator {
 	}
 
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world,
-			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		if (random.nextInt(256) == 0) {
 			int epicentrumX = chunkX * 16 + random.nextInt(16);
 			int epicentrumZ = chunkZ * 16 + random.nextInt(16);

@@ -16,6 +16,7 @@ import makmods.levelstorage.gui.client.GUIASU;
 import makmods.levelstorage.gui.container.ContainerASU;
 import makmods.levelstorage.gui.logicslot.LogicSlot;
 import makmods.levelstorage.network.packet.PacketReRender;
+import makmods.levelstorage.network.packet.PacketTileUpdate;
 import makmods.levelstorage.tileentity.template.ITEHasGUI;
 import makmods.levelstorage.tileentity.template.TileEntityInventory;
 import net.minecraft.block.state.IBlockState;
@@ -89,8 +90,8 @@ public class TileEntityASU extends TileEntityInventory implements IWrenchable,
 		charge(chargeSlot, true);
 		charge(dischargeSlot, false);
 		if (oldFacing != facing) {
-			PacketDispatcher.sendPacketToAllPlayers(getDescriptionPacket());
-			PacketReRender.reRenderBlock(xCoord, yCoord, zCoord);
+			PacketTileUpdate.synhronizeTileEntityAt(this);
+			PacketReRender.reRenderBlock(getPos().getX(), getPos().getY(), getPos().getZ());
 			oldFacing = facing;
 		}
 		if (!addedToENet) {

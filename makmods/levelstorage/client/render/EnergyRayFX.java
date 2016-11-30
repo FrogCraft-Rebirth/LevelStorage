@@ -61,7 +61,8 @@ public class EnergyRayFX extends Particle {
 		this.particleGreen = green;
 		this.particleBlue = blue;
 		setSize(0.02F, 0.02F);
-		this.noClip = true;
+		//this.noClip = true; Not sure if it's correct replacement
+		this.canCollide = false;
 		this.motionX = 0.0D;
 		this.motionY = 0.0D;
 		this.motionZ = 0.0D;

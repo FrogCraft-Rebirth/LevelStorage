@@ -10,6 +10,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -47,7 +51,7 @@ public abstract class ItemBasicElectric extends Item implements IElectricItem {
 	 * @return whether or not {@link #energyPerUse} should be consumed
 	 */
 	public abstract boolean onBlockClick(ItemStack item, World world,
-			EntityPlayer player, int x, int y, int z, int side);
+			EntityPlayer player, BlockPos pos, EnumFacing side);
 
 	@SideOnly(Side.CLIENT)
 	public abstract String getItemTexture();
@@ -98,18 +102,14 @@ public abstract class ItemBasicElectric extends Item implements IElectricItem {
 		return par1ItemStack;
 	}
 
-	public boolean onItemUse(ItemStack par1ItemStack,
-			EntityPlayer par2EntityPlayer, World par3World, int x, int y,
-			int z, int side, float par8, float par9, float par10) {
-		if (!par3World.isRemote)
-			if (ElectricItem.manager.canUse(par1ItemStack, energyPerUse))
-				if (onBlockClick(par1ItemStack, par3World, par2EntityPlayer, x,
-						y, z, side)) {
-					ElectricItem.manager.use(par1ItemStack, energyPerUse,
-							par2EntityPlayer);
-					return false;
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (!world.isRemote)
+			if (ElectricItem.manager.canUse(stack, energyPerUse))
+				if (onBlockClick(stack, world, player, pos, facing)) {
+					ElectricItem.manager.use(stack, energyPerUse, player);
+					return EnumActionResult.SUCCESS;
 				}
-		return true;
+		return EnumActionResult.FAIL;
 	}
 
 	@Override

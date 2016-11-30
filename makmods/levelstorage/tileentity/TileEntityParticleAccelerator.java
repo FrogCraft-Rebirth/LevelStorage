@@ -1,5 +1,8 @@
 package makmods.levelstorage.tileentity;
 
+import java.util.Arrays;
+import java.util.List;
+
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.gui.client.GUIParticleAccelerator;
@@ -7,20 +10,22 @@ import makmods.levelstorage.gui.container.ContainerParticleAccelerator;
 import makmods.levelstorage.gui.container.phantom.PhantomInventory;
 import makmods.levelstorage.gui.logicslot.LogicSlot;
 import makmods.levelstorage.init.LSFluids;
-import makmods.levelstorage.item.SimpleItems;
 import makmods.levelstorage.item.SimpleItems.SimpleItemShortcut;
 import makmods.levelstorage.iv.IVRegistry;
 import makmods.levelstorage.tileentity.template.IHasButtons;
 import makmods.levelstorage.tileentity.template.ITEHasGUI;
 import makmods.levelstorage.tileentity.template.TileEntityInventorySinkWithFluid;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
@@ -53,13 +58,13 @@ public class TileEntityParticleAccelerator extends
 	public int maxProgress = 1;
 
 	@Override
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-		super.writeToNBT(par1NBTTagCompound);
+	public NBTTagCompound writeToNBT(NBTTagCompound par1NBTTagCompound) {
 		phantomInventory.writeToNBT(par1NBTTagCompound);
 		par1NBTTagCompound.setInteger("modePA", mode);
 		par1NBTTagCompound.setInteger("progress", progress);
 		par1NBTTagCompound.setInteger("internalIV", internalIV);
 		par1NBTTagCompound.setInteger("maxProg", maxProgress);
+		return super.writeToNBT(par1NBTTagCompound);
 	}
 
 	@Override
@@ -83,7 +88,7 @@ public class TileEntityParticleAccelerator extends
 	}
 
 	@Override
-	public String getInvName() {
+	public String getName() {
 		return "Particle Accelerator";
 	}
 
@@ -115,22 +120,22 @@ public class TileEntityParticleAccelerator extends
 	}
 
 	@Override
-	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
-		return new ItemStack(LSBlockItemList.blockParticleAccelerator);
+	public List<ItemStack> getWrenchDrops(World world, BlockPos pos, IBlockState state, TileEntity te, EntityPlayer player, int fortune){
+		return Arrays.asList(new ItemStack(LSBlockItemList.blockParticleAccelerator));
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int var1) {
+	public int[] getSlotsForFace(EnumFacing facing) {
 		return new int[] { 1 };
 	}
 
 	@Override
-	public boolean canInsertItem(int i, ItemStack itemstack, int j) {
+	public boolean canInsertItem(int slot, ItemStack itemstack, EnumFacing facing) {
 		return false;
 	}
 
 	@Override
-	public boolean canExtractItem(int i, ItemStack itemstack, int j) {
+	public boolean canExtractItem(int slot, ItemStack itemstack, EnumFacing facing) {
 		return true;
 	}
 
@@ -173,8 +178,8 @@ public class TileEntityParticleAccelerator extends
 		return is;
 	}
 
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 		if (!LevelStorage.isSimulating())
 			return;
 		if (!canUse(ENERGY_COST_PER_TICK))

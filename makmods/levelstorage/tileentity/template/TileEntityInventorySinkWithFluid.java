@@ -23,12 +23,11 @@ public abstract class TileEntityInventorySinkWithFluid extends
 		this.tank.readFromNBT(nbttagcompound.getCompoundTag("fluidTank"));
 	}
 
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
-
+	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
 		NBTTagCompound fluidTankTag = new NBTTagCompound();
 		this.tank.writeToNBT(fluidTankTag);
 		nbttagcompound.setTag("fluidTank", fluidTankTag);
+		return super.writeToNBT(nbttagcompound);
 	}
 
 	public FluidTank getFluidTank() {

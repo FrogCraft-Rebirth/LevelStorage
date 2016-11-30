@@ -7,11 +7,12 @@ import java.io.IOException;
 import makmods.levelstorage.logic.util.LogHelper;
 import makmods.levelstorage.network.PacketLS;
 import makmods.levelstorage.tileentity.template.IHasTextBoxes;
-import net.minecraft.network.INetworkManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.network.Player;
 
 public class PacketTextChanged extends PacketLS {
 
@@ -47,14 +48,14 @@ public class PacketTextChanged extends PacketLS {
 	}
 
 	@Override
-	public void execute(INetworkManager network, Player player) {
+	public void execute(NetworkManager network, EntityPlayer player) {
 		try {
 			WorldServer world = DimensionManager.getWorld(this.dimId);
 
 			if (world != null) {
 				if (!world.isRemote) {
-					TileEntity te = world.getBlockTileEntity(this.x, this.y,
-					        this.z);
+					TileEntity te = world.getTileEntity(new BlockPos(this.x, this.y,
+					        this.z));
 					if (te != null) {
 						if (te instanceof IHasTextBoxes) {
 							IHasTextBoxes ihb = (IHasTextBoxes) te;

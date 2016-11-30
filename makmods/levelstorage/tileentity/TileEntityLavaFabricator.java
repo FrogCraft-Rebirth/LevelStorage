@@ -1,18 +1,24 @@
 package makmods.levelstorage.tileentity;
 
+import java.util.Arrays;
+import java.util.List;
+
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.gui.client.GUILavaFabricator;
 import makmods.levelstorage.gui.container.ContainerLavaFabricator;
 import makmods.levelstorage.gui.logicslot.LogicSlot;
 import makmods.levelstorage.tileentity.template.ITEHasGUI;
 import makmods.levelstorage.tileentity.template.TileEntityInventorySinkWithFluid;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -35,7 +41,7 @@ public class TileEntityLavaFabricator extends TileEntityInventorySinkWithFluid
 	}
 
 	@Override
-	public String getInvName() {
+	public String getName() {
 		return "Lava Fabricator";
 	}
 
@@ -57,8 +63,8 @@ public class TileEntityLavaFabricator extends TileEntityInventorySinkWithFluid
 	}
 
 	@Override
-	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
-		return new ItemStack(LSBlockItemList.blockLavaFabricator);
+	public List<ItemStack> getWrenchDrops(World world, BlockPos pos, IBlockState state, TileEntity te, EntityPlayer player, int fortune) {
+		return Arrays.asList(new ItemStack(LSBlockItemList.blockLavaFabricator));
 	}
 
 	@Override
@@ -137,18 +143,18 @@ public class TileEntityLavaFabricator extends TileEntityInventorySinkWithFluid
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int var1) {
+	public int[] getSlotsForFace(EnumFacing facing) {
 		return new int[] { 0, 1 };
 	}
 
 	@Override
-	public boolean canInsertItem(int i, ItemStack itemstack, int j) {
-		return isItemValidForSlot(i, itemstack);
+	public boolean canInsertItem(int slot, ItemStack itemstack, EnumFacing facing) {
+		return isItemValidForSlot(slot, itemstack);
 	}
 
 	@Override
-	public boolean canExtractItem(int i, ItemStack itemstack, int j) {
-		if (i == 1)
+	public boolean canExtractItem(int slot, ItemStack itemstack, EnumFacing facing) {
+		if (slot == 1)
 			return true;
 		else
 			return false;

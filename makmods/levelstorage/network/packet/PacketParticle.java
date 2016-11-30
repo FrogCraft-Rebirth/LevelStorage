@@ -6,8 +6,7 @@ import java.io.IOException;
 
 import makmods.levelstorage.network.PacketLS;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetworkManager;
-import net.minecraftforge.fml.common.network.Player;
+import net.minecraft.network.NetworkManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -49,10 +48,11 @@ public class PacketParticle extends PacketLS {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void execute(INetworkManager network, Player player) {
-		EntityPlayer p = (EntityPlayer) player;
-		p.worldObj.spawnParticle(this.name, this.x, this.y, this.z, this.velX,
-		        this.velY, this.velZ);
+	public void execute(NetworkManager network, EntityPlayer player) {
+		player.worldObj.spawnParticle(this.name, this.x, this.y, this.z, this.velX, this.velY, this.velZ);
+		//No way to add custom particle???
+		//player.worldObj.spawnParticle(EnumParticleTypes.CRIT_MAGIC, this.x, this.y, this.z, this.velX, this.velY, this.velZ);
+		
 	}
 
 }

@@ -140,7 +140,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void init() {
-		RenderingRegistry.registerBlockHandler(new RenderSuperconductorCable());
+		/*RenderingRegistry.registerBlockHandler(new RenderSuperconductorCable());
 		ARMOR_SUPERSONIC_RENDER_INDEX = RenderingRegistry
 				.addNewArmourRendererPrefix("supersonic");
 		ARMOR_ENHANCED_LAPPACK_RENDER_INDEX = RenderingRegistry
@@ -149,7 +149,7 @@ public class ClientProxy extends CommonProxy {
 				.addNewArmourRendererPrefix("enhnano");
 		ItemArmorAntimatterBase.RENDER_ID = RenderingRegistry
 				.addNewArmourRendererPrefix("antimatter");
-		LSCreativeTab.instance = new LSCreativeTab();
+		LSCreativeTab.instance = new LSCreativeTab();*/
 		super.init();
 		if (LevelStorage.configuration.get(LevelStorage.PERFORMANCE_CATEGORY,
 				"enableArmorHUD", true).getBoolean(true))
@@ -158,7 +158,7 @@ public class ClientProxy extends CommonProxy {
 				TileEntityWirelessConductor.class,
 				new WirelessConductorRender());
 		MinecraftForgeClient.registerItemRenderer(
-				LSBlockItemList.blockWlessConductor.blockID,
+				LSBlockItemList.blockWlessConductor,
 				new ItemWirelessConductorRender());
 		MinecraftForgeClient.registerItemRenderer(LSBlockItemList.itemAtomicDisassembler, new ItemRendererAtomicDisassembler());
 		// MinecraftForge.EVENT_BUS.register((new RenderOreRadar()));

@@ -13,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -65,8 +66,7 @@ public class WorldGeneratorPillar implements IWorldGenerator {
 	public static Block wrapper = LSBlockItemList.blockUnstableQuartz;
 
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world,
-			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		if (random.nextInt(RARITY) == 0) {
 			int genX = chunkX * 16 + random.nextInt(16);
 			int genZ = chunkZ * 16 + random.nextInt(16);

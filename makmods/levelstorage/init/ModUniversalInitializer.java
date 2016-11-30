@@ -71,6 +71,7 @@ public class ModUniversalInitializer {
 		return true;
 	}
 
+	//STOP USING NUMERICAL ID!
 	public void create(Field f) {
 		LogHelper.info("Initializing block/item: " + f.getName());
 		try {

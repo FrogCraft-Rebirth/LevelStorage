@@ -1,6 +1,7 @@
 package makmods.levelstorage;
 
 import java.util.List;
+
 import org.apache.logging.log4j.Logger;
 
 import makmods.levelstorage.armor.ArmorFunctions;
@@ -9,19 +10,14 @@ import makmods.levelstorage.init.Config;
 import makmods.levelstorage.init.LSIMCHandler;
 import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.logic.util.LogHelper;
-import makmods.levelstorage.network.PacketHandler;
 import makmods.levelstorage.proxy.CommonProxy;
 import makmods.levelstorage.proxy.LSKeyboard;
 import makmods.levelstorage.registry.FlightRegistry;
 import net.minecraft.command.ServerCommandManager;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-
-import com.google.common.collect.ImmutableList;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -139,7 +135,7 @@ public class LevelStorage {
 		ArmorFunctions.speedTickerMap.clear();
 		ArmorFunctions.onGroundMap.clear();
 		FlightRegistry.instance.modEnabledFlights.clear();
-		ImmutableList list = ImmutableList.of();
+		// ImmutableList list = ImmutableList.of(); //What?
 	}
 
 	@EventHandler
@@ -152,8 +148,7 @@ public class LevelStorage {
 					String key = message.key;
 					LSIMCHandler.instance.handle(key, value);
 				} else {
-					throw new LSIMCHandler.LSIMCException(
-							"Value must be string!");
+					throw new IllegalArgumentException("Value must be string!");
 				}
 			} catch (Exception e) {
 				LogHelper.warning("Mod " + message.getSender()

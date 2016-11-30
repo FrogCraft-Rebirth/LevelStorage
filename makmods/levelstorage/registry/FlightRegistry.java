@@ -5,8 +5,8 @@ import java.util.Map.Entry;
 
 import makmods.levelstorage.armor.ItemArmorLevitationBoots;
 import makmods.levelstorage.lib.Reference;
+import makmods.levelstorage.network.PacketDispatcher;
 import makmods.levelstorage.network.PacketFlightUpdate;
-import makmods.levelstorage.network.packet.PacketTypeHandler;
 import net.minecraft.entity.player.EntityPlayer;
 
 import com.google.common.collect.Maps;
@@ -71,8 +71,7 @@ public class FlightRegistry {
 						PacketFlightUpdate flUpd = new PacketFlightUpdate();
 						flUpd.allowFlying = false;
 						flUpd.isFlying = false;
-						PacketDispatcher.sendPacketToPlayer(
-								PacketTypeHandler.populatePacket(flUpd), (Player) p);
+						PacketDispatcher.sendPacketToPlayer(flUpd, p);
 					}
 				}
 			}

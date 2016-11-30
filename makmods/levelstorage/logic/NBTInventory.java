@@ -6,6 +6,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.DimensionManager;
 
 public class NBTInventory implements IInventory {
@@ -78,13 +79,11 @@ public class NBTInventory implements IInventory {
 		try {
 			// YES, it is a mess and pretty slow code,
 			// but without it nothing will work. Period.
-			for (Object ep : DimensionManager.getWorld(this.dimId).playerEntities) {
-				if (((EntityPlayer) ep).username == this.playerName) {
-					if (((EntityPlayer) ep).inventory.mainInventory[this.itemStackIndex] != null) {
-						if (((EntityPlayer) ep).inventory.mainInventory[this.itemStackIndex]
-						        .getItem() instanceof IHasNBTInventory) {
-							((EntityPlayer) ep).inventory.mainInventory[this.itemStackIndex].stackTagCompound
-							        .setTag("Inventory", itemList);
+			for (EntityPlayer ep : DimensionManager.getWorld(this.dimId).playerEntities) {
+				if (ep.getGameProfile().getName() == this.playerName) {
+					if (ep.inventory.mainInventory[this.itemStackIndex] != null) {
+						if (ep.inventory.mainInventory[this.itemStackIndex].getItem() instanceof IHasNBTInventory) {
+							ep.inventory.mainInventory[this.itemStackIndex].getTagCompound().setTag("Inventory", itemList);
 						}
 					}
 				}
@@ -106,13 +105,11 @@ public class NBTInventory implements IInventory {
 		try {
 			// YES, it is a mess and pretty slow code,
 			// but without it nothing will work. Period.
-			for (Object ep : DimensionManager.getWorld(this.dimId).playerEntities) {
-				if (((EntityPlayer) ep).username == this.playerName) {
-					if (((EntityPlayer) ep).inventory.mainInventory[this.itemStackIndex] != null) {
-						if (((EntityPlayer) ep).inventory.mainInventory[this.itemStackIndex]
-						        .getItem() instanceof IHasNBTInventory) {
-							tagList = ((EntityPlayer) ep).inventory.mainInventory[this.itemStackIndex].stackTagCompound
-							        .getTagList("Inventory");
+			for (EntityPlayer ep : DimensionManager.getWorld(this.dimId).playerEntities) {
+				if (ep.getGameProfile().getName() == this.playerName) {
+					if (ep.inventory.mainInventory[this.itemStackIndex] != null) {
+						if (ep.inventory.mainInventory[this.itemStackIndex].getItem() instanceof IHasNBTInventory) {
+							tagList = ep.inventory.mainInventory[this.itemStackIndex].getTagCompound().getTagList("Inventory", 9);
 						}
 					}
 				}
@@ -121,7 +118,7 @@ public class NBTInventory implements IInventory {
 			e.printStackTrace();
 		}
 		for (int i = 0; i < tagList.tagCount(); i++) {
-			NBTTagCompound tag = (NBTTagCompound) tagList.tagAt(i);
+			NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
 			byte slot = tag.getByte("Slot");
 			if (slot >= 0 && slot < this.inv.length) {
 				this.inv[slot] = ItemStack.loadItemStackFromNBT(tag);
@@ -181,6 +178,36 @@ public class NBTInventory implements IInventory {
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack stack) {
 		return true;
+	}
+
+	@Override
+	public ITextComponent getDisplayName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getField(int id) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getFieldCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -10,6 +10,7 @@ import ic2.api.tile.IEnergyStorage;
 import ic2.api.tile.IWrenchable;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.network.packet.PacketReRender;
+import makmods.levelstorage.network.packet.PacketTileUpdate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -28,11 +29,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.common.network.PacketDispatcher;
 
 import java.util.Arrays;
 import java.util.List;
-
 
 public abstract class TileEntityAdvanced extends TileEntity implements
 		IEnergySource, IEnergyStorage, IEnergySink, IWrenchable, IInventory,
@@ -142,8 +141,8 @@ public abstract class TileEntityAdvanced extends TileEntity implements
 			return;
 
 		if (oldFacing != facing) {
-			PacketDispatcher.sendPacketToAllPlayers(getDescriptionPacket());
-			PacketReRender.reRenderBlock(xCoord, yCoord, zCoord);
+			PacketTileUpdate.synhronizeTileEntityAt(this);
+			PacketReRender.reRenderBlock(getPos().getX(), getPos().getY(), getPos().getZ());
 			oldFacing = facing;
 		}
 		if (energyNetTE)

@@ -6,6 +6,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import makmods.levelstorage.network.packet.PacketTypeHandler;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.NetworkManager;
 
 /**
  * @author pahimar
@@ -53,9 +55,14 @@ public class PacketLS {
 	public void writeData(DataOutputStream dos) throws IOException {
 
 	}
-
+/*
 	public void execute(INetworkManager network, Player player) {
 
+	}*/
+	
+	//One can only hope this is correct replacement
+	public void execute(NetworkManager network, EntityPlayer player) {
+		
 	}
 
 	public void setKey(int key) {

@@ -4,7 +4,9 @@ import java.util.Random;
 
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LevelStorage;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.fml.common.IWorldGenerator;
@@ -24,7 +26,7 @@ public class LSWorldGenerator implements IWorldGenerator {
 	
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world,
-			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+			IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		if (world.provider.isSurfaceWorld()) {
 			final int chromiumOrePasses = 50 * oreDensityFactor;
 			final int chromiumOreRarity = 100;
@@ -33,9 +35,8 @@ public class LSWorldGenerator implements IWorldGenerator {
 					int xToGen = chunkX * 16 + random.nextInt(16);
 					int zToGen = chunkZ * 16 + random.nextInt(16);
 					int yToGen = random.nextInt(13) + 3;
-					new WorldGenMinable(
-							LSBlockItemList.blockChromiteOre.blockID, 3)
-							.generate(world, random, xToGen, yToGen, zToGen);
+					new WorldGenMinable(LSBlockItemList.blockChromiteOre.getStateFromMeta(3), 3)
+							.generate(world, random, new BlockPos(xToGen, yToGen, zToGen));
 				}
 			}
 		}

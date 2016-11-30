@@ -5,14 +5,15 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import makmods.levelstorage.logic.util.LogHelper;
+import makmods.levelstorage.network.PacketDispatcher;
 import makmods.levelstorage.network.PacketLS;
 import makmods.levelstorage.tileentity.template.IHasButtons;
-import net.minecraft.network.INetworkManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.network.PacketDispatcher;
-import net.minecraftforge.fml.common.network.Player;
 
 public class PacketPressButton extends PacketLS {
 
@@ -47,22 +48,19 @@ public class PacketPressButton extends PacketLS {
 	public static void handleButtonClick(int buttonID, TileEntity tileEntity) {
 		PacketPressButton packet = new PacketPressButton();
 		packet.buttonId = buttonID;
-		packet.x = tileEntity.xCoord;
-		packet.y = tileEntity.yCoord;
-		packet.z = tileEntity.zCoord;
-		packet.dimId = tileEntity.worldObj.provider.dimensionId;
-		PacketDispatcher.sendPacketToServer(PacketTypeHandler
-		        .populatePacket(packet));
+		packet.x = tileEntity.getPos().getX();
+		packet.y = tileEntity.getPos().getY();
+		packet.z = tileEntity.getPos().getZ();
+		packet.dimId = tileEntity.getWorld().provider.getDimension();
+		PacketDispatcher.sendPacketToServer(packet);
 	}
 
 	@Override
-	public void execute(INetworkManager network, Player player) {
+	public void execute(NetworkManager network, EntityPlayer player) {
 		try {
 			WorldServer world = DimensionManager.getWorld(this.dimId);
-
 			if (world != null) {
-				TileEntity te = world
-				        .getBlockTileEntity(this.x, this.y, this.z);
+				TileEntity te = world.getTileEntity(new BlockPos(this.x, this.y, this.z));
 				if (te != null) {
 					if (te instanceof IHasButtons) {
 						IHasButtons ihb = (IHasButtons) te;

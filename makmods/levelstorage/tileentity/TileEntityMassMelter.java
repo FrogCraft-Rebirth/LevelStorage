@@ -76,11 +76,11 @@ public class TileEntityMassMelter extends TileEntityInventorySinkWithFluid
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
+	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setInteger("buffer", ivBuffer);
 		nbttagcompound.setInteger("maxProg", maxProgress);
 		nbttagcompound.setInteger("progress", progress);
+		return super.writeToNBT(nbttagcompound);
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public class TileEntityMassMelter extends TileEntityInventorySinkWithFluid
 	}
 
 	@Override
-	public int[] getSlotsFromSide(EnumFacing facing) {
+	public int[] getSlotsForFace(EnumFacing facing) {
 		return new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 	}
 

@@ -1,4 +1,4 @@
-package makmods.levelstorage.logic.util;
+/*package makmods.levelstorage.logic.util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -156,3 +156,4 @@ public class TranslocationHelper {
 		return collidingBoundingBoxes;
 	}
 }
+*/

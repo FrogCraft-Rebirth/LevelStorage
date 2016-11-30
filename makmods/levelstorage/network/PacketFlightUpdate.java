@@ -6,8 +6,7 @@ import java.io.IOException;
 
 import makmods.levelstorage.network.packet.PacketTypeHandler;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetworkManager;
-import net.minecraftforge.fml.common.network.Player;
+import net.minecraft.network.NetworkManager;
 
 public class PacketFlightUpdate extends PacketLS {
 
@@ -31,10 +30,9 @@ public class PacketFlightUpdate extends PacketLS {
 	}
 
 	@Override
-	public void execute(INetworkManager network, Player player) {
-		EntityPlayer p = (EntityPlayer) player;
-		p.capabilities.allowFlying = allowFlying;
-		p.capabilities.isFlying = isFlying;
+	public void execute(NetworkManager network, EntityPlayer player) {
+		player.capabilities.allowFlying = allowFlying;
+		player.capabilities.isFlying = isFlying;
 	}
 
 }

@@ -6,12 +6,11 @@ import java.io.IOException;
 
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.client.render.EnergyRayFX;
+import makmods.levelstorage.network.PacketDispatcher;
 import makmods.levelstorage.network.PacketLS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetworkManager;
-import net.minecraftforge.fml.common.network.PacketDispatcher;
-import net.minecraftforge.fml.common.network.Player;
+import net.minecraft.network.NetworkManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -28,8 +27,7 @@ public class PacketTeslaRay extends PacketLS {
 		super(PacketTypeHandler.PACKET_TESLA_RAY, false);
 	}
 
-	public static void issue(double x, double y, double z, double tX,
-			double tY, double tZ) {
+	public static void issue(double x, double y, double z, double tX, double tY, double tZ) {
 		PacketTeslaRay ptr = new PacketTeslaRay();
 		ptr.initX = x;
 		ptr.initY = y;
@@ -37,8 +35,7 @@ public class PacketTeslaRay extends PacketLS {
 		ptr.tX = tX;
 		ptr.tY = tY;
 		ptr.tZ = tZ;
-		PacketDispatcher.sendPacketToAllPlayers(PacketTypeHandler
-				.populatePacket(ptr));
+		PacketDispatcher.sendPacketToAll(ptr);
 	}
 
 	@Override
@@ -63,7 +60,7 @@ public class PacketTeslaRay extends PacketLS {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void execute(INetworkManager network, Player player) {
+	public void execute(NetworkManager network, EntityPlayer player) {
 		if (LevelStorage.getSide().isClient()) {
 			EntityPlayer p = (EntityPlayer) player;
 			EnergyRayFX pe = new EnergyRayFX(p.worldObj, initX, initY, initZ,

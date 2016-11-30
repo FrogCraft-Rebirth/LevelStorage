@@ -2,6 +2,7 @@ package makmods.levelstorage.gui.client;
 
 import makmods.levelstorage.gui.container.ContainerPowerSync;
 import makmods.levelstorage.logic.util.RenderHelper;
+import makmods.levelstorage.network.PacketDispatcher;
 import makmods.levelstorage.network.packet.PacketPressButton;
 import makmods.levelstorage.network.packet.PacketTextChanged;
 import makmods.levelstorage.network.packet.PacketTypeHandler;
@@ -12,6 +13,8 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
+
+import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -35,10 +38,8 @@ public class GuiWirelessPowerSync extends GuiContainer {
 		super.initGui();
 		int xGuiPos = (this.width - this.xSize) / 2; // j
 		int yGuiPos = (this.height - this.ySize) / 2;
-		this.buttonList.add(new GuiButton(1, xGuiPos + 50, yGuiPos + 35, 75,
-		        15, "Change mode"));
-		this.freqTextBox = new GuiTextField(0, this.fontRendererObj, xGuiPos + 50,
-		        yGuiPos + 15, 75, 15);
+		this.buttonList.add(new GuiButton(1, xGuiPos + 50, yGuiPos + 35, 75, 15, "Change mode"));
+		this.freqTextBox = new GuiTextField(0, this.fontRendererObj, xGuiPos + 50, yGuiPos + 15, 75, 15);
 		Keyboard.enableRepeatEvents(true);
 		this.freqTextBox.setMaxStringLength(4);
 		this.freqTextBox.setEnableBackgroundDrawing(false);
@@ -82,11 +83,15 @@ public class GuiWirelessPowerSync extends GuiContainer {
 				packetTC.z = this.tileEntity.getPos().getZ();
 				packetTC.textBoxId = 0;
 				packetTC.newText = this.freqTextBox.getText();
-				PacketDispatcher.sendPacketToServer(PacketTypeHandler
-				        .populatePacket(packetTC));
+				PacketDispatcher.sendPacketToServer(packetTC);
 			}
 		}
-		super.keyTyped(par1, par2);
+		try {
+			super.keyTyped(par1, par2);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -113,8 +118,7 @@ public class GuiWirelessPowerSync extends GuiContainer {
 		packet.y = this.tileEntity.getPos().getY();
 		packet.z = this.tileEntity.getPos().getZ();
 		packet.dimId = this.tileEntity.getWorld().provider.getDimension();
-		PacketDispatcher.sendPacketToServer(PacketTypeHandler
-		        .populatePacket(packet));
+		PacketDispatcher.sendPacketToServer(packet);
 	}
 
 	@Override

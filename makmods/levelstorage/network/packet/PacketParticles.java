@@ -7,11 +7,10 @@ import java.util.List;
 
 import makmods.levelstorage.network.PacketLS;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetworkManager;
+import net.minecraft.network.NetworkManager;
 
 import com.google.common.collect.Lists;
 
-import net.minecraftforge.fml.common.network.Player;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -73,11 +72,10 @@ public class PacketParticles extends PacketLS {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void execute(INetworkManager network, Player player) {
+	public void execute(NetworkManager network, EntityPlayer player) {
 		EntityPlayer p = (EntityPlayer) player;
 		for (ParticleInternal pi : particles) {
-			p.worldObj.spawnParticle(pi.name, pi.x, pi.y, pi.z, pi.velX,
-					pi.velY, pi.velZ);
+			p.worldObj.spawnParticle(pi.name, pi.x, pi.y, pi.z, pi.velX, pi.velY, pi.velZ);
 		}
 	}
 

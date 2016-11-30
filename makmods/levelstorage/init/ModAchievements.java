@@ -4,7 +4,6 @@ import makmods.levelstorage.LSBlockItemList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
-import net.minecraftforge.fml.common.registry.LanguageRegistry;
 
 public class ModAchievements {
 
@@ -33,14 +32,13 @@ public class ModAchievements {
 		 * FMLLog.severe(Reference.MOD_NAME +
 		 * ": failed to register achievement"); e.printStackTrace(); } }
 		 */
-		craftHelmet = new Achievement(736781, "tesla", 3, -4, new ItemStack(
-		        LSBlockItemList.itemArmorTeslaHelmet), null)
-		        .registerAchievement();
+		craftHelmet = new Achievement("tesla", "achievement.levelstorage.tesla", 3, -4, new ItemStack(LSBlockItemList.itemArmorTeslaHelmet), null);
+		/* LanguageRegistry -> Use resourcepack system instead
 		LanguageRegistry.instance().addStringLocalization("achievement.tesla",
 		        "Rays, rays everywhere!");
 		LanguageRegistry.instance().addStringLocalization(
-		        "achievement.tesla.desc", "Craft a tesla helmet.");
-		LEVEL_STORAGE_ACHIEVEMENT_PAGE = new AchievementPage("LevelStorage");
+		        "achievement.tesla.desc", "Craft a tesla helmet.");*/
+		LEVEL_STORAGE_ACHIEVEMENT_PAGE = new AchievementPage("LevelStorage", craftHelmet);
 		AchievementPage.registerAchievementPage(LEVEL_STORAGE_ACHIEVEMENT_PAGE);
 	}
 }
