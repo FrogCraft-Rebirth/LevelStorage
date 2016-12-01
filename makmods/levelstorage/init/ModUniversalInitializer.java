@@ -11,7 +11,6 @@ import makmods.levelstorage.logic.util.LogHelper;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -78,9 +77,9 @@ public class ModUniversalInitializer {
 			if (!resolveRegisterWith(f))
 				return;
 			Class<?> c = f.getType();
-			int id = 0;
+			int id = 0; //Assuming that all int parameter in Block/Item constructor are all meaningless now
 			FieldKind fk = getKindOfField(f);
-			if (fk == FieldKind.BLOCK)
+			/*if (fk == FieldKind.BLOCK)
 				id = LevelStorage.configuration.getBlock(f.getName(),
 						getNextBlockID()).getInt();
 			else if (fk == FieldKind.ITEM)
@@ -88,7 +87,7 @@ public class ModUniversalInitializer {
 						getNextItemID()).getInt();
 			else
 				LogHelper
-						.severe("object is neither item nor block. This is a bug!");
+						.severe("object is neither item nor block. This is a bug!");*/
 			Constructor<?> con = c.getConstructor(int.class);
 			f.set(null, con.newInstance(id));
 			Object obj = f.get(null);

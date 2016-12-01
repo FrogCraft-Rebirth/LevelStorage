@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.google.common.collect.Lists;
+
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.registry.SyncType;
 import net.minecraft.client.resources.I18n;
@@ -19,11 +21,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.OreDictionary;
-
-import com.google.common.collect.Lists;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class CommonHelper {
 	public static SyncType invertType(SyncType type) {

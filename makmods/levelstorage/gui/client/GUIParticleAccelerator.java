@@ -1,5 +1,7 @@
 package makmods.levelstorage.gui.client;
 
+import org.lwjgl.opengl.GL11;
+
 import ic2.api.item.IC2Items;
 import makmods.levelstorage.gui.container.ContainerParticleAccelerator;
 import makmods.levelstorage.item.SimpleItems.SimpleItemShortcut;
@@ -11,8 +13,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-
-import org.lwjgl.opengl.GL11;
 
 public class GUIParticleAccelerator extends GuiContainer {
 

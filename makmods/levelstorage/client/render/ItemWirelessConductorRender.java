@@ -1,12 +1,12 @@
 package makmods.levelstorage.client.render;
 
+import org.lwjgl.opengl.GL11;
+
 import makmods.levelstorage.logic.util.RenderHelper;
 import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
-
-import org.lwjgl.opengl.GL11;
 
 public class ItemWirelessConductorRender implements IItemRenderer {
 

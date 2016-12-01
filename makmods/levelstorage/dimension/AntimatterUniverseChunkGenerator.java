@@ -1,15 +1,11 @@
 package makmods.levelstorage.dimension;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 import makmods.levelstorage.LSBlockItemList;
-import makmods.levelstorage.dimension.worldgen.WorldGeneratorAsteroids;
 import makmods.levelstorage.dimension.worldgen.WorldGeneratorContinent;
-import makmods.levelstorage.dimension.worldgen.WorldGeneratorPillar;
-import makmods.levelstorage.dimension.worldgen.WorldGeneratorUUMFountain;
 import makmods.levelstorage.proxy.CommonProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
@@ -20,7 +16,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkGenerator;
-import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
 import net.minecraft.world.gen.feature.WorldGenLakes;

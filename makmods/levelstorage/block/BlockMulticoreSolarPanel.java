@@ -1,7 +1,6 @@
 package makmods.levelstorage.block;
 
 import ic2.api.recipe.Recipes;
-
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;

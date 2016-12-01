@@ -1,5 +1,7 @@
 package makmods.levelstorage.gui.client;
 
+import org.lwjgl.opengl.GL11;
+
 import makmods.levelstorage.gui.container.ContainerLavaFabricator;
 import makmods.levelstorage.logic.util.RenderHelper;
 import makmods.levelstorage.proxy.ClientProxy;
@@ -8,8 +10,6 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
-
-import org.lwjgl.opengl.GL11;
 
 public class GUILavaFabricator extends GuiContainer {
 

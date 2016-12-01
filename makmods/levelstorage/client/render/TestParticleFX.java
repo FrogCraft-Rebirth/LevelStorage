@@ -1,12 +1,12 @@
 package makmods.levelstorage.client.render;
 
+import org.lwjgl.opengl.GL11;
+
 import makmods.levelstorage.logic.util.RenderHelper;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.world.World;
-
-import org.lwjgl.opengl.GL11;
 
 public class TestParticleFX extends Particle {
 

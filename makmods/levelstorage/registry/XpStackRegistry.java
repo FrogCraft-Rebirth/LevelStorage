@@ -1,10 +1,9 @@
 package makmods.levelstorage.registry;
 
-import ic2.api.recipe.Recipes;
-
 import java.util.AbstractMap;
 import java.util.ArrayList;
 
+import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.api.XpStack;
 import makmods.levelstorage.lib.Reference;
@@ -13,9 +12,8 @@ import makmods.levelstorage.logic.util.LogHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.oredict.OreDictionary;
-
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class XpStackRegistry {
 

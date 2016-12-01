@@ -3,6 +3,8 @@ package makmods.levelstorage.dimension.worldgen;
 import java.util.List;
 import java.util.Random;
 
+import com.google.common.collect.Lists;
+
 import makmods.levelstorage.LSBlockItemList;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -12,11 +14,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraftforge.oredict.OreDictionary;
-
-import com.google.common.collect.Lists;
-
 import net.minecraftforge.fml.common.IWorldGenerator;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class WorldGeneratorPillar implements IWorldGenerator {
 

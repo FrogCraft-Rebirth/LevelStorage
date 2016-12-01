@@ -10,4 +10,5 @@ public class TileEntityMulticoreSolarPanel extends TileEntitySolarPanel {
 		//int dayPower, int nightPower, int storage, int tier
 		super(2048, 256, (int)2E8, 4);
 	}
+
 }

@@ -1,8 +1,13 @@
 package makmods.levelstorage.tileentity;
+import java.util.Arrays;
 import java.util.List;
+
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
-import ic2.api.energy.tile.*;
+import ic2.api.energy.tile.IEnergyAcceptor;
+import ic2.api.energy.tile.IEnergyEmitter;
+import ic2.api.energy.tile.IEnergySink;
+import ic2.api.energy.tile.IEnergySource;
 import ic2.api.tile.IWrenchable;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LevelStorage;
@@ -21,17 +26,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-
-import java.util.Arrays;
 
 public class TileEntityWirelessConductor extends TileEntity implements
 		IWirelessConductor, IInventory, ITickable, IEnergySink, IWrenchable,

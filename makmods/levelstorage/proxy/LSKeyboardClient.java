@@ -6,6 +6,12 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.lwjgl.input.Keyboard;
+
+import com.google.common.collect.Maps;
+
+import io.netty.buffer.Unpooled;
+import makmods.levelstorage.network.PacketDispatcher;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
@@ -13,12 +19,6 @@ import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import org.lwjgl.input.Keyboard;
-
-import com.google.common.collect.Maps;
-
-import io.netty.buffer.Unpooled;
-import makmods.levelstorage.network.PacketDispatcher;
 
 public class LSKeyboardClient extends LSKeyboard {
 

@@ -13,7 +13,7 @@ public class XpRegistryAPI {
 	private static Method m_pushOreToRegistry;
 
 	private static Object c_XpStackRegistry_instance;
-	private static Class c_XpStackRegistry_class;
+	private static Class<?> c_XpStackRegistry_class;
 
 	private static Field f_XpStackRegistry_conversions;
 

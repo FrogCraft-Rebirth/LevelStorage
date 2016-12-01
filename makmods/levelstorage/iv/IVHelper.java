@@ -1,8 +1,5 @@
 package makmods.levelstorage.iv;
 
-import makmods.levelstorage.init.LSFluids;
-import net.minecraftforge.fluids.FluidStack;
-
 public class IVHelper {
 	
 	public static IVStack createIV(int iv) {

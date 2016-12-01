@@ -1,14 +1,13 @@
 package makmods.levelstorage.armor;
 
-import ic2.api.item.ElectricItem;
-import ic2.api.item.IElectricItem;
-import ic2.api.item.IMetalArmor;
-import ic2.api.item.IC2Items;
-import ic2.api.recipe.Recipes;
-import ic2.api.util.Keys;
-
 import java.util.List;
 
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IC2Items;
+import ic2.api.item.IElectricItem;
+import ic2.api.item.IMetalArmor;
+import ic2.api.recipe.Recipes;
+import ic2.api.util.Keys;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;

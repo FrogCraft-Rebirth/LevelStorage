@@ -3,6 +3,8 @@ package makmods.levelstorage.dimension.worldgen;
 import java.util.List;
 import java.util.Random;
 
+import com.google.common.collect.Lists;
+
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.logic.IDMeta;
 import makmods.levelstorage.logic.util.LogHelper;
@@ -16,11 +18,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
-import net.minecraftforge.oredict.OreDictionary;
-
-import com.google.common.collect.Lists;
-
 import net.minecraftforge.fml.common.IWorldGenerator;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class WorldGeneratorAsteroids implements IWorldGenerator {
 

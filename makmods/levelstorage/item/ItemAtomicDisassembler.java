@@ -1,11 +1,12 @@
 package makmods.levelstorage.item;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
 import ic2.api.recipe.Recipes;
-
-import java.util.List;
-
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
@@ -20,33 +21,24 @@ import makmods.levelstorage.logic.util.NBTHelper.Cooldownable;
 import makmods.levelstorage.network.PacketDispatcher;
 import makmods.levelstorage.network.packet.PacketParticles;
 import makmods.levelstorage.network.packet.PacketParticles.ParticleInternal;
-import makmods.levelstorage.network.packet.PacketTypeHandler;
-import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.proxy.LSKeyboard;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.CPacketCustomPayload;
-import net.minecraft.world.World;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-
-import com.google.common.collect.Lists;
-
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.World;
+import net.minecraftforge.common.config.Configuration;
 
 public class ItemAtomicDisassembler extends Item implements IElectricItem,
 		IChargeable, IHasRecipe {
@@ -307,11 +299,11 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 			return;
 		for (BlockLocation blockLoc : removeBlocks) {
 			if (blockLoc != null) {
-				Block b = par2World.getBlockState(blockLoc.toBlockPos()).getBlock();
+				IBlockState bs = par2World.getBlockState(blockLoc.toBlockPos());
+				Block b = bs.getBlock();
 				int aimBlockMeta = b.getMetaFromState(par2World.getBlockState(blockLoc.toBlockPos()));
 				if (b != null) {
-					if (b.getBlockHardness(par2World, blockLoc.getX(),
-							blockLoc.getY(), blockLoc.getZ()) > 0.0F) {
+					if (b.getBlockHardness(bs, par2World, blockLoc.toBlockPos()) > 0.0F) {
 						if (b.removeBlockByPlayer(par2World, player,
 								blockLoc.getX(), blockLoc.getY(),
 								blockLoc.getZ())) {

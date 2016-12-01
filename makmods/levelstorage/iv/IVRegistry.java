@@ -1,7 +1,5 @@
 package makmods.levelstorage.iv;
 
-import ic2.api.item.IC2Items;
-
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Iterator;
@@ -9,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import ic2.api.item.IC2Items;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.iv.parsers.IRecipeParser;
 import makmods.levelstorage.iv.parsers.IVRecipeParser;
@@ -21,12 +23,8 @@ import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.oredict.OreDictionary;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * The heart of LevelStorage's IV system

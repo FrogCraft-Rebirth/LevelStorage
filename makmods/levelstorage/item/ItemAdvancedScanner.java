@@ -1,16 +1,17 @@
 package makmods.levelstorage.item;
 
-import ic2.api.item.ElectricItem;
-import ic2.api.item.IElectricItem;
-import ic2.api.item.IC2Items;
-import ic2.api.recipe.Recipes;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IC2Items;
+import ic2.api.item.IElectricItem;
+import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -24,7 +25,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class ItemAdvancedScanner extends Item implements IElectricItem, IHasRecipe {
 
@@ -40,24 +40,16 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 		super();
 		this.setMaxDamage(27);
 		this.setNoRepair();
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			this.setCreativeTab(LSCreativeTab.instance);
-		}
+		this.setCreativeTab(LSCreativeTab.instance);
 		this.setMaxStackSize(1);
 	}
 
 	public void addCraftingRecipe() {
-
-		ItemStack ovScanner = IC2Items.getItem("ovScanner");
-		ItemStack energyCrystal = IC2Items.getItem("energyCrystal");
-		ItemStack advCircuit = IC2Items.getItem("advancedCircuit");
-		ItemStack glassFiber = IC2Items.getItem("glassFiberCableItem");
+		ItemStack glassFiber = IC2Items.getItem("cable", "type:glass,insulation:0");
 		ItemStack advScanner = new ItemStack(LSBlockItemList.itemAdvScanner);
-		Recipes.advRecipes.addRecipe(advScanner, "ucu", "asa", "ggg",
-		        Character.valueOf('u'), advCircuit, Character.valueOf('g'),
-		        glassFiber, Character.valueOf('a'), advCircuit,
-		        Character.valueOf('c'), energyCrystal, Character.valueOf('s'),
-		        ovScanner);
+		Recipes.advRecipes.addRecipe(advScanner, "aca", "asa", "ggg", 'g', glassFiber, 'a',
+				IC2ItemsShortcut.ADV_CIRCUIT, 'c', IC2ItemsShortcut.ENERGY_CRYSTAL, 's',
+				IC2Items.getItem("advanced_scanner"));
 
 	}
 
@@ -98,7 +90,8 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand) {
+	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player,
+			EnumHand hand) {
 		if (!world.isRemote) {
 			if (ElectricItem.manager.canUse(itemStack, ENERGY_PER_USE)) {
 				ElectricItem.manager.use(itemStack, ENERGY_PER_USE, player);
@@ -126,8 +119,7 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 
 			this.printMessage("", player);
 			this.printMessage("", player);
-			this.printMessage("Found materials in " + RADIUS + "x" + RADIUS
-			        + " cubouid below you", player);
+			this.printMessage("Found materials in " + RADIUS + "x" + RADIUS + " cubouid below you", player);
 			this.printMessage("", player);
 			ArrayList<String> names = new ArrayList<>();
 			ArrayList<CollectedStatInfo> info = new ArrayList<>();
@@ -148,8 +140,7 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 							}
 						}
 						info.remove(indexAt);
-						info.add(new CollectedStatInfo(currentName,
-						        amountAlreadyHas + 1));
+						info.add(new CollectedStatInfo(currentName, amountAlreadyHas + 1));
 					}
 				}
 				// There will be a ton of these guys, let's ignore em
@@ -165,13 +156,11 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 	}
 
 	@Override
-	public void onUpdate(ItemStack par1ItemStack, World par2World,
-	        Entity par3Entity, int par4, boolean par5) {
+	public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5) {
 		if (!par2World.isRemote) {
 			verifyStack(par1ItemStack);
 			if (getNBTInt(par1ItemStack, NBT_COOLDOWN) > 0) {
-				setNBTInt(par1ItemStack, NBT_COOLDOWN,
-				        getNBTInt(par1ItemStack, NBT_COOLDOWN) - 1);
+				setNBTInt(par1ItemStack, NBT_COOLDOWN, getNBTInt(par1ItemStack, NBT_COOLDOWN) - 1);
 			}
 		}
 	}
@@ -199,20 +188,19 @@ public class ItemAdvancedScanner extends Item implements IElectricItem, IHasReci
 	@Override
 	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> stacks) {
 		ItemStack stack = new ItemStack(this, 1);
-		ElectricItem.manager.charge(stack, Integer.MAX_VALUE, Integer.MAX_VALUE,
-		        true, false);
+		ElectricItem.manager.charge(stack, Integer.MAX_VALUE, Integer.MAX_VALUE, true, false);
 		stacks.add(stack);
 		stacks.add(new ItemStack(this, 1, this.getMaxDamage()));
 
 	}
-/*
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
-		this.itemIcon = par1IconRegister
-		        .registerIcon(ClientProxy.ADV_SCANNER_TEXTURE);
-	}
-*/
+
+	/*
+	 * @Override
+	 * 
+	 * @SideOnly(Side.CLIENT) public void registerIcons(IconRegister
+	 * par1IconRegister) { this.itemIcon = par1IconRegister
+	 * .registerIcon(ClientProxy.ADV_SCANNER_TEXTURE); }
+	 */
 	public class CollectedStatInfo {
 		public int amount;
 		public String name;

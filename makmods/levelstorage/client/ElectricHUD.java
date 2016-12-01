@@ -2,7 +2,6 @@ package makmods.levelstorage.client;
 
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;

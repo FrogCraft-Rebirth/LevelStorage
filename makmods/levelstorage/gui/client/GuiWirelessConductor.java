@@ -1,5 +1,7 @@
 package makmods.levelstorage.gui.client;
 
+import org.lwjgl.opengl.GL11;
+
 import makmods.levelstorage.gui.container.ContainerWirelessConductor;
 import makmods.levelstorage.logic.util.RenderHelper;
 import makmods.levelstorage.network.PacketDispatcher;
@@ -10,8 +12,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
-
-import org.lwjgl.opengl.GL11;
 
 public class GuiWirelessConductor extends GuiContainer {
 

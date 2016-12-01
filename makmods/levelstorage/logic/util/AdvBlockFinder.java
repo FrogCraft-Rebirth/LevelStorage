@@ -3,14 +3,14 @@ package makmods.levelstorage.logic.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
-
-import com.google.common.collect.Lists;
 
 /**
  * A pending replace for OreFinder.

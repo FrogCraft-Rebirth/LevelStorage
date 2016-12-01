@@ -1,15 +1,15 @@
 package makmods.levelstorage.block;
 
-import ic2.api.item.IC2Items;
-import ic2.api.recipe.Recipes;
-
 import java.util.Random;
 
+import ic2.api.item.IC2Items;
+import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.item.ItemFrequencyCard;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.logic.util.NBTHelper;
 import makmods.levelstorage.tileentity.TileEntityWirelessConductor;
 import net.minecraft.block.BlockContainer;
@@ -18,8 +18,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,7 +30,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -38,19 +37,17 @@ public class BlockWirelessConductor extends BlockContainer implements IHasRecipe
 
 	public BlockWirelessConductor(int id) {
 		super(Material.IRON);
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			this.setCreativeTab(LSCreativeTab.instance);
-		}
+		this.setCreativeTab(LSCreativeTab.instance);
 		this.setSoundType(SoundType.METAL);
 		this.setHardness(3.0F);
 		TileEntityWirelessConductor.getConfig();
 	}
-	
+
 	@Override
 	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
 		return new AxisAlignedBB(0F, 0F, 0F, 1F, 0.375F, 1F);
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
@@ -59,25 +56,17 @@ public class BlockWirelessConductor extends BlockContainer implements IHasRecipe
 
 	@Override
 	public void addCraftingRecipe() {
-		ItemStack frequencyTr = IC2Items.getItem("frequencyTransmitter");
-		ItemStack transformerHv = IC2Items.getItem("hvTransformer");
-		ItemStack advCircuit = IC2Items.getItem("advancedCircuit");
-		ItemStack advMachine = IC2Items.getItem("advancedMachine");
-		ItemStack enderPearl = new ItemStack(Items.ENDER_PEARL);
-		Recipes.advRecipes.addRecipe(new ItemStack(
-		        LSBlockItemList.blockWlessConductor), "tmt", "cec", "chc",
-		        Character.valueOf('t'), frequencyTr, Character.valueOf('e'),
-		        enderPearl, Character.valueOf('c'), advCircuit, Character
-		                .valueOf('h'), transformerHv, Character.valueOf('m'),
-		        advMachine);
-
+		ItemStack frequencyTr = IC2Items.getItem("frequency_transmitter");
+		ItemStack transformerHv = IC2Items.getItem("te", "hv_transformer");
+		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.blockWlessConductor), "tmt", "cec", "chc", 
+				't', frequencyTr, 'e', new ItemStack(Items.ENDER_PEARL), 'c', IC2ItemsShortcut.ADV_CIRCUIT, 'h',
+				transformerHv, 'm', IC2ItemsShortcut.ADV_MACHINE);
 	}
-/*
-	private Icon down;
-	private Icon up;
-	private Icon side;*/
+	/*
+	 * private Icon down; private Icon up; private Icon side;
+	 */
 
-	public ItemStack advMachine = IC2Items.getItem("advancedMachine");
+	public ItemStack advMachine = IC2Items.getItem("resource", "advanced_machine");
 
 	// You don't want the normal render type, or it wont render properly.
 	@Override
@@ -129,12 +118,11 @@ public class BlockWirelessConductor extends BlockContainer implements IHasRecipe
 				float ry = rand.nextFloat() * 0.8F + 0.1F;
 				float rz = rand.nextFloat() * 0.8F + 0.1F;
 
-				EntityItem entityItem = new EntityItem(world, pos.getX() + rx, 
-					pos.getY() + ry, pos.getZ() + rz, item.copy());
+				EntityItem entityItem = new EntityItem(world, pos.getX() + rx, pos.getY() + ry, pos.getZ() + rz,
+						item.copy());
 
 				if (item.hasTagCompound()) {
-					entityItem.getEntityItem().setTagCompound(
-					        (NBTTagCompound) item.getTagCompound().copy());
+					entityItem.getEntityItem().setTagCompound((NBTTagCompound) item.getTagCompound().copy());
 				}
 
 				float factor = 0.05F;
@@ -148,9 +136,8 @@ public class BlockWirelessConductor extends BlockContainer implements IHasRecipe
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, 
-			EntityPlayer player, EnumHand hand, ItemStack heldItem, 
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+			ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
 			ItemStack stack = player.inventory.getCurrentItem();
 			boolean isEmptyCard = false;
@@ -161,8 +148,7 @@ public class BlockWirelessConductor extends BlockContainer implements IHasRecipe
 				}
 			}
 			if (isEmptyCard) {
-				LevelStorage.proxy.messagePlayer(player, "Card data set",
-				        new Object[0]);
+				LevelStorage.proxy.messagePlayer(player, "Card data set", new Object[0]);
 				return false;
 			}
 		}
@@ -171,7 +157,7 @@ public class BlockWirelessConductor extends BlockContainer implements IHasRecipe
 		else {
 			if (!world.isRemote) {
 				TileEntityWirelessConductor tileWirelessConductor = (TileEntityWirelessConductor) world
-				        .getTileEntity(pos);
+						.getTileEntity(pos);
 				if (tileWirelessConductor != null) {
 					player.openGui(LevelStorage.instance, 52, world, pos.getX(), pos.getY(), pos.getZ());
 				}

@@ -1,13 +1,12 @@
 package makmods.levelstorage.item;
 
-import ic2.api.item.ElectricItem;
-import ic2.api.item.IElectricItem;
-import ic2.api.recipe.Recipes;
-
 import java.util.List;
 
 import com.google.common.collect.ImmutableSet;
 
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IElectricItem;
+import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.init.IHasRecipe;

@@ -1,20 +1,17 @@
 package makmods.levelstorage.item;
 
+import java.util.List;
+
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
 import ic2.api.recipe.Recipes;
-
-import java.util.List;
-
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
-import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.armor.ArmorFunctions;
 import makmods.levelstorage.armor.ItemArmorLevitationBoots;
 import makmods.levelstorage.armor.ItemArmorTeslaHelmet;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.lib.IC2ItemsShortcut;
-import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

@@ -3,6 +3,8 @@ package makmods.levelstorage.init;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.common.collect.Maps;
+
 import makmods.levelstorage.tileentity.TileEntityASU;
 import makmods.levelstorage.tileentity.TileEntityIVGenerator;
 import makmods.levelstorage.tileentity.TileEntityLavaFabricator;
@@ -14,9 +16,6 @@ import makmods.levelstorage.tileentity.TileEntitySuperconductorCable;
 import makmods.levelstorage.tileentity.TileEntityWirelessConductor;
 import makmods.levelstorage.tileentity.TileEntityWirelessPowerSynchronizer;
 import net.minecraft.tileentity.TileEntity;
-
-import com.google.common.collect.Maps;
-
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**

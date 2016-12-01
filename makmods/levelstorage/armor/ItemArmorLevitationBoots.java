@@ -1,19 +1,18 @@
 package makmods.levelstorage.armor;
 
+import java.util.List;
+
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
 import ic2.api.item.IMetalArmor;
-import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
-
-import java.util.List;
-
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.api.IFlyArmor;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.item.ItemQuantumRing;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.network.PacketDispatcher;
 import makmods.levelstorage.network.PacketFlightUpdate;
 import makmods.levelstorage.proxy.CommonProxy;
@@ -126,8 +125,8 @@ public class ItemArmorLevitationBoots extends ItemArmor implements
 	public void addCraftingRecipe() {
 		Recipes.advRecipes.addRecipe(new ItemStack(
 				LSBlockItemList.itemLevitationBoots), "iii", "iqi", "lil",
-				Character.valueOf('i'), makmods.levelstorage.lib.IC2ItemsShortcut.IRIDIUM_PLATE, 
-				Character.valueOf('q'), IC2Items.getItem("quantumBoots"), 
+				Character.valueOf('i'), IC2ItemsShortcut.IRIDIUM_PLATE, 
+				Character.valueOf('q'), IC2ItemsShortcut.QUANTUM_BOOTS, 
 				Character.valueOf('l'), new ItemStack(
 						LSBlockItemList.itemStorageFourtyMillion));
 

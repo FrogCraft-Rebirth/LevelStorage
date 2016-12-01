@@ -1,5 +1,8 @@
 package makmods.levelstorage.tileentity.template;
 
+import java.util.Arrays;
+import java.util.List;
+
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergyAcceptor;
@@ -29,9 +32,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-
-import java.util.Arrays;
-import java.util.List;
 
 public abstract class TileEntityAdvanced extends TileEntity implements
 		IEnergySource, IEnergyStorage, IEnergySink, IWrenchable, IInventory,

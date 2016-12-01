@@ -1,19 +1,16 @@
 package makmods.levelstorage.item;
 
-import ic2.api.recipe.Recipes;
-
 import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
-import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.armor.ArmorFunctions;
 import makmods.levelstorage.armor.ItemArmorLevitationBoots;
 import makmods.levelstorage.armor.ItemArmorTeslaHelmet;
 import makmods.levelstorage.item.SimpleItems.SimpleItemShortcut;
-import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,9 +33,8 @@ public class ItemAntimatterRing extends ItemQuantumRing {
 	}*/
 
 	@Override
-	public void addInformation(ItemStack par1ItemStack,
-			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
-		par3List.add(TextFormatting.DARK_PURPLE + I18n.format("tooltip.antimatterring"));
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltips, boolean adv) {
+		tooltips.add(TextFormatting.DARK_PURPLE + I18n.format("tooltip.antimatterring"));
 	}
 
 	public void onUpdate(ItemStack itemStack, World world, Entity par3Entity,

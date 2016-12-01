@@ -1,10 +1,11 @@
 package makmods.levelstorage.block;
 
-import ic2.api.item.IC2Items;
-import ic2.api.recipe.Recipes;
-
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import ic2.api.item.IC2Items;
+import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.block.item.ItemBlockRockDesintegrator;
 import makmods.levelstorage.init.CustomItemBlock;
@@ -16,8 +17,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidRegistry;
-
-import com.google.common.collect.Lists;
 
 @CustomItemBlock(itemBlock=ItemBlockRockDesintegrator.class)
 public class BlockRockDesintegrator extends BlockMachineStandart implements IHasRecipe {

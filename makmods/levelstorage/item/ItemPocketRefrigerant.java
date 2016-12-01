@@ -1,15 +1,14 @@
 package makmods.levelstorage.item;
 
-import ic2.api.item.ElectricItem;
-import ic2.api.item.IC2Items;
-import ic2.api.item.IElectricItem;
-import ic2.api.recipe.Recipes;
-
 import java.util.List;
 
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IElectricItem;
+import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.init.IHasRecipe;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -27,7 +26,6 @@ public class ItemPocketRefrigerant extends Item implements IElectricItem, IHasRe
 
 	public ItemPocketRefrigerant(int id) {
 		super();
-
 		this.setMaxDamage(27);
 		this.setNoRepair();
 		this.setCreativeTab(LSCreativeTab.instance);
@@ -37,10 +35,10 @@ public class ItemPocketRefrigerant extends Item implements IElectricItem, IHasRe
 	public void addCraftingRecipe() {
 		Recipes.advRecipes.addShapelessRecipe(new ItemStack(LSBlockItemList.itemPocketRefrigerant),
 				new ItemStack(Blocks.ICE), new ItemStack(Blocks.ICE), new ItemStack(Blocks.ICE),
-				new ItemStack(Blocks.ICE), IC2Items.getItem("advancedCircuit"), IC2Items.getItem("reBattery"));
+				new ItemStack(Blocks.ICE), IC2ItemsShortcut.ADV_CIRCUIT, IC2ItemsShortcut.RE_BATTERY_CHARGED);
 		Recipes.advRecipes.addShapelessRecipe(new ItemStack(LSBlockItemList.itemPocketRefrigerant),
-				new ItemStack(Blocks.ICE), new ItemStack(Blocks.ICE), new ItemStack(Blocks.ICE),
-				new ItemStack(Blocks.ICE), IC2Items.getItem("advancedCircuit"), IC2Items.getItem("chargedReBattery"));
+				new ItemStack(Blocks.PACKED_ICE), new ItemStack(Blocks.PACKED_ICE), new ItemStack(Blocks.PACKED_ICE),
+				new ItemStack(Blocks.PACKED_ICE), IC2ItemsShortcut.ADV_CIRCUIT, IC2ItemsShortcut.RE_BATTERY_CHARGED);
 	}
 
 	@Override

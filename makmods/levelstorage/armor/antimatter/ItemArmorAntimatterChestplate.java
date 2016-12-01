@@ -1,10 +1,9 @@
 package makmods.levelstorage.armor.antimatter;
 
-import ic2.api.item.ElectricItem;
-import ic2.api.recipe.Recipes;
-
 import java.util.List;
 
+import ic2.api.item.ElectricItem;
+import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.item.SimpleItems.SimpleItemShortcut;
@@ -15,8 +14,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ItemArmorAntimatterChestplate extends ItemArmorAntimatterBase
 		implements IHasRecipe {

@@ -1,11 +1,10 @@
 package makmods.levelstorage.armor;
 
-import ic2.api.item.ElectricItem;
-import ic2.api.util.Keys;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import ic2.api.item.ElectricItem;
+import ic2.api.util.Keys;
 import makmods.levelstorage.api.event.BootsFlyingEvent;
 import makmods.levelstorage.armor.antimatter.ItemArmorAntimatterBase;
 import makmods.levelstorage.lib.Reference;
@@ -21,12 +20,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 
 /**

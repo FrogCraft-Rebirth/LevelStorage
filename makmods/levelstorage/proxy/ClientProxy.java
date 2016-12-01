@@ -1,25 +1,15 @@
 package makmods.levelstorage.proxy;
 
-import makmods.levelstorage.LSBlockItemList;
-import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
-import makmods.levelstorage.armor.ItemArmorEnhancedNanoChestplate;
-import makmods.levelstorage.armor.antimatter.ItemArmorAntimatterBase;
 import makmods.levelstorage.client.ElectricHUD;
-import makmods.levelstorage.client.render.ItemRendererAtomicDisassembler;
-import makmods.levelstorage.client.render.ItemWirelessConductorRender;
-import makmods.levelstorage.client.render.RenderSuperconductorCable;
 import makmods.levelstorage.client.render.WirelessConductorRender;
 import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.tileentity.TileEntityWirelessConductor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

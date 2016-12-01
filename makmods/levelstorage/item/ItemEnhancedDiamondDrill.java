@@ -1,23 +1,24 @@
 package makmods.levelstorage.item;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import ic2.api.item.ElectricItem;
-import ic2.api.item.IC2Items;
-import ic2.api.item.IElectricItem;
-import ic2.api.recipe.Recipes;
-import ic2.api.util.Keys;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IC2Items;
+import ic2.api.item.IElectricItem;
+import ic2.api.recipe.Recipes;
+import ic2.api.util.Keys;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.logic.DrillEnhancementRecipe;
 import makmods.levelstorage.logic.util.AdvBlockFinder;
@@ -37,7 +38,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
@@ -194,11 +194,11 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 	public void addCraftingRecipe() {
 		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.itemEnhDiamondDrill),
 				"cdc", "did", "aea",
-					'c', IC2Items.getItem("carbonPlate"),
-					'e', IC2Items.getItem("advBattery"),
-					'i', IC2Items.getItem("diamondDrill"),
-					'a', IC2Items.getItem("advancedCircuit"),
-					'd', new ItemStack(Items.DIAMOND)); //todo: oredict
+					'c', IC2ItemsShortcut.CARBON_PLATE,
+					'e', IC2Items.getItem("advanced_re_battery"),
+					'i', IC2Items.getItem("diamond_drill"),
+					'a', IC2ItemsShortcut.ADV_CIRCUIT,
+					'd', "gemDiamond");
 		CraftingManager.getInstance().getRecipeList().add(new DrillEnhancementRecipe());
 	}
 

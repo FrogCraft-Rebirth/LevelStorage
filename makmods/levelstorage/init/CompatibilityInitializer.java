@@ -16,12 +16,11 @@ public class CompatibilityInitializer {
 		try {
 			String classname = "makmods.levelstorage.compat." + name
 					+ ".CompatibilityLoader";
-			Class compat = Class.forName(classname);
+			Class<?> compat = Class.forName(classname);
 			Method load = compat.getMethod("load");
 			load.invoke(null);
 		} catch (Exception e) {
-			LogHelper.severe(String
-					.format("Failed to load compatibility submodule %s"));
+			LogHelper.severe(String.format("Failed to load compatibility submodule %s"));
 			e.printStackTrace();
 		}
 	}

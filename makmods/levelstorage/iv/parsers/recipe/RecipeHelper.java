@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.google.common.collect.Lists;
+
 import makmods.levelstorage.iv.IVRegistry;
 import makmods.levelstorage.logic.util.LogHelper;
 import net.minecraft.item.ItemStack;
@@ -14,8 +16,6 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
-
-import com.google.common.collect.Lists;
 
 public class RecipeHelper {
 

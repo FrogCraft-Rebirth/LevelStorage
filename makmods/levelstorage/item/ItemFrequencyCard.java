@@ -1,10 +1,9 @@
 package makmods.levelstorage.item;
 
-import ic2.api.item.IC2Items;
-import ic2.api.recipe.Recipes;
-
 import java.util.List;
 
+import ic2.api.item.IC2Items;
+import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.init.IHasRecipe;
@@ -36,7 +35,7 @@ public class ItemFrequencyCard extends Item implements IHasRecipe {
 
 	public void addCraftingRecipe() {
 		// Frequency card
-		ItemStack frequencyTr = IC2Items.getItem("frequencyTransmitter");
+		ItemStack frequencyTr = IC2Items.getItem("frequency_transmitter");
 		Recipes.advRecipes.addShapelessRecipe(new ItemStack(
 		        LSBlockItemList.itemFreqCard), frequencyTr, new ItemStack(
 				Items.PAPER));

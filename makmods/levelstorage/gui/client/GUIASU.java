@@ -1,5 +1,7 @@
 package makmods.levelstorage.gui.client;
 
+import org.lwjgl.opengl.GL11;
+
 import makmods.levelstorage.gui.container.ContainerASU;
 import makmods.levelstorage.logic.util.RenderHelper;
 import makmods.levelstorage.proxy.ClientProxy;
@@ -7,8 +9,6 @@ import makmods.levelstorage.tileentity.TileEntityASU;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
-
-import org.lwjgl.opengl.GL11;
 
 public class GUIASU extends GuiContainer {
 

@@ -3,14 +3,13 @@ package makmods.levelstorage.registry;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.common.collect.Maps;
+
 import makmods.levelstorage.armor.ItemArmorLevitationBoots;
 import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.network.PacketDispatcher;
 import makmods.levelstorage.network.PacketFlightUpdate;
 import net.minecraft.entity.player.EntityPlayer;
-
-import com.google.common.collect.Maps;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;

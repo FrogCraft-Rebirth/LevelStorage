@@ -1,11 +1,15 @@
 package makmods.levelstorage.gui.client;
 
+import java.io.IOException;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
+
 import makmods.levelstorage.gui.container.ContainerPowerSync;
 import makmods.levelstorage.logic.util.RenderHelper;
 import makmods.levelstorage.network.PacketDispatcher;
 import makmods.levelstorage.network.packet.PacketPressButton;
 import makmods.levelstorage.network.packet.PacketTextChanged;
-import makmods.levelstorage.network.packet.PacketTypeHandler;
 import makmods.levelstorage.registry.SyncType;
 import makmods.levelstorage.tileentity.TileEntityWirelessPowerSynchronizer;
 import net.minecraft.client.gui.GuiButton;
@@ -13,11 +17,6 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
-
-import java.io.IOException;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 public class GuiWirelessPowerSync extends GuiContainer {
 

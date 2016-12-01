@@ -1,12 +1,12 @@
 package makmods.levelstorage.client.render;
 
+import org.lwjgl.opengl.GL11;
+
 import makmods.levelstorage.logic.util.RenderHelper;
 import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
-
-import org.lwjgl.opengl.GL11;
 
 public class MassInfuserRender extends TileEntitySpecialRenderer {
 	// Model is the same, i see no sense in simple codecloning

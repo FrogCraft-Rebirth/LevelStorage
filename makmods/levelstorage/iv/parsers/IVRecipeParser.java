@@ -1,5 +1,9 @@
 package makmods.levelstorage.iv.parsers;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import ic2.api.recipe.IMachineRecipeManager;
 import ic2.api.recipe.IMachineRecipeManager.RecipeIoContainer;
 import ic2.api.recipe.IRecipeInput;
@@ -7,9 +11,6 @@ import ic2.api.recipe.RecipeInputItemStack;
 import ic2.api.recipe.RecipeInputOreDict;
 import ic2.api.recipe.RecipeOutput;
 import ic2.api.recipe.Recipes;
-
-import java.util.List;
-
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.iv.IVEntry;
 import makmods.levelstorage.iv.IVItemStackEntry;
@@ -22,8 +23,6 @@ import makmods.levelstorage.logic.util.LogHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
-
-import com.google.common.collect.Lists;
 
 public class IVRecipeParser implements IRecipeParser {
 

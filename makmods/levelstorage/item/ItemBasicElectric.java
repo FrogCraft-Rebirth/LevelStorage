@@ -1,10 +1,9 @@
 package makmods.levelstorage.item;
 
-import ic2.api.item.ElectricItem;
-import ic2.api.item.IElectricItem;
-
 import java.util.List;
 
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IElectricItem;
 import makmods.levelstorage.LSCreativeTab;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;

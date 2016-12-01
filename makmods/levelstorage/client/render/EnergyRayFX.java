@@ -3,8 +3,9 @@ package makmods.levelstorage.client.render;
 import java.util.List;
 import java.util.Random;
 
+import org.lwjgl.opengl.GL11;
+
 import makmods.levelstorage.logic.LSDamageSource;
-import makmods.levelstorage.logic.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.Tessellator;
@@ -14,9 +15,6 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -114,13 +112,12 @@ public class EnergyRayFX extends Particle {
 		if (this.impact > 0)
 			this.impact -= 1;
 
-		List entities = this.worldObj.getEntitiesWithinAABB(EntityMob.class,
+		List<EntityMob> mobs = this.worldObj.getEntitiesWithinAABB(EntityMob.class,
 				new AxisAlignedBB(tX - 4, tY - 4, tZ - 4, tX + 4,
 						tY + 4, tZ + 4));
 
-		for (Object obj : entities) {
-			((EntityMob) obj).attackEntityFrom(LSDamageSource.teslaRay, 10);
-		}
+		
+		mobs.forEach(mob -> mob.attackEntityFrom(LSDamageSource.teslaRay, 10));
 
 		if (this.particleAge++ >= this.particleMaxAge) {
 			this.setExpired(); //Per Entity#setDead()

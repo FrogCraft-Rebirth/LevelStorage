@@ -1,10 +1,9 @@
 package makmods.levelstorage.armor.antimatter;
 
-import ic2.api.item.ElectricItem;
-import ic2.api.item.IElectricItem;
-
 import java.util.List;
 
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IElectricItem;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.armor.ArmorFunctions;
 import makmods.levelstorage.armor.ItemArmorLevitationBoots;

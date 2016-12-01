@@ -1,12 +1,11 @@
 package makmods.levelstorage.command;
 
-import ic2.api.item.ElectricItem;
-import ic2.api.item.IElectricItem;
-
 import java.util.List;
 
 import javax.annotation.Nullable;
 
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IElectricItem;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

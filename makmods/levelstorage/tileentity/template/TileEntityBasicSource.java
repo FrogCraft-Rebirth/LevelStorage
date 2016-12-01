@@ -1,5 +1,8 @@
 package makmods.levelstorage.tileentity.template;
 
+import java.util.Arrays;
+import java.util.List;
+
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergyAcceptor;
@@ -19,9 +22,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * 

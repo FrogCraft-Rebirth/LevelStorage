@@ -1,13 +1,13 @@
 package makmods.levelstorage.gui.client;
 
+import org.lwjgl.opengl.GL11;
+
 import makmods.levelstorage.gui.container.ContainerMassMelter;
 import makmods.levelstorage.logic.util.RenderHelper;
 import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.tileentity.TileEntityMassMelter;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
-
-import org.lwjgl.opengl.GL11;
 
 /**
  * TODO: add a fancier processing GUI

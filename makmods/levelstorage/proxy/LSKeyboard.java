@@ -3,11 +3,11 @@ package makmods.levelstorage.proxy;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.common.collect.Maps;
+
 import makmods.levelstorage.LevelStorage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-
-import com.google.common.collect.Maps;
 
 public class LSKeyboard {
 	

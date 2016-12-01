@@ -2,10 +2,10 @@ package makmods.levelstorage.tileentity.template;
 
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
-import com.google.common.collect.Maps;
 
 public abstract class TileEntityBasicMachine extends TileEntityInventorySink {
 
