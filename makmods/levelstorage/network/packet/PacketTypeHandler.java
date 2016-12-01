@@ -3,9 +3,14 @@ package makmods.levelstorage.network.packet;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
+import io.netty.buffer.Unpooled;
+import makmods.levelstorage.lib.Reference;
 //import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.network.PacketFlightUpdate;
 import makmods.levelstorage.network.PacketLS;
+import net.minecraft.network.Packet;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.client.CPacketCustomPayload;
 //import net.minecraft.network.Packet;
 //import net.minecraft.network.play.client.CPacketCustomPayload;
 
@@ -59,17 +64,17 @@ public enum PacketTypeHandler {
 
 		return packet;
 	}
-/*
+
 	public static Packet<?> populatePacket(PacketLS packetLV) {
 
 		byte[] data = packetLV.populate();
 
-		CPacketCustomPayload packet250 = new CPacketCustomPayload();
-		packet250.channel = Reference.MOD_ID;
+		CPacketCustomPayload packet250 = new CPacketCustomPayload(Reference.MOD_ID, new PacketBuffer(Unpooled.wrappedBuffer(data)));
+		/*packet250.channel = Reference.MOD_ID;
 		packet250.data = data;
 		packet250.length = data.length;
-		packet250.isChunkDataPacket = packetLV.isChunkDataPacket;
+		packet250.isChunkDataPacket = packetLV.isChunkDataPacket;*/
 
 		return packet250;
-	}*/
+	}
 }

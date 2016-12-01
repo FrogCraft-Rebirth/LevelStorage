@@ -16,6 +16,7 @@ public enum PacketHandler {
 
 	PacketHandler() {
 		this.channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(Reference.MOD_ID);
+		channel.register(this);
 	}
 
 	@SubscribeEvent // There seems to be three different channels. Should merge into one.

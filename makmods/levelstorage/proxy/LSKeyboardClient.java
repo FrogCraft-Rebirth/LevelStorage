@@ -8,12 +8,17 @@ import java.util.Map.Entry;
 
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
-
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
 import com.google.common.collect.Maps;
+
+import io.netty.buffer.Unpooled;
+import makmods.levelstorage.network.PacketDispatcher;
 
 public class LSKeyboardClient extends LSKeyboard {
 
@@ -47,16 +52,18 @@ public class LSKeyboardClient extends LSKeyboard {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		byte[] data = bos.toByteArray();
+		byte[] data = bos.toByteArray();/*
 		Packet250CustomPayload packet = new Packet250CustomPayload();
 		packet.channel = LSKeyboard.PACKET_KEYBOARD_CHANNEL;
 		packet.isChunkDataPacket = false;
 		packet.data = data;
 		packet.length = data.length;
+		PacketDispatcher.sendPacketToServer(packet);*/
+		CPacketCustomPayload packet = new CPacketCustomPayload(LSKeyboard.PACKET_KEYBOARD_CHANNEL, new PacketBuffer(Unpooled.wrappedBuffer(data)));
 		PacketDispatcher.sendPacketToServer(packet);
 	}
 
-	@Override
+	@SubscribeEvent
 	public void tickStart(TickEvent.PlayerTickEvent event) {
 		if (!(event.phase == TickEvent.Phase.START))
 			return;

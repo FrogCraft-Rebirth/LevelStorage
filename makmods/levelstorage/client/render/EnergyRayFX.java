@@ -8,6 +8,7 @@ import makmods.levelstorage.logic.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -223,14 +224,13 @@ public class EnergyRayFX extends Particle {
 			double var37 = this.length * size * var9 + var35;
 
 			GL11.glRotatef(60.0F, 0.0F, 1.0F, 0.0F);
-			tessellator.startDrawingQuads();
-			tessellator.setBrightness(200);
-			tessellator.setColorRGBA_F(this.particleRed, this.particleGreen,
-					this.particleBlue, op);
-			tessellator.addVertexWithUV(var44b, var29, 0.0D, var33, var37);
-			tessellator.addVertexWithUV(var44, 0.0D, 0.0D, var33, var35);
-			tessellator.addVertexWithUV(var17, 0.0D, 0.0D, var31, var35);
-			tessellator.addVertexWithUV(var17b, var29, 0.0D, var31, var37);
+			tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+			//tessellator.setBrightness(200);
+			tessellator.getBuffer().color(this.particleRed, this.particleGreen, this.particleBlue, op);
+			tessellator.getBuffer().pos(var44b, var29, 0.0D).tex(var33, var37);
+			tessellator.getBuffer().pos(var44, 0.0D, 0.0D).tex(var33, var35);
+			tessellator.getBuffer().pos(var17, 0.0D, 0.0D).tex(var31, var35);
+			tessellator.getBuffer().pos(var17b, var29, 0.0D).tex(var31, var37);
 			tessellator.draw();
 		}
 
@@ -244,7 +244,7 @@ public class EnergyRayFX extends Particle {
 			renderImpact(tessellator, f, f1, f2, f3, f4, f5);
 
 		// RenderHelper.bindTexture(ClientProxy.TESLA_PARTICLES_TEXTURE);
-		tessellator.startDrawingQuads();
+		tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 		this.prevSize = size;
 		GL11.glDisable(2884);
 		GL11.glPopMatrix();
@@ -271,18 +271,17 @@ public class EnergyRayFX extends Particle {
 		float var15 = (float) (this.ptZ + (this.tZ - this.ptZ) * f - this.interpPosZ);
 		float var16 = 1.0F;
 
-		tessellator.startDrawingQuads();
-		tessellator.setBrightness(200);
-		tessellator.setColorRGBA_F(this.particleRed, this.particleGreen,
-				this.particleBlue, 0.66F);
-		tessellator.addVertexWithUV(var13 - f1 * var12 - f4 * var12, var14 - f2
-				* var12, var15 - f3 * var12 - f5 * var12, var9, var11);
-		tessellator.addVertexWithUV(var13 - f1 * var12 + f4 * var12, var14 + f2
-				* var12, var15 - f3 * var12 + f5 * var12, var9, var10);
-		tessellator.addVertexWithUV(var13 + f1 * var12 + f4 * var12, var14 + f2
-				* var12, var15 + f3 * var12 + f5 * var12, var8, var10);
-		tessellator.addVertexWithUV(var13 + f1 * var12 - f4 * var12, var14 - f2
-				* var12, var15 + f3 * var12 - f5 * var12, var8, var11);
+		tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+		//tessellator.setBrightness(200);
+		tessellator.getBuffer().color(this.particleRed, this.particleGreen, this.particleBlue, 0.66F);
+		tessellator.getBuffer().pos(var13 - f1 * var12 - f4 * var12, var14 - f2
+				* var12, var15 - f3 * var12 - f5 * var12).tex(var9, var11);
+		tessellator.getBuffer().pos(var13 - f1 * var12 + f4 * var12, var14 + f2
+				* var12, var15 - f3 * var12 + f5 * var12).tex(var9, var10);
+		tessellator.getBuffer().pos(var13 + f1 * var12 + f4 * var12, var14 + f2
+				* var12, var15 + f3 * var12 + f5 * var12).tex(var8, var10);
+		tessellator.getBuffer().pos(var13 + f1 * var12 - f4 * var12, var14 - f2
+				* var12, var15 + f3 * var12 - f5 * var12).tex(var8, var11);
 
 		tessellator.draw();
 

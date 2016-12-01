@@ -14,9 +14,8 @@ import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.api.IFlyArmor;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.item.ItemQuantumRing;
-import makmods.levelstorage.item.SimpleItems;
+import makmods.levelstorage.network.PacketDispatcher;
 import makmods.levelstorage.network.PacketFlightUpdate;
-import makmods.levelstorage.network.packet.PacketTypeHandler;
 import makmods.levelstorage.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -29,15 +28,11 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.PacketDispatcher;
-import net.minecraftforge.fml.common.network.Player;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -113,8 +108,7 @@ public class ItemArmorLevitationBoots extends ItemArmor implements
 				PacketFlightUpdate flUpd = new PacketFlightUpdate();
 				flUpd.allowFlying = false;
 				flUpd.isFlying = false;
-				PacketDispatcher.sendPacketToPlayer(
-						PacketTypeHandler.populatePacket(flUpd), (Player) p);
+				PacketDispatcher.sendPacketToPlayer(flUpd, p);
 				return false;
 			}
 		} else {

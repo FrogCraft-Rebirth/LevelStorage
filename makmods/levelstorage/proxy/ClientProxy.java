@@ -115,8 +115,8 @@ public class ClientProxy extends CommonProxy {
 	public static final String ARMOR_LEVITATION_BOOTS_TEXTURE = "/textures/models/armor/supersonic_layer_1.png";
 
 	// Custom renders
-	public static final int CABLE_RENDER_ID = RenderingRegistry
-			.getNextAvailableRenderId();
+	//public static final int CABLE_RENDER_ID = RenderingRegistry
+	//		.getNextAvailableRenderId();
 	public static final ResourceLocation TESLA_RAY_1 = getResourceLocation("misc/tesla.png");
 	public static final ResourceLocation SUN_TEXTURE = getResourceLocation("misc/microstar.png");
 
@@ -151,16 +151,13 @@ public class ClientProxy extends CommonProxy {
 				.addNewArmourRendererPrefix("antimatter");
 		LSCreativeTab.instance = new LSCreativeTab();*/
 		super.init();
-		if (LevelStorage.configuration.get(LevelStorage.PERFORMANCE_CATEGORY,
-				"enableArmorHUD", true).getBoolean(true))
+		if (LevelStorage.configuration.get(LevelStorage.PERFORMANCE_CATEGORY, "enableArmorHUD", true).getBoolean(true))
 			new ElectricHUD();
 		ClientRegistry.bindTileEntitySpecialRenderer(
 				TileEntityWirelessConductor.class,
 				new WirelessConductorRender());
-		MinecraftForgeClient.registerItemRenderer(
-				LSBlockItemList.blockWlessConductor,
-				new ItemWirelessConductorRender());
-		MinecraftForgeClient.registerItemRenderer(LSBlockItemList.itemAtomicDisassembler, new ItemRendererAtomicDisassembler());
+		//MinecraftForgeClient.registerItemRenderer(LSBlockItemList.blockWlessConductor, new ItemWirelessConductorRender());
+		//MinecraftForgeClient.registerItemRenderer(LSBlockItemList.itemAtomicDisassembler, new ItemRendererAtomicDisassembler());
 		// MinecraftForge.EVENT_BUS.register((new RenderOreRadar()));
 	}
 

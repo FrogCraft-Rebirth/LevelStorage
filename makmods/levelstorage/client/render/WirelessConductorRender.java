@@ -8,7 +8,6 @@ import makmods.levelstorage.tileentity.TileEntityWirelessConductor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
 
@@ -16,17 +15,15 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class WirelessConductorRender extends TileEntitySpecialRenderer {
+public class WirelessConductorRender extends TileEntitySpecialRenderer<TileEntityWirelessConductor> {
 
 	public ConductorModel model = new ConductorModel();
 
 	public WirelessConductorRender() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity te, double x, double y, double z,
-	        float partialTicks, int destoryState) {
+	public void renderTileEntityAt(TileEntityWirelessConductor cnd, double x, double y, double z, float partialTicks, int destoryState) {
 		// The PushMatrix tells the renderer to "start" doing something.
 
 		GL11.glPushMatrix();
@@ -41,24 +38,19 @@ public class WirelessConductorRender extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
 		// A reference to your Model file. Again, very important.
-		this.model
-		        .render((Entity) null, 0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+		this.model.render((Entity) null, 0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
 		// Tell it to stop rendering for both the PushMatrix's
 		GL11.glPopMatrix();
 		GL11.glPopMatrix();
 
 		// if (LevelStorage.getSide().isClient()) {
 		if (LevelStorage.fancyGraphics) {
-			TileEntityWirelessConductor cnd = (TileEntityWirelessConductor) te;
 			if (cnd.getType() == ConductorType.SOURCE) {
 				if (cnd.safePair != null) {
 					if (cnd.safePair.getDimId() == cnd.getDimId()) {
-						EnergyRayFX p = new EnergyRayFX(cnd.getWorld(),
-						        cnd.getX(), cnd.getY(), cnd.getZ(),
-						        cnd.safePair.getX(), cnd.safePair.getY(),
-						        cnd.safePair.getZ(), 48, 141, 255, 10);
-						Minecraft.getMinecraft().effectRenderer
-						        .addEffect(p);
+						EnergyRayFX p = new EnergyRayFX(cnd.getWorld(), cnd.getX(), cnd.getY(), cnd.getZ(),
+						        cnd.safePair.getX(), cnd.safePair.getY(), cnd.safePair.getZ(), 48, 141, 255, 10);
+						Minecraft.getMinecraft().effectRenderer.addEffect(p);
 					}
 				}
 			}

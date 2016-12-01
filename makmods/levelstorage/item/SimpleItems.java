@@ -3,12 +3,8 @@ package makmods.levelstorage.item;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import makmods.levelstorage.LSCreativeTab;
-import makmods.levelstorage.LevelStorage;
-import makmods.levelstorage.init.ModUniversalInitializer;
-import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.tileentity.TileEntityIVGenerator;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -138,8 +134,7 @@ public class SimpleItems extends Item {
 		public boolean hasEffect;
 	}
 
-	public void addItem(int meta, String name, EnumRarity rarity,
-			boolean hasEffect) {
+	public void addItem(int meta, String name, EnumRarity rarity, boolean hasEffect) {
 		if (mapping.containsKey(meta))
 			throw new RuntimeException(
 					"SimpleItems: addItem(): mapping already contains item with metadata ("
@@ -163,7 +158,6 @@ public class SimpleItems extends Item {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
 	public EnumRarity getRarity(ItemStack par1ItemStack) {
 		int meta = par1ItemStack.getItemDamage();
 		if (!mapping.containsKey(meta))
@@ -199,9 +193,7 @@ public class SimpleItems extends Item {
 	}*/
 
 	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
-		for (Entry<Integer, SimpleItemData> entry : mapping.entrySet()) {
-			list.add(new ItemStack(item, 1, entry.getKey()));
-		}
+		mapping.keySet().forEach(meta -> list.add(new ItemStack(item, 1, meta)));
 	}
 
 }

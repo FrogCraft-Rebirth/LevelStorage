@@ -1,20 +1,22 @@
 package makmods.levelstorage.logic;
 
+import net.minecraft.item.Item;
+
 public class IDMeta {
 	
-	private int id;
+	private Item id;
 	private int metadata;
-	
-	public IDMeta(int id, int metadata) {
-		this.id = id;
+
+	public IDMeta(Item item, int metadata) {
+		this.id = item;
 		this.metadata = metadata;
 	}
 
-	public int getID() {
+	public Item getID() {
 		return id;
 	}
 
-	public void setID(int id) {
+	public void setID(Item id) {
 		this.id = id;
 	}
 

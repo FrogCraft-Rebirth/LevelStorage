@@ -13,7 +13,6 @@ import makmods.levelstorage.logic.ExperienceRecipe;
 import makmods.levelstorage.logic.util.CommonHelper;
 import makmods.levelstorage.logic.util.NBTHelper;
 import makmods.levelstorage.logic.util.NBTHelper.Cooldownable;
-import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.proxy.LSKeyboard;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -184,13 +183,12 @@ public class ItemXPTome extends Item implements IHasRecipe {
 	}
 
 	@Override
-	public void addInformation(ItemStack par1ItemStack,
-			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltips, boolean adv) {
 		// Here we add our nice little tooltip
-		super.addInformation(par1ItemStack, par2EntityPlayer, par3List, par4);
-		NBTHelper.checkNBT(par1ItemStack);
-		par3List.add(I18n.format("tooltip.xptome.stored")
-				+ " " + String.valueOf(getStoredXP(par1ItemStack)) + " "
+		super.addInformation(stack, player, tooltips, adv);
+		NBTHelper.checkNBT(stack);
+		tooltips.add(I18n.format("tooltip.xptome.stored")
+				+ " " + String.valueOf(getStoredXP(stack)) + " "
 				+ I18n.format("tooltip.xptome.xppoints"));
 	}
 
@@ -204,12 +202,12 @@ public class ItemXPTome extends Item implements IHasRecipe {
 		return durability;
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
 	public EnumRarity getRarity(ItemStack stack) {
 		return EnumRarity.RARE;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 		ItemStack stackFull = new ItemStack(item, 1, 1);

@@ -7,7 +7,6 @@ import makmods.levelstorage.dimension.LSDimensions;
 import makmods.levelstorage.init.CompatibilityInitializer;
 import makmods.levelstorage.init.Config;
 import makmods.levelstorage.init.LSFluids;
-import makmods.levelstorage.init.LocalizationInitializer;
 import makmods.levelstorage.init.ModAchievements;
 import makmods.levelstorage.init.ModTileEntities;
 import makmods.levelstorage.init.ModUniversalInitializer;
@@ -51,10 +50,8 @@ public class CommonProxy {
 	}
 
 	public void init() {
-		NetworkRegistry.INSTANCE.registerGuiHandler(LevelStorage.instance,
-				new LSGUIHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(LevelStorage.instance, new LSGUIHandler());
 		MinecraftForge.EVENT_BUS.register(new LevelStorageEventHandler());
-		LocalizationInitializer.instance.init();
 		SimpleItems.instance = new SimpleItems();
 		// LSBlockItemList.init();
 		// LSBlockItemList.init();

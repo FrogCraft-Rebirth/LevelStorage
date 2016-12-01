@@ -1,6 +1,5 @@
 package makmods.levelstorage.logic.util;
 
-import jdk.nashorn.internal.ir.Block;
 import makmods.levelstorage.LevelStorage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

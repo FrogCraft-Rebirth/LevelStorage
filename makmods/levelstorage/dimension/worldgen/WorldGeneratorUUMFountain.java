@@ -3,6 +3,8 @@ package makmods.levelstorage.dimension.worldgen;
 import java.util.Random;
 
 import makmods.levelstorage.LevelStorage;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -10,11 +12,7 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 
 public class WorldGeneratorUUMFountain implements IWorldGenerator {
 
-	public static int UUM;
-
-	static {
-		UUM = LevelStorage.IC2UUM.getBlockID();
-	}
+	public static final IBlockState UUM = LevelStorage.IC2UUM.getBlock().getDefaultState();;
 
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
@@ -24,7 +22,7 @@ public class WorldGeneratorUUMFountain implements IWorldGenerator {
 			int x = chunkX * 16 + random.nextInt(16);
 			int z = chunkZ * 16 + random.nextInt(16);
 			for (int i = 256; i >= 0; i--) {
-				if (!world.isAirBlock(x, i, z)) {
+				if (!world.isAirBlock(new BlockPos(x, i, z))) {
 					y = i;
 					break;
 				}

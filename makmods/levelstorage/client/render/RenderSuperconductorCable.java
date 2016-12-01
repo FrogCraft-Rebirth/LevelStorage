@@ -1,5 +1,5 @@
 package makmods.levelstorage.client.render;
-
+/*
 import makmods.levelstorage.proxy.ClientProxy;
 import makmods.levelstorage.tileentity.TileEntitySuperconductorCable;
 import net.minecraft.block.Block;
@@ -12,8 +12,8 @@ import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
-public class RenderSuperconductorCable implements ISimpleBlockRenderingHandler {
+@SideOnly(Side.CLIENT)*/
+public class RenderSuperconductorCable {}/*implements ISimpleBlockRenderingHandler {
 	public void renderInventoryBlock(Block block, int metadata, int modelID,
 	        RenderBlocks renderer) {
 	}
@@ -294,4 +294,4 @@ public class RenderSuperconductorCable implements ISimpleBlockRenderingHandler {
 	public int getRenderId() {
 		return ClientProxy.CABLE_RENDER_ID;
 	}
-}
+}*/

@@ -17,6 +17,7 @@ import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.logic.util.CommonHelper;
 import makmods.levelstorage.logic.util.NBTHelper;
 import makmods.levelstorage.logic.util.NBTHelper.Cooldownable;
+import makmods.levelstorage.network.PacketDispatcher;
 import makmods.levelstorage.network.packet.PacketParticles;
 import makmods.levelstorage.network.packet.PacketParticles.ParticleInternal;
 import makmods.levelstorage.network.packet.PacketTypeHandler;
@@ -33,6 +34,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraft.util.EnumActionResult;
@@ -43,7 +45,6 @@ import net.minecraft.util.math.BlockPos;
 import com.google.common.collect.Lists;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.network.PacketDispatcher;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -148,8 +149,8 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 			}
 			PacketParticles packet = new PacketParticles();
 			packet.particles = toSend;
-			Packet250CustomPayload p = (Packet250CustomPayload) PacketTypeHandler.populatePacket(packet);
-			PacketDispatcher.sendPacketToAllAround(x, y, z, 128, world.provider.dimensionId, p);
+			//Packet250CustomPayload p = (Packet250CustomPayload) PacketTypeHandler.populatePacket(packet);
+			PacketDispatcher.sendPacketToAllAround(packet, world.provider.getDimension(), pos, 128);
 			return EnumActionResult.SUCCESS;
 		}
 		return EnumActionResult.PASS;
@@ -298,7 +299,7 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 					EnumFacing.WEST, 1);
 			break;
 		}
-		case UNKNOWN:
+		default:
 			break;
 		}
 		removeBlocks[12] = currBlock.copy();

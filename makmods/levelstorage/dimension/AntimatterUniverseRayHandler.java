@@ -3,6 +3,7 @@ package makmods.levelstorage.dimension;
 import java.util.Random;
 
 import makmods.levelstorage.logic.util.CommonHelper;
+import makmods.levelstorage.network.PacketDispatcher;
 import makmods.levelstorage.network.packet.PacketTeslaRay;
 import makmods.levelstorage.network.packet.PacketTypeHandler;
 import net.minecraft.entity.Entity;
@@ -13,7 +14,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.PacketDispatcher;
 
 public class AntimatterUniverseRayHandler {
 
@@ -94,8 +94,8 @@ public class AntimatterUniverseRayHandler {
 		ptr.tX = coordinateX;
 		ptr.tY = coordinateY;
 		ptr.tZ = coordinateZ;
-		PacketDispatcher.sendPacketToAllInDimension(
-				PacketTypeHandler.populatePacket(ptr),
+		PacketDispatcher.sendPacketToDim(
+				/*PacketTypeHandler.populatePacket(ptr)*/ptr,
 				world.provider.getDimension());
 		CommonHelper.spawnLightning(world, coordinateX, coordinateY,
 				coordinateZ, false);

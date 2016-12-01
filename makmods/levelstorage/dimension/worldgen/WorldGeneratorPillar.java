@@ -1,17 +1,14 @@
 package makmods.levelstorage.dimension.worldgen;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import makmods.levelstorage.LSBlockItemList;
-import makmods.levelstorage.logic.util.LogHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -23,41 +20,18 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 
 public class WorldGeneratorPillar implements IWorldGenerator {
 
-	public static List<Block> toGenerate = Lists.newArrayList();
+	public static List<IBlockState> toGenerate = Lists.newArrayList();
 
-	static {
-		Block[] defaults = { Block.oreCoal, Block.oreDiamond, Block.oreEmerald,
-				Block.oreGold, Block.oreIron, Block.oreLapis, Block.oreRedstone };
-		for (Block def : defaults)
-			toGenerate.add(def);
-		try {
-			Class oreDictClass = OreDictionary.class;
-			Field fieldOreIds = oreDictClass.getDeclaredField("oreIDs");
-			fieldOreIds.setAccessible(true);
-			Map<String, Integer> oreIDs = (HashMap<String, Integer>) fieldOreIds
-					.get(null);
-			for (String s : oreIDs.keySet()) {
-				try {
-					if (s.startsWith("ore")) {
-						ArrayList<ItemStack> stacksForGiven = OreDictionary
-								.getOres(s);
-						for (ItemStack st : stacksForGiven) {
-							if (st == null)
-								continue;
-							if (st.getItem() instanceof ItemBlock)
-								toGenerate.add(Block.blocksList[st.itemID]);
-						}
-					}
-				} catch (Exception e) {
-					LogHelper
-							.severe("Exception when trying to dynamically allocate more ores to generate");
-					e.printStackTrace();
+	static { //The reason of not expliciting support vanilla ore is that, ore dict has built-in support already
+		String[] oreIDs = OreDictionary.getOreNames();
+		for (String s : oreIDs) {
+				if (s.startsWith("ore")) {
+					List<ItemStack> stacksForGiven = OreDictionary.getOres(s);
+					for (ItemStack st : stacksForGiven) {
+						if (st.getItem() instanceof ItemBlock)
+							toGenerate.add(Block.getBlockFromItem(st.getItem()).getDefaultState());
 				}
 			}
-		} catch (Throwable e) {
-			LogHelper
-					.severe("Exception when trying to dynamically allocate more ores to generate");
-			e.printStackTrace();
 		}
 	}
 	
@@ -72,7 +46,7 @@ public class WorldGeneratorPillar implements IWorldGenerator {
 			int genZ = chunkZ * 16 + random.nextInt(16);
 			int genY = 0;
 			for (int i = 256; i >= 0; i--) {
-				if (!world.isAirBlock(genX, i, genZ)) {
+				if (!world.isAirBlock(new BlockPos(genX, i, genZ))) {
 					genY = i;
 					break;
 				}
@@ -87,9 +61,9 @@ public class WorldGeneratorPillar implements IWorldGenerator {
 							int xT = genX + x;
 							int yT = genY + i;
 							int zT = genZ + z;
-							int idToGenerate = toGenerate.get(random
-									.nextInt(toGenerate.size())).blockID;
-							world.setBlock(xT, yT, zT, idToGenerate);
+							IBlockState idToGenerate = toGenerate.get(random
+									.nextInt(toGenerate.size()));
+							world.setBlockState(new BlockPos(xT, yT, zT), idToGenerate);
 						}
 					}
 					for (int x = -(THICKNESS / 2); x <= THICKNESS / 2; x++) {
@@ -97,8 +71,8 @@ public class WorldGeneratorPillar implements IWorldGenerator {
 							int xT = genX + x;
 							int yT = genY + i;
 							int zT = genZ + z;
-							if (world.isAirBlock(xT, yT, zT))
-								world.setBlock(xT, yT, zT, wrapper.blockID);
+							if (world.isAirBlock(new BlockPos(xT, yT, zT)))
+								world.setBlockState(new BlockPos(xT, yT, zT), wrapper.getDefaultState());
 						}
 					}
 				}
