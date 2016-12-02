@@ -9,7 +9,6 @@ import makmods.levelstorage.api.event.BootsFlyingEvent;
 import makmods.levelstorage.armor.antimatter.ItemArmorAntimatterBase;
 import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.logic.LSDamageSource;
-import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.logic.util.EntityUtil;
 import makmods.levelstorage.network.packet.PacketTeslaRay;
 import makmods.levelstorage.proxy.LSKeyboard;
@@ -129,18 +128,13 @@ public class ArmorFunctions {
 			return;
 		if (LSKeyboard.getInstance().isKeyDown(player,LSKeyboard.RAY_SHOOT_KEY_NAME)
 				&& player.isSneaking()) {
-			RayTraceResult mop = getMovingObjectPositionFromPlayer(world,
-					player, true);
+			RayTraceResult mop = getMovingObjectPositionFromPlayer(world, player, true);
 			if (mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK) {
-				if (ElectricItem.manager.canUse(armor,
-						ItemArmorAntimatterBase.EU_PER_TELEPORT)) {
-					ElectricItem.manager.discharge(armor,
-							ItemArmorAntimatterBase.EU_PER_TELEPORT,
+				if (ElectricItem.manager.canUse(armor, ItemArmorAntimatterBase.EU_PER_TELEPORT)) {
+					ElectricItem.manager.discharge(armor, ItemArmorAntimatterBase.EU_PER_TELEPORT,
 							Integer.MAX_VALUE, true, false, false);
 				}
-				EnumFacing sideHit = mop.sideHit;
-				BlockLocation bl = new BlockLocation(world.provider.getDimension(), new BlockPos(mop.hitVec));
-				bl = bl.move(sideHit, 1);
+				BlockPos bl = new BlockPos(mop.hitVec).add(mop.sideHit.getDirectionVec());
 				player.setPositionAndUpdate(bl.getX(), bl.getY(), bl.getZ());
 			}
 		}
@@ -230,8 +224,7 @@ public class ArmorFunctions {
 		}
 	}
 
-	public static void jumpBooster(World world, EntityPlayer player,
-			ItemStack itemStack) {
+	public static void jumpBooster(World world, EntityPlayer player, ItemStack itemStack) {
 		boolean boostKey = Keys.instance.isBoostKeyDown(player);
 
 		if (!onGroundMap.containsKey(player))

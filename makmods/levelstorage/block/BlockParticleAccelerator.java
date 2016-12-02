@@ -4,6 +4,7 @@ import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.init.IHasRecipe;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.tileentity.TileEntityParticleAccelerator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -17,13 +18,13 @@ public class BlockParticleAccelerator extends BlockMachineStandart implements
 	}
 
 	public void addCraftingRecipe() {
-		Recipes.advRecipes.addRecipe(new ItemStack(
-				LSBlockItemList.blockParticleAccelerator), "ImI", "RNR", "TTT",
-				Character.valueOf('m'), IC2Items.getItem("massFabricator"),
-				Character.valueOf('I'), "ingotIridium", 'R', IC2Items
-						.getItem("RTGPellets"), Character.valueOf('N'), IC2Items
-						.getItem("advancedMachine"), Character.valueOf('T'),
-				IC2Items.getItem("replicator"));
+		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.blockParticleAccelerator), 
+				"ImI", "RNR", "TTT",
+				'm', IC2Items.getItem("te", "matter_generator"),
+				'I', "ingotIridium", 
+				'R', IC2Items.getItem("nuclear", "rtg_pellet"), 
+				'N', IC2ItemsShortcut.ADV_MACHINE,
+				'T', IC2Items.getItem("te", "replicator"));
 	}
 
 	@Override

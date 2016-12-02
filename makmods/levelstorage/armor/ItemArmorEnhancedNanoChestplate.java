@@ -12,6 +12,7 @@ import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.logic.util.CommonHelper;
 import makmods.levelstorage.logic.util.NBTHelper;
 import makmods.levelstorage.logic.util.NBTHelper.Cooldownable;
@@ -56,17 +57,14 @@ public class ItemArmorEnhancedNanoChestplate extends ItemArmor implements
 	}
 
 	public void addCraftingRecipe() {
-		Recipes.advRecipes.addRecipe(new ItemStack(
-				LSBlockItemList.itemArmorEnhancedNanoChestplate), "clc", "qnq",
-				"aja", Character.valueOf('c'), 
-				makmods.levelstorage.lib.IC2ItemsShortcut.CARBON_PLATE.copy(),
-				Character.valueOf('n'), IC2Items.getItem("nanoBodyarmor"),
-				Character.valueOf('l'), new ItemStack(
-						LSBlockItemList.itemEnhLappack),
-				Character.valueOf('j'),
-				IC2Items.getItem("electricJetpack").copy(),
-				Character.valueOf('a'), makmods.levelstorage.lib.IC2ItemsShortcut.ADV_CIRCUIT.copy(), 
-				Character.valueOf('q'), "itemJetpackAccelerator");
+		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.itemArmorEnhancedNanoChestplate), 
+				"clc", "qnq", "aja", 
+				'c', IC2ItemsShortcut.CARBON_PLATE,
+				'n', IC2Items.getItem("nano_chestplate"),
+				'l', new ItemStack(LSBlockItemList.itemEnhLappack),
+				'j', IC2Items.getItem("jetpack_electric"),
+				'a', IC2ItemsShortcut.ADV_CIRCUIT, 
+				'q', "itemJetpackAccelerator");
 	}
 
 	@SideOnly(Side.CLIENT)

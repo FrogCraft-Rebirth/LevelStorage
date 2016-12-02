@@ -19,7 +19,7 @@ import net.minecraftforge.oredict.OreDictionary;
  * 
  */
 public class AdvBlockFinder {
-	private ArrayList<BlockLocation> blocksFound = Lists.newArrayList();
+	private ArrayList<BlockPos> blocksFound = Lists.newArrayList();
 
 	private int initialX;
 	private int initialY;
@@ -55,7 +55,7 @@ public class AdvBlockFinder {
 		this.initialZ = z;
 		this.world = w;
 		this.targetName = targetName;
-		BlockLocation initialBlock = new BlockLocation(x, y, z);
+		BlockPos initialBlock = new BlockPos(x, y, z);
 		findContinuation(initialBlock);
 	}
 
@@ -68,7 +68,7 @@ public class AdvBlockFinder {
 	 * 
 	 * @return
 	 */
-	public List<BlockLocation> getBlocksFound() {
+	public List<BlockPos> getBlocksFound() {
 		return this.blocksFound;
 	}
 
@@ -78,10 +78,10 @@ public class AdvBlockFinder {
 				: false; // TODO: may consider more comprehensive solution
 	}
 
-	private void findContinuation(BlockLocation loc) {
+	private void findContinuation(BlockPos loc) {
 		boolean found = false;
 		if (loc != null) {
-			for (BlockLocation locat : blocksFound) {
+			for (BlockPos locat : blocksFound) {
 				if (locat.equals(loc))
 					found = true;
 			}
@@ -89,23 +89,16 @@ public class AdvBlockFinder {
 				blocksFound.add(loc);
 		}
 		if (!found) {
-			for (int dir = 0; dir < 6; dir++) {
-				BlockLocation newTh = loc.move(EnumFacing.values()[dir], 1);
-				int currX = newTh.getX();
-				int currY = newTh.getY();
-				int currZ = newTh.getZ();
-
-				Block currBlock = this.world.getBlockState(new BlockPos(
-						currX, currY, currZ)).getBlock();
+			for (EnumFacing facing : EnumFacing.VALUES) {
+				BlockPos newTh = loc.add(facing.getDirectionVec());
+				Block currBlock = this.world.getBlockState(newTh).getBlock();
 				if (currBlock != null) {
 					if (isBlockOreDict(currBlock)) {
 						// Recursion, very dangerous, but i hope nobody
 						// will
 						// use
 						// this on stone...
-						findContinuation(new BlockLocation(
-								this.world.provider.getDimension(), currX, currY,
-								currZ));
+						findContinuation(newTh);
 					}
 				}
 			}

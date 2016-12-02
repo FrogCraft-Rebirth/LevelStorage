@@ -5,10 +5,10 @@ import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergyAcceptor;
 import ic2.api.energy.tile.IEnergyConductor;
 import ic2.api.energy.tile.IEnergyEmitter;
-import makmods.levelstorage.logic.util.BlockLocation;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 
 public class TileEntitySuperconductorCable extends TileEntity implements
@@ -100,10 +100,8 @@ public class TileEntitySuperconductorCable extends TileEntity implements
 		for (EnumFacing direction : EnumFacing.VALUES) {
 			// TileEntity neighbor = EnergyNet.getForWorld(this.worldObj)
 			// .getNeighbor(this, direction);
-			BlockLocation currLocation = new BlockLocation(
-			        this.worldObj.provider.getDimension(), this.getPos());
-			BlockLocation nextLoc = currLocation.move(direction, 1);
-			TileEntity neighbor = worldObj.getTileEntity(nextLoc.toBlockPos());
+			BlockPos nextLoc = this.getPos().add(direction.getDirectionVec());
+			TileEntity neighbor = worldObj.getTileEntity(nextLoc);
 
 			if ((((neighbor instanceof IEnergyAcceptor)) && (((IEnergyAcceptor) neighbor)
 			        .acceptsEnergyFrom(this, direction.getOpposite())))

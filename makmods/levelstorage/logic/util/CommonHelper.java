@@ -230,8 +230,7 @@ public class CommonHelper {
 		EntityLightningBolt lightning = new EntityLightningBolt(w, x, y, z, false);
 		w.addWeatherEffect(lightning);
 		if (exp) {
-			w.createExplosion(lightning, x, y, z,
-					(float) (Math.random() * 1.0f), true);
+			w.createExplosion(lightning, x, y, z, (float) (Math.random() * 1.0f), true);
 		}
 		w.spawnEntityInWorld(lightning);
 

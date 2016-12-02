@@ -4,6 +4,7 @@ import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.init.IHasRecipe;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.tileentity.TileEntityLavaFabricator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -16,12 +17,11 @@ public class BlockLavaFabricator extends BlockMachineStandart implements IHasRec
 	}
 
 	public void addCraftingRecipe() {
-		Recipes.advRecipes.addRecipe(new ItemStack(
-				LSBlockItemList.blockLavaFabricator), "aca", "pgp", 
-				Character.valueOf('a'), makmods.levelstorage.lib.IC2ItemsShortcut.ADV_CIRCUIT, 
-				Character.valueOf('p'), makmods.levelstorage.lib.IC2ItemsShortcut.ADV_ALLOY, 
-				Character.valueOf('c'), makmods.levelstorage.lib.IC2ItemsShortcut.ADV_MACHINE, 
-				Character.valueOf('g'), IC2Items.getItem("geothermalGenerator"));
+		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.blockLavaFabricator), "aca", "pgp", 
+				'a', IC2ItemsShortcut.ADV_CIRCUIT, 
+				'p', IC2ItemsShortcut.ADV_ALLOY, 
+				'c', IC2ItemsShortcut.ADV_MACHINE, 
+				'g', IC2Items.getItem("te", "geo_generator"));
 	}
 
 	@Override

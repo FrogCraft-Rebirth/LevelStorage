@@ -7,7 +7,6 @@ import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.init.IHasRecipe;
-import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.logic.util.NBTHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,24 +47,25 @@ public class ItemFrequencyCard extends Item implements IHasRecipe {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltips, boolean adv) {
 		NBTHelper.checkNBT(stack);
-		if (stack.getTagCompound().hasKey(BlockLocation.BLOCK_LOCATION_NBT)) {
+		if (stack.getTagCompound().hasKey("blockLocation")) { //BlockLocation has been entirely removed, so use magic string for a while
 			boolean isValid = isValid(stack);
-			BlockLocation location = BlockLocation.readFromNBT(stack.getTagCompound());
+			BlockPos location = NBTHelper.getPositionData(stack.getTagCompound());
 			tooltips.add(I18n.format("tooltip.freqCard.location") + " " + location);
 			tooltips.add(I18n.format("tooltip.freqCard.isValid") + " " +
 					(isValid ? I18n.format("other.true") : I18n.format("other.false")));
 		}
 	}
 
+	//TODO: this method will not pass compile unless we find solution for missing dim id from BlockPos
 	public static boolean isValid(ItemStack stack) {
-		if (hasCardData(stack)) {
-			BlockLocation loc = BlockLocation.readFromNBT(stack.getTagCompound());
+		/*if (hasCardData(stack)) {
+			BlockPos loc = NBTHelper.getPositionData(stack.getTagCompound());
 			if (BlockLocation.isDimIdValid(loc.getDimId())) {
 				WorldServer w = DimensionManager.getWorld(loc.getDimId());
 				if (w.getBlockState(loc.toBlockPos()).getBlock() == LSBlockItemList.blockWlessConductor)
 					return true;
 			}
-		}
+		}*/
 		return false;
 	}
 
@@ -90,23 +90,23 @@ public class ItemFrequencyCard extends Item implements IHasRecipe {
 
 
 
-	@Override
+	@Override //TODO: Replace BlockLocation with something else
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand,
 									  EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (!world.isRemote) {
+		/*if (!world.isRemote) {
 			if (world.getBlockState(pos).getBlock() == LSBlockItemList.blockWlessConductor) {
 				NBTHelper.checkNBT(stack);
 				BlockLocation loc = new BlockLocation(world.provider.getDimension(), pos);
 				BlockLocation.writeToNBT(stack.getTagCompound(), loc);
 				return EnumActionResult.SUCCESS;
 			}
-		}
-		return EnumActionResult.FAIL;
+		}*/
+		return EnumActionResult.PASS;
 	}
 
 	public static boolean hasCardData(ItemStack stack) {
 		NBTTagCompound cardNBT = stack.getTagCompound();
-		return cardNBT.hasKey(BlockLocation.BLOCK_LOCATION_NBT);
+		return cardNBT.hasKey("blockLocation");
 	}
 /*
 	@Override

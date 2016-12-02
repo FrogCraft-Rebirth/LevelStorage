@@ -3,6 +3,7 @@ package makmods.levelstorage.item;
 import java.util.List;
 
 import ic2.api.item.ElectricItem;
+import ic2.api.item.IC2Items;
 import ic2.api.item.IElectricItem;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
@@ -150,7 +151,7 @@ public class ItemElectricMagnet extends Item implements IElectricItem, IHasRecip
 				"cc ", "cic", " cb",
 				'c', "plateCopper",
 				'i', "plateIron",
-				'b', ic2.api.item.IC2Items.getItem("powerunitsmall"));
+				'b', IC2Items.getItem("crafting", "small_power_unit"));
 	}
 
 	@Override

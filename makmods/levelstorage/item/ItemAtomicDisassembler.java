@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import ic2.api.item.ElectricItem;
+import ic2.api.item.IC2Items;
 import ic2.api.item.IElectricItem;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
@@ -14,7 +15,6 @@ import makmods.levelstorage.api.IChargeable;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.logic.LSDamageSource;
-import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.logic.util.CommonHelper;
 import makmods.levelstorage.logic.util.NBTHelper;
 import makmods.levelstorage.logic.util.NBTHelper.Cooldownable;
@@ -136,7 +136,7 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 				player.attackEntityFrom(LSDamageSource.disassembled, damage);
 			List<ParticleInternal> toSend = Lists.newArrayList();
 			for (int curr = 0; curr < length; curr++) {
-				BlockLocation loc = new BlockLocation(world.provider.getDimension(), pos).move(facing.getOpposite(), curr);
+				BlockPos loc = pos.offset(facing.getOpposite(), curr);
 				mineThreeByThree(stack, facing, loc, world, player, toSend);
 			}
 			PacketParticles packet = new PacketParticles();
@@ -157,164 +157,46 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 	}
 
 	public void mineThreeByThree(ItemStack device, EnumFacing hitFrom,
-			BlockLocation currBlock, World par2World, EntityPlayer player,
+			BlockPos pos, World par2World, EntityPlayer player,
 			List<ParticleInternal> particles) {
-		BlockLocation[] removeBlocks = new BlockLocation[13];
 		int fortune = 0;
+		Iterable<BlockPos> removeBlocks;
 		switch (hitFrom) {
-		case DOWN: {
-			removeBlocks[0] = currBlock.move(EnumFacing.NORTH, 1);
-			removeBlocks[1] = currBlock.move(EnumFacing.WEST, 1);
-			removeBlocks[2] = currBlock.move(EnumFacing.SOUTH, 1);
-			removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
-
-			removeBlocks[4] = currBlock.move(EnumFacing.NORTH, 1).move(
-					EnumFacing.EAST, 1);
-			removeBlocks[5] = currBlock.move(EnumFacing.WEST, 1).move(
-					EnumFacing.NORTH, 1);
-			removeBlocks[6] = currBlock.move(EnumFacing.NORTH, 1).move(
-					EnumFacing.WEST, 1);
-			removeBlocks[7] = currBlock.move(EnumFacing.WEST, 1).move(
-					EnumFacing.SOUTH, 1);
-			removeBlocks[8] = currBlock.move(EnumFacing.SOUTH, 1).move(
-					EnumFacing.EAST, 1);
-			break;
+			case DOWN:
+			case UP: {
+				removeBlocks = BlockPos.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1));
+				break;
+			}
+			case NORTH: 
+			case SOUTH: {
+				removeBlocks = BlockPos.getAllInBox(pos.add(-1, -1, 0), pos.add(1, 1, 0));
+				break;
+			}
+			case WEST: 
+			case EAST: {
+				removeBlocks = BlockPos.getAllInBox(pos.add(0, -1, -1), pos.add(0, 1, 1));
+				break;
+			}
+			default: {
+				removeBlocks = BlockPos.getAllInBox(pos, pos);
+				break;
+				//Note: all possible value had been enumerated. Unless the sideHit is null due to whatever reason, the rewrite above will be most effective one. 
+			}
 		}
-		case UP: {
-			removeBlocks[0] = currBlock.move(EnumFacing.NORTH, 1);
-			removeBlocks[1] = currBlock.move(EnumFacing.WEST, 1);
-			removeBlocks[2] = currBlock.move(EnumFacing.SOUTH, 1);
-			removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
-
-			removeBlocks[4] = currBlock.move(EnumFacing.NORTH, 1).move(
-					EnumFacing.EAST, 1);
-			removeBlocks[5] = currBlock.move(EnumFacing.WEST, 1).move(
-					EnumFacing.NORTH, 1);
-			removeBlocks[6] = currBlock.move(EnumFacing.NORTH, 1).move(
-					EnumFacing.WEST, 1);
-			removeBlocks[7] = currBlock.move(EnumFacing.WEST, 1).move(
-					EnumFacing.SOUTH, 1);
-			removeBlocks[8] = currBlock.move(EnumFacing.SOUTH, 1).move(
-					EnumFacing.EAST, 1);
-			break;
-		}
-		case NORTH: {
-			// Up & down
-			removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
-			removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
-			// West & east
-			removeBlocks[2] = currBlock.move(EnumFacing.WEST, 1);
-			removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
-			// Up-west & Down-west
-			removeBlocks[4] = currBlock.move(EnumFacing.DOWN, 1).move(
-					EnumFacing.WEST, 1);
-			removeBlocks[5] = currBlock.move(EnumFacing.UP, 1).move(
-					EnumFacing.EAST, 1);
-
-			removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(
-					EnumFacing.WEST, 1);
-			removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(
-					EnumFacing.EAST, 1);
-
-			removeBlocks[8] = currBlock.move(EnumFacing.UP, 1).move(
-					EnumFacing.EAST, 1);
-			removeBlocks[9] = currBlock.move(EnumFacing.DOWN, 1).move(
-					EnumFacing.WEST, 1);
-
-			break;
-			// South up & north down
-		}
-		case WEST: {
-			removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
-			removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
-			// West & east
-			removeBlocks[2] = currBlock.move(EnumFacing.NORTH, 1);
-			removeBlocks[3] = currBlock.move(EnumFacing.SOUTH, 1);
-
-			removeBlocks[4] = currBlock.move(EnumFacing.UP, 1).move(
-					EnumFacing.NORTH, 1);
-			removeBlocks[5] = currBlock.move(EnumFacing.DOWN, 1).move(
-					EnumFacing.SOUTH, 1);
-
-			removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(
-					EnumFacing.NORTH, 1);
-			removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(
-					EnumFacing.SOUTH, 1);
-			removeBlocks[10] = currBlock.move(EnumFacing.SOUTH, 1).move(
-					EnumFacing.UP, 1);
-			removeBlocks[11] = currBlock.move(EnumFacing.NORTH, 1).move(
-					EnumFacing.DOWN, 1);
-			break;
-		}
-		case EAST: {
-			removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
-			removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
-			// West & east
-			removeBlocks[2] = currBlock.move(EnumFacing.NORTH, 1);
-			removeBlocks[3] = currBlock.move(EnumFacing.SOUTH, 1);
-
-			removeBlocks[4] = currBlock.move(EnumFacing.UP, 1).move(
-					EnumFacing.NORTH, 1);
-			removeBlocks[5] = currBlock.move(EnumFacing.DOWN, 1).move(
-					EnumFacing.SOUTH, 1);
-
-			removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(
-					EnumFacing.NORTH, 1);
-			removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(
-					EnumFacing.SOUTH, 1);
-			removeBlocks[10] = currBlock.move(EnumFacing.SOUTH, 1).move(
-					EnumFacing.UP, 1);
-			removeBlocks[11] = currBlock.move(EnumFacing.NORTH, 1).move(
-					EnumFacing.DOWN, 1);
-			break;
-		}
-		case SOUTH: {
-			removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
-			removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
-			// West & east
-			removeBlocks[2] = currBlock.move(EnumFacing.WEST, 1);
-			removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
-			// Up-west & Down-west
-			removeBlocks[4] = currBlock.move(EnumFacing.DOWN, 1).move(
-					EnumFacing.WEST, 1);
-			removeBlocks[5] = currBlock.move(EnumFacing.UP, 1).move(
-					EnumFacing.EAST, 1);
-
-			removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(
-					EnumFacing.WEST, 1);
-			removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(
-					EnumFacing.EAST, 1);
-
-			removeBlocks[8] = currBlock.move(EnumFacing.UP, 1).move(
-					EnumFacing.EAST, 1);
-			removeBlocks[9] = currBlock.move(EnumFacing.DOWN, 1).move(
-					EnumFacing.WEST, 1);
-			break;
-		}
-		default:
-			break;
-		}
-		removeBlocks[12] = currBlock.copy();
 		if (!ElectricItem.manager.canUse(device, ENERGY_USE_BASE))
 			return;
-		for (BlockLocation blockLoc : removeBlocks) {
+		for (BlockPos blockLoc : removeBlocks) {
 			if (blockLoc != null) {
-				IBlockState bs = par2World.getBlockState(blockLoc.toBlockPos());
+				IBlockState bs = par2World.getBlockState(blockLoc);
 				Block b = bs.getBlock();
-				int aimBlockMeta = b.getMetaFromState(par2World.getBlockState(blockLoc.toBlockPos()));
+				int aimBlockMeta = b.getMetaFromState(par2World.getBlockState(blockLoc));
 				if (b != null) {
-					if (b.getBlockHardness(bs, par2World, blockLoc.toBlockPos()) > 0.0F) {
-						if (b.removeBlockByPlayer(par2World, player,
-								blockLoc.getX(), blockLoc.getY(),
-								blockLoc.getZ())) {
-							List<ItemStack> drops = b.getBlockDropped(
-									par2World, blockLoc.getX(),
-									blockLoc.getY(), blockLoc.getZ(),
-									aimBlockMeta, 0);
+					if (b.getBlockHardness(bs, par2World, blockLoc) > 0.0F) {
+						if (b.removedByPlayer(bs, par2World, pos, player, true)) {
+							List<ItemStack> drops = b.getDrops(par2World, pos, bs, fortune);
 							for (ItemStack drop : drops) {
 								ParticleInternal particle = new ParticleInternal();
-								particle.name = "tilecrack_" + b + "_"
-										+ aimBlockMeta;
+								particle.name = "tilecrack_" + b + "_" + aimBlockMeta;
 								particle.x = blockLoc.getX();
 								particle.y = blockLoc.getY();
 								particle.z = blockLoc.getZ();
@@ -340,8 +222,7 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 						}
 					}
 					if (ElectricItem.manager.canUse(device, ENERGY_USE_BASE)) {
-						ElectricItem.manager.use(device, ENERGY_USE_BASE,
-								player);
+						ElectricItem.manager.use(device, ENERGY_USE_BASE, player);
 					} else {
 						break;
 					}
@@ -390,7 +271,7 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 		Recipes.advRecipes.addRecipe(new ItemStack(
 				LSBlockItemList.itemAtomicDisassembler), "ccc", "lda", "ccc",
 					'c', IC2ItemsShortcut.CARBON_PLATE, 
-					'l', ic2.api.item.IC2Items.getItem("miningLaser"), 
+					'l', IC2Items.getItem("mining_laser"), 
 					'd', new ItemStack(LSBlockItemList.itemEnhDiamondDrill), 
 					'a', IC2ItemsShortcut.ADV_CIRCUIT);
 	}

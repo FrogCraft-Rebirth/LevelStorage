@@ -1,5 +1,6 @@
 package makmods.levelstorage.armor.antimatter;
 
+import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.init.IHasRecipe;
@@ -15,12 +16,12 @@ public class ItemArmorAntimatterLeggings extends ItemArmorAntimatterBase impleme
 	
 	@Override
 	public void addCraftingRecipe() {
-		Recipes.advRecipes.addRecipe(new ItemStack(
-				LSBlockItemList.itemArmorAntimatterLeggings), "ici", "pap",
-				"pep", 'p', SimpleItemShortcut.PLATE_ANTIMATTER_IRIDIUM
-						.getItemStack(), 'e', new ItemStack(
-						LSBlockItemList.itemAntimatterCrystal), 'a',
-				new ItemStack(LSBlockItemList.itemSupersonicLeggings), 'c', ic2.api.item.IC2Items
-						.getItem("teleporter"), 'i', IC2ItemsShortcut.IRIDIUM_PLATE);
+		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.itemArmorAntimatterLeggings), 
+				"ici", "pap", "pep", 
+				'p', SimpleItemShortcut.PLATE_ANTIMATTER_IRIDIUM.getItemStack(), 
+				'e', new ItemStack(LSBlockItemList.itemAntimatterCrystal), 
+				'a', new ItemStack(LSBlockItemList.itemSupersonicLeggings), 
+				'c', IC2Items.getItem("te", "teleporter"), 
+				'i', IC2ItemsShortcut.IRIDIUM_PLATE);
 	}
 }

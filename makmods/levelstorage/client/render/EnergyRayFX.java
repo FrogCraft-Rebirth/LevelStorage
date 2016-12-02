@@ -195,9 +195,9 @@ public class EnergyRayFX extends Particle {
 		GL11.glBlendFunc(770, 1);
 		GL11.glDepthMask(false);
 
-		float xx = (float) (this.prevPosX + (this.posX - this.prevPosX) * f - this.interpPosX);
-		float yy = (float) (this.prevPosY + (this.posY - this.prevPosY) * f - this.interpPosY);
-		float zz = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * f - this.interpPosZ);
+		float xx = (float) (this.prevPosX + (this.posX - this.prevPosX) * f - Particle.interpPosX);
+		float yy = (float) (this.prevPosY + (this.posY - this.prevPosY) * f - Particle.interpPosY);
+		float zz = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * f - Particle.interpPosZ);
 		GL11.glTranslated(xx, yy, zz);
 
 		float ry = (float) (this.prevYaw + (this.rotYaw - this.prevYaw) * f);
@@ -263,9 +263,9 @@ public class EnergyRayFX extends Particle {
 		float var11 = var10 + 0.125F;
 		float var12 = this.endMod / 2.0F / (6 - this.impact);
 
-		float var13 = (float) (this.ptX + (this.tX - this.ptX) * f - this.interpPosX);
-		float var14 = (float) (this.ptY + (this.tY - this.ptY) * f - this.interpPosY);
-		float var15 = (float) (this.ptZ + (this.tZ - this.ptZ) * f - this.interpPosZ);
+		float var13 = (float) (this.ptX + (this.tX - this.ptX) * f - Particle.interpPosX);
+		float var14 = (float) (this.ptY + (this.tY - this.ptY) * f - Particle.interpPosY);
+		float var15 = (float) (this.ptZ + (this.tZ - this.ptZ) * f - Particle.interpPosZ);
 		float var16 = 1.0F;
 
 		tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);

@@ -13,8 +13,8 @@ import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.gui.SlotFrequencyCard;
 import makmods.levelstorage.item.ItemFrequencyCard;
-import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.logic.util.CommonHelper;
+import makmods.levelstorage.logic.util.NBTHelper;
 import makmods.levelstorage.registry.ConductorType;
 import makmods.levelstorage.registry.IWirelessConductor;
 import makmods.levelstorage.registry.WirelessConductorRegistry;
@@ -61,7 +61,7 @@ public class TileEntityWirelessConductor extends TileEntity implements
 		ENABLE_PARTICLES = p2.getBoolean(true);
 	}
 
-	public boolean canReceive(int amount) {
+	public boolean canReceive(double amount) {
 		if (this.energyToSend + amount <= MAX_ENERGY_INTERNAL)
 			return true;
 		return false;
@@ -131,16 +131,14 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	@Override //TODO: clean up logic, avoiding using BlockLocation
 	public double injectEnergy(EnumFacing directionFrom, double amount, double voltage) {
 		if (this.type == ConductorType.SOURCE) {
-			if (this.safePair != null) {
-				BlockLocation thisTe = new BlockLocation(this.getDimId(),
-						this.getX(), this.getY(), this.getZ());
-				BlockLocation pairTe = new BlockLocation(
-						this.safePair.getDimId(), this.safePair.getX(),
-						this.safePair.getY(), this.safePair.getZ());
-				int amtWithDisc = (int) amount
-						- BlockLocation.getEnergyDiscount((int) amount,
-								thisTe.getDistance(pairTe));
-				return this.safePair.receiveEnergy(amtWithDisc, this);
+			if (this.safePair != null) { //BlockPos lacks the dimension id, so it cannot be fully implemented yet.
+				//BlockPos thisTe = this.getPos();
+				//BlockPos pairTe = this.safePair.getCoordinate();
+				//int amtWithDisc = (int) amount
+				//		- BlockLocation.getEnergyDiscount((int) amount,
+				//				thisTe.getDistance(pairTe));
+				//return this.safePair.receiveEnergy(amtWithDisc, this);
+				return this.safePair.receiveEnergy(amount, this);
 			}
 		}
 		return amount;
@@ -151,7 +149,7 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	public static final int MAX_ENERGY_INTERNAL = 2048;
 
 	@Override
-	public int receiveEnergy(int amount, IWirelessConductor transmitter) {
+	public double receiveEnergy(double amount, IWirelessConductor transmitter) {
 
 		if (this.type == ConductorType.SOURCE)
 			return amount;
@@ -160,7 +158,7 @@ public class TileEntityWirelessConductor extends TileEntity implements
 			if (this.elapsedReceives > 600 && amount > 128) {
 
 				if (ENABLE_LIGHTNINGS) {
-					CommonHelper.spawnLightning(this.worldObj, getX(), getY(), getZ(), false);
+					CommonHelper.spawnLightning(this.worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), false);
 				}
 				this.elapsedReceives = 0;
 			}
@@ -200,18 +198,8 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	}
 
 	@Override
-	public int getX() {
-		return this.getPos().getX();
-	}
-
-	@Override
-	public int getY() {
-		return this.getPos().getY();
-	}
-
-	@Override
-	public int getZ() {
-		return this.getPos().getZ();
+	public BlockPos getCoordinate() {
+		return this.getPos();
 	}
 
 	public TileEntityWirelessConductor() {
@@ -248,11 +236,9 @@ public class TileEntityWirelessConductor extends TileEntity implements
 		ItemStack stack = this.inv[0];
 		if (stack != null) {
 			if (ItemFrequencyCard.isValid(stack)) {
-				BlockLocation devLocation = BlockLocation
-						.readFromNBT(stack.getTagCompound());
-				WorldServer world = DimensionManager.getWorld(devLocation
-						.getDimId());
-				TileEntity te = world.getTileEntity(devLocation.toBlockPos());
+				BlockPos devLocation = NBTHelper.getPositionData(stack.getTagCompound());
+				WorldServer world = DimensionManager.getWorld(stack.getTagCompound().getCompoundTag("blockLocation").getInteger("dimId")); //This is the old logic. It will be changed soon (tm)
+				TileEntity te = world.getTileEntity(devLocation);
 				if (te != null) {
 					if (te instanceof IWirelessConductor) {
 						if (te != this) {
@@ -347,8 +333,8 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
 		return this.worldObj.getTileEntity(getPos()) == this
-				&& player.getDistanceSq(this.getX() + 0.5, this.getY() + 0.5,
-						this.getZ() + 0.5) < 64;
+				&& player.getDistanceSq(this.getPos().getX() + 0.5, this.getPos().getY() + 0.5,
+						this.getPos().getZ() + 0.5) < 64;
 	}
 
 	@Override

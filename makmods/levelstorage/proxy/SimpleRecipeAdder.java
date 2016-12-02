@@ -41,7 +41,7 @@ public class SimpleRecipeAdder {
 		ItemStack oreWashingOutput2 = SimpleItemShortcut.DUST_TINY_CHROME
 				.getItemStack().copy();
 		oreWashingOutput2.stackSize = 2;
-		ItemStack oreWashingOutput3 = IC2Items.getItem("stoneDust").copy();
+		ItemStack oreWashingOutput3 = IC2Items.getItem("dust", "stone").copy();
 		Recipes.oreWashing.addRecipe(new RecipeInputItemStack(
 				SimpleItemShortcut.CRUSHED_CHROME_ORE.getItemStack()), null, false,
 				oreWashingOutput1, oreWashingOutput2, oreWashingOutput3);
@@ -58,7 +58,7 @@ public class SimpleRecipeAdder {
 				centrifugeOutput1, centrifugeOutput2, centrifugeOutput3);
 		ItemStack irBit = SimpleItemShortcut.TINY_IRIDIUM_DUST.getItemStack().copy();
 		irBit.stackSize = 9;
-		Recipes.compressor.addRecipe(new RecipeInputItemStack(irBit), null, false, IC2Items.getItem("iridiumOre").copy());
+		Recipes.compressor.addRecipe(new RecipeInputItemStack(irBit), null, false, IC2Items.getItem("misc_resource", "iridium_ore").copy());
 		Recipes.metalformerRolling.addRecipe(new RecipeInputItemStack(
 				SimpleItemShortcut.INGOT_CHROME.getItemStack().copy()), null, false,
 				SimpleItemShortcut.PLATE_CHROME.getItemStack().copy());
@@ -99,7 +99,7 @@ public class SimpleRecipeAdder {
 				SimpleItemShortcut.IV_GENERATOR_UPGRADE.ordinal());
 		Recipes.advRecipes.addShapelessRecipe(outp,
 				SimpleItemShortcut.PLATE_ANTIMATTER_IRIDIUM.getItemStack(),
-				IC2Items.getItem("overclockerUpgrade"), new ItemStack(
+				IC2Items.getItem("upgrade", "overclocker"), new ItemStack(
 						LSBlockItemList.blockMassMelter));
 	}
 
@@ -152,7 +152,7 @@ public class SimpleRecipeAdder {
 						.valueOf('n'), new ItemStack(Items.NETHER_STAR).copy());
 		Recipes.advRecipes.addShapelessRecipe(
 				SimpleItemShortcut.JETPACK_ACCELERATOR.getItemStack(),
-				IC2Items.getItem("overclockerUpgrade"),
+				IC2Items.getItem("upgrade", "overclocker"),
 				IC2ItemsShortcut.CARBON_PLATE.copy(), IC2ItemsShortcut.CARBON_PLATE.copy(),
 				IC2ItemsShortcut.ADV_CIRCUIT.copy());
 

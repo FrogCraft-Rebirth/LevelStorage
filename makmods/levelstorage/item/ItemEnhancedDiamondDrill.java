@@ -22,7 +22,6 @@ import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.logic.DrillEnhancementRecipe;
 import makmods.levelstorage.logic.util.AdvBlockFinder;
-import makmods.levelstorage.logic.util.BlockLocation;
 import makmods.levelstorage.logic.util.NBTHelper;
 import makmods.levelstorage.logic.util.NBTHelper.Cooldownable;
 import makmods.levelstorage.logic.util.OreDictHelper;
@@ -391,20 +390,20 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 			int metadata = state.getBlock().getMetaFromState(state);
 			if (name.startsWith("ore")) {
 				AdvBlockFinder finder = new AdvBlockFinder(world, pos, name);
-				for (BlockLocation oreCh : finder.getBlocksFound()) {
-					IBlockState blockFound = world.getBlockState(oreCh.toBlockPos());
+				for (BlockPos oreCh : finder.getBlocksFound()) {
+					IBlockState blockFound = world.getBlockState(oreCh);
 					Block b = blockFound.getBlock();
 					if (entityLiving instanceof EntityPlayer) {
-						if (b.getBlockHardness(blockFound, world, oreCh.toBlockPos()) != -1.0F) {
-							if (b.canEntityDestroy(blockFound, world, oreCh.toBlockPos(), entityLiving)) {
+						if (b.getBlockHardness(blockFound, world, oreCh) != -1.0F) {
+							if (b.canEntityDestroy(blockFound, world, oreCh, entityLiving)) {
 								if (!silktouch) {
-										b.dropBlockAsItem(world, oreCh.toBlockPos(), blockFound, fortune);
+										b.dropBlockAsItem(world, oreCh, blockFound, fortune);
 								} else {
-									if (b.canSilkHarvest(world, oreCh.toBlockPos(), blockFound, (EntityPlayer) entityLiving)) {
+									if (b.canSilkHarvest(world, oreCh, blockFound, (EntityPlayer) entityLiving)) {
 										ItemStack itemstack = new ItemStack(b,1, metadata);
 										this.dropBlockAsItem_do(world, oreCh.getX(), oreCh.getY(), oreCh.getZ(), itemstack);
 									} else {
-										b.dropBlockAsItem(world, oreCh.toBlockPos(), blockFound, fortune);
+										b.dropBlockAsItem(world, oreCh, blockFound, fortune);
 									}
 								}
 							}
@@ -423,123 +422,44 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 						if (!player.isSneaking()) {
 							RayTraceResult rayTrace = this.rayTrace(world, player, true);
 							if (rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
-								EnumFacing hitFrom = rayTrace.sideHit;
-								BlockLocation currBlock = new BlockLocation(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ());
-								BlockLocation[] removeBlocks = new BlockLocation[12];
-								switch (hitFrom) {
-									case DOWN: {
-										removeBlocks[0] = currBlock.move(EnumFacing.NORTH, 1);
-										removeBlocks[1] = currBlock.move(EnumFacing.WEST, 1);
-										removeBlocks[2] = currBlock.move(EnumFacing.SOUTH, 1);
-										removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
-
-										removeBlocks[4] = currBlock.move(EnumFacing.NORTH, 1).move(EnumFacing.EAST, 1);
-										removeBlocks[5] = currBlock.move(EnumFacing.WEST, 1).move(EnumFacing.NORTH, 1);
-										removeBlocks[6] = currBlock.move(EnumFacing.NORTH, 1).move(EnumFacing.WEST, 1);
-										removeBlocks[7] = currBlock.move(EnumFacing.WEST, 1).move(EnumFacing.SOUTH, 1);
-										removeBlocks[8] = currBlock.move(EnumFacing.SOUTH, 1).move(EnumFacing.EAST, 1);
-										break;
-									}
+								Iterable<BlockPos> removeBlocks;
+								switch (rayTrace.sideHit) {
+									case DOWN:
 									case UP: {
-										removeBlocks[0] = currBlock.move(EnumFacing.NORTH, 1);
-										removeBlocks[1] = currBlock.move(EnumFacing.WEST, 1);
-										removeBlocks[2] = currBlock.move(EnumFacing.SOUTH, 1);
-										removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
-
-										removeBlocks[4] = currBlock.move(EnumFacing.NORTH, 1).move(EnumFacing.EAST, 1);
-										removeBlocks[5] = currBlock.move(EnumFacing.WEST, 1).move(EnumFacing.NORTH, 1);
-										removeBlocks[6] = currBlock.move(EnumFacing.NORTH, 1).move(EnumFacing.WEST, 1);
-										removeBlocks[7] = currBlock.move(EnumFacing.WEST, 1).move(EnumFacing.SOUTH, 1);
-										removeBlocks[8] = currBlock.move(EnumFacing.SOUTH, 1).move(EnumFacing.EAST, 1);
+										removeBlocks = BlockPos.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1));
 										break;
 									}
-									case NORTH: {
-										// Up & down
-										removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
-										removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
-										// West & east
-										removeBlocks[2] = currBlock.move(EnumFacing.WEST, 1);
-										removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
-										// Up-west & Down-west
-										removeBlocks[4] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.WEST, 1);
-										removeBlocks[5] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.EAST, 1);
-
-										removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.WEST, 1);
-										removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.EAST, 1);
-
-										removeBlocks[8] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.EAST, 1);
-										removeBlocks[9] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.WEST, 1);
-
-										break;
-										// South up & north down
-									}
-									case WEST: {
-										removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
-										removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
-										// West & east
-										removeBlocks[2] = currBlock.move(EnumFacing.NORTH, 1);
-										removeBlocks[3] = currBlock.move(EnumFacing.SOUTH, 1);
-
-										removeBlocks[4] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.NORTH, 1);
-										removeBlocks[5] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.SOUTH, 1);
-
-										removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.NORTH, 1);
-										removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.SOUTH, 1);
-										removeBlocks[10] = currBlock.move(EnumFacing.SOUTH, 1).move(EnumFacing.UP, 1);
-										removeBlocks[11] = currBlock.move(EnumFacing.NORTH, 1).move(EnumFacing.DOWN, 1);
-										break;
-									}
-									case EAST: {
-										removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
-										removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
-										// West & east
-										removeBlocks[2] = currBlock.move(EnumFacing.NORTH, 1);
-										removeBlocks[3] = currBlock.move(EnumFacing.SOUTH, 1);
-
-										removeBlocks[4] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.NORTH, 1);
-										removeBlocks[5] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.SOUTH, 1);
-
-										removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.NORTH, 1);
-										removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.SOUTH, 1);
-										removeBlocks[10] = currBlock.move(EnumFacing.SOUTH, 1).move(EnumFacing.UP, 1);
-										removeBlocks[11] = currBlock.move(EnumFacing.NORTH, 1).move(EnumFacing.DOWN, 1);
-										break;
-									}
+									case NORTH: 
 									case SOUTH: {
-										removeBlocks[0] = currBlock.move(EnumFacing.UP, 1);
-										removeBlocks[1] = currBlock.move(EnumFacing.DOWN, 1);
-										// West & east
-										removeBlocks[2] = currBlock.move(EnumFacing.WEST, 1);
-										removeBlocks[3] = currBlock.move(EnumFacing.EAST, 1);
-										// Up-west & Down-west
-										removeBlocks[4] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.WEST, 1);
-										removeBlocks[5] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.EAST, 1);
-
-										removeBlocks[6] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.WEST, 1);
-										removeBlocks[7] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.EAST, 1);
-
-										removeBlocks[8] = currBlock.move(EnumFacing.UP, 1).move(EnumFacing.EAST, 1);
-										removeBlocks[9] = currBlock.move(EnumFacing.DOWN, 1).move(EnumFacing.WEST, 1);
+										removeBlocks = BlockPos.getAllInBox(pos.add(-1, -1, 0), pos.add(1, 1, 0));
 										break;
 									}
-									default:
+									case WEST: 
+									case EAST: {
+										removeBlocks = BlockPos.getAllInBox(pos.add(0, -1, -1), pos.add(0, 1, 1));
 										break;
 									}
+									default: {
+										removeBlocks = BlockPos.getAllInBox(pos, pos);
+										break;
+										//Note: all possible value had been enumerated. Unless the sideHit is null due to whatever reason, the rewrite above will be most effective one. 
+									}
+								}
 									// Stuff destroying part.. messy code, but it works.
-									for (BlockLocation blockLoc : removeBlocks) {
+									for (BlockPos blockLoc : removeBlocks) {
 										if (blockLoc != null) {
-											IBlockState bs = world.getBlockState(blockLoc.toBlockPos());
+											IBlockState bs = world.getBlockState(blockLoc);
 											int aimBlockMeta = bs.getBlock().getMetaFromState(bs);
-											if (bs.getBlockHardness(world, blockLoc.toBlockPos()) != -1.0F) {
-												if (bs.getBlock().canEntityDestroy(bs, world, blockLoc.toBlockPos(), entityLiving)) {
+											if (bs.getBlockHardness(world, blockLoc) != -1.0F) {
+												if (bs.getBlock().canEntityDestroy(bs, world, blockLoc, entityLiving)) {
 													if (!silktouch) {
-														bs.getBlock().dropBlockAsItem(world, blockLoc.toBlockPos(), bs, fortune);
+														bs.getBlock().dropBlockAsItem(world, blockLoc, bs, fortune);
 													} else {
-														if (bs.getBlock().canSilkHarvest(world, blockLoc.toBlockPos(), bs, (EntityPlayer) entityLiving)) {
+														if (bs.getBlock().canSilkHarvest(world, blockLoc, bs, (EntityPlayer) entityLiving)) {
 															ItemStack itemstack = new ItemStack(bs.getBlock(), 1, aimBlockMeta);
 															this.dropBlockAsItem_do(world, blockLoc.getX(), blockLoc.getY(), blockLoc.getZ(), itemstack);
 														} else {
-															bs.getBlock().dropBlockAsItem(world, blockLoc.toBlockPos(), bs, fortune);
+															bs.getBlock().dropBlockAsItem(world, blockLoc, bs, fortune);
 														}
 													}
 												}

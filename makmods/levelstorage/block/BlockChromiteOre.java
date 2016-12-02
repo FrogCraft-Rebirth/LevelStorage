@@ -8,16 +8,13 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class BlockChromiteOre extends Block {
 
 	public BlockChromiteOre(int id) {
 		super(Material.ROCK);
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			this.setCreativeTab(LSCreativeTab.instance);
-		}
+		this.setCreativeTab(LSCreativeTab.instance);
 		this.setSoundType(SoundType.STONE);
 		this.setHardness(3.0F);
 		OreDictionary.registerOre("oreChromite", this);

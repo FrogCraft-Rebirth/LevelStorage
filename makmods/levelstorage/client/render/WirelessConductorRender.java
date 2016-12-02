@@ -47,8 +47,10 @@ public class WirelessConductorRender extends TileEntitySpecialRenderer<TileEntit
 			if (cnd.getType() == ConductorType.SOURCE) {
 				if (cnd.safePair != null) {
 					if (cnd.safePair.getDimId() == cnd.getDimId()) {
-						EnergyRayFX p = new EnergyRayFX(cnd.getWorld(), cnd.getX(), cnd.getY(), cnd.getZ(),
-						        cnd.safePair.getX(), cnd.safePair.getY(), cnd.safePair.getZ(), 48, 141, 255, 10);
+						EnergyRayFX p = new EnergyRayFX(cnd.getWorld(),
+								cnd.getCoordinate().getX(), cnd.getCoordinate().getY(), cnd.getCoordinate().getZ(),
+						        cnd.safePair.getCoordinate().getX(), cnd.safePair.getCoordinate().getY(), cnd.safePair.getCoordinate().getZ(),
+						        48, 141, 255, 10);
 						Minecraft.getMinecraft().effectRenderer.addEffect(p);
 					}
 				}

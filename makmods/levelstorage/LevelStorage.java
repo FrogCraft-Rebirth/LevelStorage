@@ -13,7 +13,6 @@ import makmods.levelstorage.logic.util.LogHelper;
 import makmods.levelstorage.proxy.CommonProxy;
 import makmods.levelstorage.proxy.LSKeyboard;
 import makmods.levelstorage.registry.FlightRegistry;
-import net.minecraft.command.ServerCommandManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.Fluid;
@@ -33,7 +32,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 //import net.minecraftforge.fml.common.network.NetworkMod;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.server.FMLServerHandler;
 
 //@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, dependencies = "Forge@[9.10.0.804,);required-after:IC2")
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, dependencies = "required-after:IC2@[2.0,)")
@@ -77,31 +75,23 @@ public class LevelStorage {
 		logger = event.getModLog();
 		initTimeMeter = System.currentTimeMillis();
 		LogHelper.info("Pre-Initialization...");
-		Configuration config = new Configuration(
-				event.getSuggestedConfigurationFile());
+		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		configuration = config;
 		configuration.load();
 		Config.ACTIVE = true;
-		LevelStorage.itemLevelStorageBookSpace = config.get(
-				Configuration.CATEGORY_GENERAL, "bookCapacity",
-				2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2) // 16384
-				.getInt();
-		Property p = config.get(LevelStorage.BALANCE_CATEGORY,
-				"chargerOnlyUsesUUM", true);
+		LevelStorage.itemLevelStorageBookSpace = config.get(Configuration.CATEGORY_GENERAL, "bookCapacity", 1 << 14).getInt(); // 1 << 14 == 16384
+		Property p = config.get(LevelStorage.BALANCE_CATEGORY, "chargerOnlyUsesUUM", true);
 		p.setComment("If set to true, chargers will consume UUM and only UUM (they will refuse to receive any energy), if set to false, chargers will receive energy and only energy (no UUM)");
 		LevelStorage.chargerOnlyUUM = p.getBoolean(true);
 
-		Property p2 = config.get(LevelStorage.BALANCE_CATEGORY,
-				"experienceRecipesEnabled", true);
+		Property p2 = config.get(LevelStorage.BALANCE_CATEGORY, "experienceRecipesEnabled", true);
 		p2.setComment("Whether or not experience recipes are enabled");
 		LevelStorage.experienceRecipesOn = p2.getBoolean(true);
-		Property p4 = config.get(LevelStorage.BALANCE_CATEGORY, "hardRecipes",
-				false);
+		Property p4 = config.get(LevelStorage.BALANCE_CATEGORY, "hardRecipes", false);
 		p4.setComment("If set to true, armors (and other) will require hard-to-get materials (f.e. full set of armor will require 72 stacks of UUM)");
 		LevelStorage.recipesHardmode = p4.getBoolean(false);
 
-		Property p5 = config.get(LevelStorage.BALANCE_CATEGORY,
-				"explosionPowerAntimatterBomb", false);
+		Property p5 = config.get(LevelStorage.BALANCE_CATEGORY, "explosionPowerAntimatterBomb", false);
 		p5.setComment("Explosion power of Antimatter Bomb, where TNT is 4");
 		LevelStorage.powerExplosionAntimatterBomb = p5.getInt(100);
 		proxy.preInit();
@@ -124,8 +114,7 @@ public class LevelStorage {
 		ArmorFunctions.speedTickerMap.clear();
 		ArmorFunctions.onGroundMap.clear();
 		FlightRegistry.instance.modEnabledFlights.clear();
-		((ServerCommandManager) FMLServerHandler.instance().getServer().getCommandManager())
-				.registerCommand(new CommandChargeItems());
+		event.registerServerCommand(new CommandChargeItems());
 	}
 
 	@EventHandler

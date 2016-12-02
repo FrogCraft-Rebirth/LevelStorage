@@ -1,5 +1,6 @@
 package makmods.levelstorage.item;
 
+import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.init.IHasRecipe;
@@ -8,6 +9,7 @@ import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -35,10 +37,7 @@ public class ItemElectricLighter extends ItemBasicElectric implements IHasRecipe
 	}
 
 	public void addCraftingRecipe() {
-		Recipes.advRecipes.addShapelessRecipe(new ItemStack(
-				LSBlockItemList.itemElectricLighter),
-				ic2.api.item.IC2Items.getItem("powerunitsmall").copy(), new ItemStack(
-					net.minecraft.init.Items.FLINT_AND_STEEL), IC2ItemsShortcut.ADV_CIRCUIT);
+		//Recipes.advRecipes.addShapelessRecipe(new ItemStack(LSBlockItemList.itemElectricLighter), IC2Items.getItem("small_power_unit"), new ItemStack(Items.FLINT_AND_STEEL), IC2ItemsShortcut.ADV_CIRCUIT);
 	}
 
 	@Override

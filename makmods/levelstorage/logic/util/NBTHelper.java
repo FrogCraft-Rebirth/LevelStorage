@@ -2,6 +2,7 @@ package makmods.levelstorage.logic.util;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * Just a bunch of helpers (shortcuts, better to say) for operations with NBT
@@ -96,6 +97,15 @@ public class NBTHelper {
 			setByte(stack, name, (byte)0);
 		}
 		return stack.getTagCompound().getByte(name);
+	}
+	
+	public static BlockPos getPositionData(NBTTagCompound tag) {
+		NBTTagCompound tagPos = tag.getCompoundTag("blockLocation");
+		int
+		x = tagPos.getInteger("xCoord"),
+		y = tagPos.getInteger("yCoord"),
+		z = tagPos.getInteger("zCoord");
+		return new BlockPos(x, y, z);
 	}
 
 	/**

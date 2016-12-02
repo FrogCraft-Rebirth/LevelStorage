@@ -166,8 +166,8 @@ public class IVRegistry {
 		assign(new ItemStack(Items.QUARTZ), 24);
 		assign(new ItemStack(Items.SADDLE), 256);
 		assign(new ItemStack(Items.NETHER_STAR), 524288);
-		assign(IC2Items.getItem("iridiumOre").copy(), 131072);
-		assign(IC2Items.getItem("resin").copy(), 24);
+		assign(IC2Items.getItem("misc_resource", "iridium_ore").copy(), 131072);
+		assign(IC2Items.getItem("misc_resource", "resin").copy(), 24);
 		assign(new ItemStack(Items.SKULL, 1, 1), 87381);
 		assign(new ItemStack(Items.REEDS), 24);
 		assign(new ItemStack(Blocks.SOUL_SAND), 49);
@@ -175,9 +175,9 @@ public class IVRegistry {
 		assign(new ItemStack(Items.GUNPOWDER), 192);
 		assign(new ItemStack(Blocks.COBBLESTONE), 1);
 		assign(new ItemStack(Blocks.NETHERRACK), 1);
-		assign(IC2Items.getItem("industrialDiamond"), 8192);
-		assign(IC2Items.getItem("smallUran235"), 1024);
-		assign(IC2Items.getItem("Uran238"), 204);
+		assign(IC2Items.getItem("crafting", "industrial_diamond"), 8192);
+		assign(IC2Items.getItem("nuclear", "small_uranium_235"), 1024);
+		assign(IC2Items.getItem("nuclear", "uranium_238"), 204);
 		if (LevelStorage.configuration.get(LevelStorage.BALANCE_CATEGORY,
 				"disableBlazeRodToPowderExploit", true).getBoolean(true))
 			assign(new ItemStack(Items.BLAZE_POWDER), 307);
@@ -259,16 +259,17 @@ public class IVRegistry {
 	}
 
 	public void assignItemStack(ItemStack stack, int value) {
-		String id = stack.getItem().getRegistryName().toString();
-		int meta = stack.getItemDamage();
-		int valueActual = LevelStorage.configuration.get(
-				IV_CATEGORY,
-				id + ":" + meta,
-				value,
-				stack.hasDisplayName() ? stack.getDisplayName().replace(
-						".name", "") : stack.getUnlocalizedName()).getInt();
-		if (valueActual > 0)
-			itemStackEntries.add(new IVItemStackEntry(stack.copy(), value));
+		try {
+			String id = stack.getItem().getRegistryName().toString();
+			int meta = stack.getItemDamage();
+			int valueActual = LevelStorage.configuration.get(IV_CATEGORY, id + ":" + meta, value,
+					stack.hasDisplayName() ? stack.getDisplayName().replace(".name", "") : stack.getUnlocalizedName())
+					.getInt();
+			if (valueActual > 0)
+				itemStackEntries.add(new IVItemStackEntry(stack.copy(), value));
+		} catch (Exception e) {
+			System.out.println("Invalid ItemStack detected! " + stack.toString());
+		}
 	}
 
 	public void removeIV(Object obj) {
@@ -317,6 +318,8 @@ public class IVRegistry {
 				value).getInt();
 		if (valueActual > 0) {
 			List<ItemStack> sts = OreDictionary.getOres(name);
+			// I am not sure what's wrong here but it seems like there is still invalid entries
+			sts.stream().filter(stack -> stack.getItem() != null && stack.getItem().getRegistryName() != null);
 			for (ItemStack st : sts)
 				assignItemStack(st.copy(), value);
 			oreDictEntries.add(new IVOreDictEntry(name, value));

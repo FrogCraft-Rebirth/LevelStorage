@@ -4,6 +4,7 @@ import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.init.IHasRecipe;
+import makmods.levelstorage.lib.IC2ItemsShortcut;
 import makmods.levelstorage.tileentity.TileEntityMassMelter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -16,14 +17,14 @@ public class BlockMassMelter extends BlockMachineStandart implements IHasRecipe 
 	}
 
 	public void addCraftingRecipe() {
-		Recipes.advRecipes.addRecipe(new ItemStack(
-				LSBlockItemList.blockMassMelter), "ata", "cic", "mem", 'm',
-				IC2Items.getItem("recycler"), 'e', IC2Items
-						.getItem("energyCrystal"), 't', IC2Items
-						.getItem("teleporter"), 'a', IC2Items
-						.getItem("advancedMachine"), 'c', IC2Items
-						.getItem("advancedCircuit"), 'i', IC2Items
-						.getItem("iridiumPlate"));
+		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.blockMassMelter), 
+				"ata", "cic", "mem", 
+				'm', IC2Items.getItem("te", "recycler"), 
+				'e', IC2ItemsShortcut.ENERGY_CRYSTAL, 
+				't', IC2Items.getItem("te", "teleporter"), 
+				'a', IC2ItemsShortcut.ADV_MACHINE, 
+				'c', IC2ItemsShortcut.ADV_CIRCUIT, 
+				'i', IC2ItemsShortcut.IRIDIUM_PLATE);
 	}
 
 	@Override

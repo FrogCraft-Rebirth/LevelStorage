@@ -1,5 +1,6 @@
 package makmods.levelstorage.item;
 
+import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.LSCreativeTab;
@@ -33,12 +34,11 @@ public class ItemSuperconductor extends Item implements IHasRecipe {
 						"superConductorRecipeOutput", 6);
 		pOutput.setComment("Determines how much superconductors you get from one recipe");
 
-		Recipes.advRecipes.addRecipe(new ItemStack(
-				LSBlockItemList.itemSuperconductor, pOutput.getInt(6)), "ccc",
-				"iai", "ccc", 
-				'c', ic2.api.item.IC2Items.getItem("glassFiberCableItem"),
+		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.itemSuperconductor, pOutput.getInt(6)), 
+				"ccc", "iai", "ccc", 
+				'c', IC2Items.getItem("cable", "type:glass,insulation:0"),
 				'i', IC2ItemsShortcut.IRIDIUM_PLATE, 
-				'a', ic2.api.item.IC2Items.getItem("advancedMachine"));
+				'a', IC2ItemsShortcut.ADV_MACHINE);
 
 	}
 

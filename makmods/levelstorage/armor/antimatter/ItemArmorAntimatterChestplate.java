@@ -3,6 +3,7 @@ package makmods.levelstorage.armor.antimatter;
 import java.util.List;
 
 import ic2.api.item.ElectricItem;
+import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
 import makmods.levelstorage.init.IHasRecipe;
@@ -80,12 +81,11 @@ public class ItemArmorAntimatterChestplate extends ItemArmorAntimatterBase
 
 	@Override
 	public void addCraftingRecipe() {
-		Recipes.advRecipes.addRecipe(new ItemStack(
-				LSBlockItemList.itemArmorAntimatterChestplate), "pcp", "pap",
-				"pep", 'p', SimpleItemShortcut.PLATE_ANTIMATTER_IRIDIUM
-						.getItemStack(), 'e', new ItemStack(
-						LSBlockItemList.itemAntimatterCrystal), 'a',
-				new ItemStack(LSBlockItemList.itemArmorEnergeticChestplate),
-				'c', ic2.api.item.IC2Items.getItem("teslaCoil"));
+		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.itemArmorAntimatterChestplate), 
+				"pcp", "pap", "pep", 
+				'p', SimpleItemShortcut.PLATE_ANTIMATTER_IRIDIUM.getItemStack(), 
+				'e', new ItemStack(LSBlockItemList.itemAntimatterCrystal), 
+				'a', new ItemStack(LSBlockItemList.itemArmorEnergeticChestplate),
+				'c', IC2Items.getItem("te", "tesla_coil"));
 	}
 }

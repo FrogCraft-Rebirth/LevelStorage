@@ -24,9 +24,10 @@ public class BlockASU extends BlockMachineAdvanced implements IHasRecipe {
 	public void addCraftingRecipe() {
 		// TODO: make the recipe more expensive. MUCH MORE EXPENSIVE.
 		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.blockASU),
-				"epe", "eme", "epe", 'e', new ItemStack(
-						LSBlockItemList.itemAntimatterCrystal), 'm', IC2Items
-						.getItem("mfsUnit"), 'p', SimpleItemShortcut.PLATE_ANTIMATTER_IRIDIUM.getItemStack());
+				"epe", "eme", "epe", 
+				'e', new ItemStack(LSBlockItemList.itemAntimatterCrystal), 
+				'm', IC2Items.getItem("te", "mfsu"), 
+				'p', SimpleItemShortcut.PLATE_ANTIMATTER_IRIDIUM.getItemStack());
 	}
 
 }

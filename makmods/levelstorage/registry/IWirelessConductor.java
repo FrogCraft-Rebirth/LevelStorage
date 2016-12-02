@@ -1,5 +1,7 @@
 package makmods.levelstorage.registry;
 
+import net.minecraft.util.math.BlockPos;
+
 /**
  * Basic interface for all the wireless conductors.
  * 
@@ -7,24 +9,14 @@ package makmods.levelstorage.registry;
  */
 public interface IWirelessConductor {
 	/**
-	 * X coord for the current instance
+	 * Coordinate for the current instance
 	 */
-	public int getX();
+	public BlockPos getCoordinate();
 
 	/**
 	 * Type for current instance
 	 */
 	public ConductorType getType();
-
-	/**
-	 * Y coord for the current instance
-	 */
-	public int getY();
-
-	/**
-	 * Z coord for the current instance
-	 */
-	public int getZ();
 
 	/**
 	 * Dimension id for the current instance
@@ -39,7 +31,7 @@ public interface IWirelessConductor {
 	 *            Energy being sent
 	 * @return Energy not being consumed
 	 */
-	public int receiveEnergy(int amount, IWirelessConductor transmitter);
+	public double receiveEnergy(double amount, IWirelessConductor transmitter);
 
 	/**
 	 * Returns pair for the current instance
@@ -48,5 +40,5 @@ public interface IWirelessConductor {
 	 */
 	public IWirelessConductor getPair();
 	
-	public boolean canReceive(int amount);
+	public boolean canReceive(double amount);
 }

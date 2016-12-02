@@ -1,9 +1,5 @@
 package makmods.levelstorage.block;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import ic2.api.item.IC2Items;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
@@ -14,9 +10,8 @@ import makmods.levelstorage.tileentity.TileEntityRockDesintegrator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 @CustomItemBlock(itemBlock=ItemBlockRockDesintegrator.class)
 public class BlockRockDesintegrator extends BlockMachineStandart implements IHasRecipe {
@@ -26,24 +21,12 @@ public class BlockRockDesintegrator extends BlockMachineStandart implements IHas
 	}
 
 	public void addCraftingRecipe() {
-		List<ItemStack> lavas = Lists.newArrayList();
-		List<ItemStack> waters = Lists.newArrayList();
-		for (FluidContainerData d : FluidContainerRegistry
-				.getRegisteredFluidContainerData()) {
-			if (d.fluid.getFluid() == FluidRegistry.WATER)
-				waters.add(d.filledContainer.copy());
-			if (d.fluid.getFluid() == FluidRegistry.LAVA)
-				lavas.add(d.filledContainer.copy());
-		}
-		for (ItemStack lava : lavas)
-			for (ItemStack water : waters) {
-				Recipes.advRecipes.addRecipe(new ItemStack(
-						LSBlockItemList.blockRockDesintegrator), "lll", "cmc",
-						"www", Character.valueOf('l'), lava, Character
-								.valueOf('w'), water, Character.valueOf('c'),
-						IC2Items.getItem("crafting", "circuit"), 
-						Character.valueOf('m'), IC2Items.getItem("machine"));
-			}
+		//Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.blockRockDesintegrator), 
+		//		"lll", "cmc", "www", 
+		//		'l', new FluidStack(FluidRegistry.LAVA, 1000), 
+		//		'w', new FluidStack(FluidRegistry.WATER, 1000),
+		//		'c', IC2Items.getItem("crafting", "circuit"), 
+		//		'm', IC2Items.getItem("machine"));
 	}
 
 	@Override
