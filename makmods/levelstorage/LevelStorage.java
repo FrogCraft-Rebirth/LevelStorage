@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 
 import makmods.levelstorage.armor.ArmorFunctions;
 import makmods.levelstorage.command.CommandChargeItems;
-import makmods.levelstorage.init.Config;
 import makmods.levelstorage.init.LSIMCHandler;
 import makmods.levelstorage.lib.Reference;
 import makmods.levelstorage.logic.util.LogHelper;
@@ -34,7 +33,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 //@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, dependencies = "Forge@[9.10.0.804,);required-after:IC2")
-@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, dependencies = "required-after:IC2@[2.0,)")
+@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, dependencies = "required-after:IC2@[2.0,);after:gregtech;after:adv_solar_panel;")
 //@NetworkMod(channels = { Reference.MOD_ID, LSKeyboard.PACKET_KEYBOARD_CHANNEL,
 //		Reference.CUSTOM_PACKET_CHANNEL }, clientSideRequired = true, serverSideRequired = false, packetHandler = PacketHandler.class)
 public class LevelStorage {
@@ -64,10 +63,11 @@ public class LevelStorage {
 	public static float powerExplosionAntimatterBomb;
 	private long initTimeMeter;
 
-	public static boolean detectedGT = false;
+	public static final boolean detectedGT = Loader.isModLoaded("gregtech");
+	public static final boolean detectedASP = Loader.isModLoaded("adv_solar_panel");
 
 	public static boolean isAnySolarModLoaded() {
-		return Loader.isModLoaded("AdvancedSolarPanel") || detectedGT;
+		return detectedASP || detectedGT;
 	}
 
 	@EventHandler
@@ -78,7 +78,6 @@ public class LevelStorage {
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		configuration = config;
 		configuration.load();
-		Config.ACTIVE = true;
 		LevelStorage.itemLevelStorageBookSpace = config.get(Configuration.CATEGORY_GENERAL, "bookCapacity", 1 << 14).getInt(); // 1 << 14 == 16384
 		Property p = config.get(LevelStorage.BALANCE_CATEGORY, "chargerOnlyUsesUUM", true);
 		p.setComment("If set to true, chargers will consume UUM and only UUM (they will refuse to receive any energy), if set to false, chargers will receive energy and only energy (no UUM)");

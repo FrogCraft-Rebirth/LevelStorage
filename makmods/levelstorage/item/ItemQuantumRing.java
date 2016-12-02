@@ -131,11 +131,12 @@ public class ItemQuantumRing extends Item implements IElectricItem, IHasRecipe {
 		return chargeSt > 0 && dischSt > 0;
 	}
 
-	public void onUpdate(ItemStack itemStack, World world, Entity par3Entity,
+	@Override
+	public void onUpdate(ItemStack itemStack, World world, Entity entity,
 			int par4, boolean par5) {
-		if (!(par3Entity instanceof EntityPlayer))
+		if (!(entity instanceof EntityPlayer))
 			return;
-		EntityPlayer player = (EntityPlayer) par3Entity;
+		EntityPlayer player = (EntityPlayer) entity;
 		InventoryPlayer inv = player.inventory;
 		boolean didSomething = false;
 		for (ItemStack device : inv.armorInventory)
@@ -164,20 +165,14 @@ public class ItemQuantumRing extends Item implements IElectricItem, IHasRecipe {
 	}
 
 	public void addCraftingRecipe() {
-		Recipes.advRecipes.addRecipe(new ItemStack(
-				LSBlockItemList.itemQuantumRing), "hic", "iei", "bil",
-				Character.valueOf('i'), IC2ItemsShortcut.IRIDIUM_PLATE.copy(),
-				Character.valueOf('e'), new ItemStack(
-						LSBlockItemList.itemStorageFourtyMillion), Character
-						.valueOf('h'), new ItemStack(
-						LSBlockItemList.itemArmorTeslaHelmet), Character
-						.valueOf('c'), new ItemStack(
-						LSBlockItemList.itemArmorEnergeticChestplate),
-				Character.valueOf('b'), new ItemStack(
-						LSBlockItemList.itemLevitationBoots), Character
-						.valueOf('l'), new ItemStack(
-						LSBlockItemList.itemSupersonicLeggings));
-
+		Recipes.advRecipes.addRecipe(new ItemStack(LSBlockItemList.itemQuantumRing),
+				"hic", "iei", "bil",
+				'i', IC2ItemsShortcut.IRIDIUM_PLATE.copy(),
+				'e', new ItemStack(LSBlockItemList.itemStorageFourtyMillion),
+				'h', new ItemStack(LSBlockItemList.itemArmorTeslaHelmet),
+				'c', new ItemStack(LSBlockItemList.itemArmorEnergeticChestplate),
+				'b', new ItemStack(LSBlockItemList.itemLevitationBoots),
+				'l', new ItemStack(LSBlockItemList.itemSupersonicLeggings));
 	}
 
 	@Override

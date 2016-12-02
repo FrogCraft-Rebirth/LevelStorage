@@ -15,10 +15,8 @@ public class BlockAntimatterStone extends Block {
 
 	public BlockAntimatterStone(int id) {
 		super(Material.ROCK);
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			this.setCreativeTab(LSCreativeTab.instance);
-		}
-		this.setSoundType(/*Block.soundStoneFootstep*/SoundType.STONE);
+		this.setCreativeTab(LSCreativeTab.instance);
+		this.setSoundType(SoundType.STONE);
 		this.setHardness(6.0F);
 		this.setResistance(600.0F);
 		this.setLightLevel(1.0F);
@@ -39,7 +37,6 @@ public class BlockAntimatterStone extends Block {
 	
 	public Item drop = OreDictionary.getOres("itemAntimatterMolecule").get(0).getItem();
 	public int dropMeta = OreDictionary.getOres("itemAntimatterMolecule").get(0).getItemDamage();
-	
 
 	@Override
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
