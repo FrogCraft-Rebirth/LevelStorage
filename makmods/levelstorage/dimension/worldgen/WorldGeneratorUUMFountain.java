@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 
 public class WorldGeneratorUUMFountain implements IWorldGenerator {
 
-	public static final IBlockState UUM = LevelStorage.IC2UUM.getBlock().getDefaultState();;
+	public static final IBlockState UUM = LevelStorage.IC2UUM.getBlock().getDefaultState();
 
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {

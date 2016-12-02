@@ -1,10 +1,23 @@
 package makmods.levelstorage.dimension;
 
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.chunk.storage.IChunkLoader;
 
 public class AntimatterUniverseChunkProvider implements IChunkProvider {
 
+	private WorldServer world;
+	private IChunkLoader chunkLoader;
+	private IChunkGenerator chunkGen;
+	
+	public AntimatterUniverseChunkProvider(WorldServer world, IChunkLoader chunkLoader, IChunkGenerator chunkGen) {
+		this.world = world;
+		this.chunkLoader = chunkLoader;
+		this.chunkGen = chunkGen;
+	}
+	
 	@Override
 	public Chunk getLoadedChunk(int x, int z) {
 		return null;

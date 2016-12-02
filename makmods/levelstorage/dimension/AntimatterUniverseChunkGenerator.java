@@ -11,6 +11,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -20,6 +21,7 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
 import net.minecraft.world.gen.feature.WorldGenLakes;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class AntimatterUniverseChunkGenerator implements IChunkGenerator {
@@ -157,10 +159,6 @@ public class AntimatterUniverseChunkGenerator implements IChunkGenerator {
 		BlockPos pos = new BlockPos(par2 * 16 + 16, 0, par3 * 16 + 16);
 		Biome biomegenbase = this.worldObj.getBiomeForCoordsBody(pos);
 		biomegenbase.decorate(this.worldObj, this.random, pos);
-		/*new WorldGeneratorPillar().generate(random, par2, par3, this.worldObj, this, par1IChunkProvider);
-		new WorldGeneratorAsteroids().generate(random, par2, par3, this.worldObj, this, par1IChunkProvider);
-		new WorldGeneratorUUMFountain().generate(random, par2, par3, this.worldObj, this, par1IChunkProvider);
-		new WorldGeneratorContinent().generate(random, par2, par3, this.worldObj, this, par1IChunkProvider);*/
 	}
 
 	/**
@@ -193,15 +191,6 @@ public class AntimatterUniverseChunkGenerator implements IChunkGenerator {
 	@Override
 	public List<Biome.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
 		return Collections.emptyList();
-	}
-
-	/**
-	 * Returns the location of the closest structure of the specified type. If
-	 * not found returns null.
-	 */
-	public ChunkPosition findClosestStructure(World par1World, String par2Str,
-			int par3, int par4, int par5) {
-		return null;
 	}
 
 	public int getLoadedChunkCount() {
@@ -299,11 +288,11 @@ public class AntimatterUniverseChunkGenerator implements IChunkGenerator {
 
 	private double[] initializeNoiseField(double[] par1ArrayOfDouble, int par2,
 			int par3, int par4, int par5, int par6, int par7) {
-		ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(
+		ChunkGeneratorEvent.InitNoiseField event = new ChunkGeneratorEvent.InitNoiseField(
 				this, par1ArrayOfDouble, par2, par3, par4, par5, par6, par7);
 		MinecraftForge.EVENT_BUS.post(event);
 		if (event.getResult() == Event.Result.DENY)
-			return event.noisefield;
+			return event.getNoisefield();
 
 		if (par1ArrayOfDouble == null) {
 			par1ArrayOfDouble = new double[par5 * par6 * par7];
