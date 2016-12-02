@@ -1,4 +1,5 @@
 package makmods.levelstorage.tileentity;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import ic2.api.tile.IWrenchable;
 import makmods.levelstorage.LSBlockItemList;
-import makmods.levelstorage.LevelStorage;
+import makmods.levelstorage.LSConfig;
 import makmods.levelstorage.gui.SlotFrequencyCard;
 import makmods.levelstorage.item.ItemFrequencyCard;
 import makmods.levelstorage.logic.util.CommonHelper;
@@ -33,8 +34,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 
 public class TileEntityWirelessConductor extends TileEntity implements
 		IWirelessConductor, IInventory, ITickable, IEnergySink, IWrenchable,
@@ -49,16 +48,8 @@ public class TileEntityWirelessConductor extends TileEntity implements
 	public static boolean ENABLE_LIGHTNINGS;
 
 	public static void getConfig() {
-		Property p = LevelStorage.configuration.get(
-				Configuration.CATEGORY_GENERAL, "conductorsSpawnLightnings",
-				true);
-		p.setComment("If set to false, wireless conductors will stop spawning lightnings");
-		ENABLE_LIGHTNINGS = p.getBoolean(true);
-		Property p2 = LevelStorage.configuration
-				.get(Configuration.CATEGORY_GENERAL, "conducorsSpawnParticles",
-						true);
-		p2.setComment("If set to false, conductors will stop spawning particles (useful on servers, because every 40 ticks server will send 180 packets to all the clients)");
-		ENABLE_PARTICLES = p2.getBoolean(true);
+		ENABLE_LIGHTNINGS = LSConfig.conductorSpawnLightnings;
+		ENABLE_PARTICLES = LSConfig.conductorSpawnParticles;
 	}
 
 	public boolean canReceive(double amount) {

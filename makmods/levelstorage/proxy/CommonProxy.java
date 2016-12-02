@@ -5,7 +5,6 @@ import makmods.levelstorage.dimension.AntimatterUniverseRayHandler;
 import makmods.levelstorage.dimension.BiomeAntimatterField;
 import makmods.levelstorage.dimension.LSDimensions;
 import makmods.levelstorage.init.CompatibilityInitializer;
-import makmods.levelstorage.init.Config;
 import makmods.levelstorage.init.LSFluids;
 import makmods.levelstorage.init.ModAchievements;
 import makmods.levelstorage.init.ModTileEntities;
@@ -21,7 +20,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -77,14 +75,10 @@ public class CommonProxy {
 		// XPStackRegistry.instance.printRegistry();
 		ModAchievements.instance.init();
 		IVRegistry.instance.init();
-		LevelStorage.configuration.save();
-		Config.ACTIVE = false;
 		CompatibilityInitializer.instance.init();
 		// TODO: move this to an external compat class
-		if (Loader.isModLoaded("gregtech_addon")) {
-			LogHelper
-					.severe("GregTech detected. Performing needed changes. (mostly nerfs.. you know the drill)");
-			LevelStorage.detectedGT = true;
+		if (LevelStorage.DETECT_GT) {
+			LogHelper.severe("GregTech detected. Performing needed changes. (mostly nerfs.. you know the drill)");
 			XpStackRegistry.UUM_XP_CONVERSION.setValue(1300);
 		}
 		// LSBlockItemList.itemCapFluidCell.fillMetaListWithFluids();

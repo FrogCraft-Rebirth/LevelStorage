@@ -1,6 +1,6 @@
 package makmods.levelstorage.proxy;
 
-import makmods.levelstorage.LevelStorage;
+import makmods.levelstorage.LSConfig;
 import makmods.levelstorage.client.ElectricHUD;
 import makmods.levelstorage.client.render.WirelessConductorRender;
 import makmods.levelstorage.lib.Reference;
@@ -141,7 +141,7 @@ public class ClientProxy extends CommonProxy {
 				.addNewArmourRendererPrefix("antimatter");
 		LSCreativeTab.instance = new LSCreativeTab();*/
 		super.init();
-		if (LevelStorage.configuration.get(LevelStorage.PERFORMANCE_CATEGORY, "enableArmorHUD", true).getBoolean(true))
+		if (LSConfig.enableArmorHUD)
 			new ElectricHUD();
 		ClientRegistry.bindTileEntitySpecialRenderer(
 				TileEntityWirelessConductor.class,

@@ -11,7 +11,7 @@ import ic2.api.recipe.RecipeInputItemStack;
 import ic2.api.recipe.RecipeInputOreDict;
 import ic2.api.recipe.RecipeOutput;
 import ic2.api.recipe.Recipes;
-import makmods.levelstorage.LevelStorage;
+import makmods.levelstorage.LSConfig;
 import makmods.levelstorage.iv.IVEntry;
 import makmods.levelstorage.iv.IVItemStackEntry;
 import makmods.levelstorage.iv.IVRegistry;
@@ -26,12 +26,7 @@ import net.minecraft.item.crafting.IRecipe;
 
 public class IVRecipeParser implements IRecipeParser {
 
-	public static int PASSES = LevelStorage.configuration
-			.get(IVRegistry.IV_CATEGORY,
-					"dynamicAssignmentPasses",
-					-1,
-					"Determines how many passes (\"attempts\") will be made. Basically, the lower value, the faster minecraft will start, the higher value, the more items will be assigned. Set to -1 to completely disable. 2 is the minimum requirement for semi-filled IV values. 1 will cover the most straightforward recipes.")
-			.getInt();
+	public static int PASSES = LSConfig.dynamicIVRegistryMappingDepth;
 
 	public int assignCrafting(ItemStack is) {
 		List<IRecipe> recipesFor = RecipeHelper.getRecipesFor(is);

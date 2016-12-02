@@ -3,7 +3,7 @@ package makmods.levelstorage.worldgen;
 import java.util.Random;
 
 import makmods.levelstorage.LSBlockItemList;
-import makmods.levelstorage.LevelStorage;
+import makmods.levelstorage.LSConfig;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
@@ -20,8 +20,7 @@ public class LSWorldGenerator implements IWorldGenerator {
 	public static final String WORLDGEN_CATEGORY = "worldgen";
 
 	public LSWorldGenerator() {
-		oreDensityFactor = LevelStorage.configuration.get(WORLDGEN_CATEGORY,
-				"oreDensity", 1).getInt();
+		oreDensityFactor = LSConfig.oreDensityFactor;
 	}
 	
 	@Override

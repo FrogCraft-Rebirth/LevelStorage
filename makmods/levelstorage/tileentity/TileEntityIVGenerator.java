@@ -1,10 +1,9 @@
 package makmods.levelstorage.tileentity;
 
+import makmods.levelstorage.LSConfig;
 import makmods.levelstorage.gui.client.GUIIVGenerator;
 import makmods.levelstorage.gui.container.ContainerIVGenerator;
 import makmods.levelstorage.gui.logicslot.LogicSlot;
-import makmods.levelstorage.init.Config;
-import makmods.levelstorage.init.Config.LSConfigCategory;
 import makmods.levelstorage.init.LSFluids;
 import makmods.levelstorage.item.SimpleItems.SimpleItemShortcut;
 import makmods.levelstorage.iv.IVRegistry;
@@ -40,7 +39,7 @@ public class TileEntityIVGenerator extends TileEntityInventory implements IFluid
 	}
 	
 	public static void getConfig() {
-		IV_PER_TICK = Config.getInt(LSConfigCategory.IV, "IVGenerator_Rate", 20, "Speed at which IV Generators produce IV. (per tick)");
+		IV_PER_TICK = LSConfig.ivGenerationRate;
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound par1NBTTagCompound) {

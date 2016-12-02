@@ -15,6 +15,7 @@ import ic2.api.item.IElectricItem;
 import ic2.api.recipe.Recipes;
 import ic2.api.util.Keys;
 import makmods.levelstorage.LSBlockItemList;
+import makmods.levelstorage.LSConfig;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
@@ -44,18 +45,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 
 public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 		IElectricItem, IHasRecipe {
 
-	public static final float SPEED; //Defined in a static initializer
+	public static float SPEED = LSConfig.enchancedDiamondDrillSpeed;
 	public static final int TIER = 2;
 	public static final int STORAGE = 100000;
 	public static final int ENERGY_PER_USE = 200;
@@ -105,14 +103,6 @@ public class ItemEnhancedDiamondDrill extends ItemPickaxe implements
 	@Override
 	public Set<String> getToolClasses(ItemStack stack) {
 		return ImmutableSet.of("shovel", "pickaxe");
-	}
-
-	static {
-		Property p = LevelStorage.configuration
-				.get(Configuration.CATEGORY_GENERAL,
-						"enhancedDiamondDrillSpeed", 32);
-		p.setComment("Speed of enhanced diamond drill (diamond drill = 16, default = 32)");
-		SPEED = p.getInt(32);
 	}
 
 	public static enum Mode {

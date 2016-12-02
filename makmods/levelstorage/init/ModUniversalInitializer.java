@@ -155,10 +155,7 @@ public class ModUniversalInitializer {
 				LogHelper.warning("Item/Block has no recipe: " + f.getType().getSimpleName());
 				return;
 			}
-			Property p4 = LevelStorage.configuration.get(
-					LevelStorage.RECIPES_CATEGORY, f.getName(), true);
-			p4.setComment("Determines whether or not item's recipe is enabled");
-			boolean enable = p4.getBoolean(true);
+			boolean enable = true; //You know what? This is another legacy remain. This will be worked out in future.
 			if (enable) {
 				LogHelper.info("Adding recipe for: " + f.getName());
 				((IHasRecipe)obj).addCraftingRecipe();

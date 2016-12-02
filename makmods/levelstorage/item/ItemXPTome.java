@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.Random;
 
 import makmods.levelstorage.LSBlockItemList;
-import makmods.levelstorage.LevelStorage;
+import makmods.levelstorage.LSConfig;
 import makmods.levelstorage.gui.logicslot.LogicSlot;
-import makmods.levelstorage.init.Config;
-import makmods.levelstorage.init.Config.LSConfigCategory;
 import makmods.levelstorage.init.IHasRecipe;
 import makmods.levelstorage.logic.ExperienceRecipe;
 import makmods.levelstorage.logic.util.CommonHelper;
@@ -40,16 +38,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemXPTome extends Item implements IHasRecipe {
 
-	private int bookMaxStorage;
+	private int bookMaxStorage = LSConfig.itemLevelStorageBookSpace;
 	public static final int COOLDOWN = 3;
 
 	public static String STORED_XP_NBT = "storedXP";
 	public static int xpPerInteraction = 100;
-	public static int XP_PER_BOOKCRAFT = Config.getInt(LSConfigCategory.BALANCE, "xpPerBookEnchantment", 840, "Determines how much XP is consumed from XP tome when you try to enchant a book with it (default V while holding XP tome in your hand and having books in inventory");
+	public static int XP_PER_BOOKCRAFT = LSConfig.xpPerEnchantmentBook;
 
 	public ItemXPTome(int id) {
 		super();
-		this.bookMaxStorage = LevelStorage.itemLevelStorageBookSpace;
 		this.setMaxDamage(512);
 		this.setNoRepair();
 		this.setCreativeTab(CreativeTabs.TOOLS);
@@ -66,9 +63,8 @@ public class ItemXPTome extends Item implements IHasRecipe {
 		ItemStack stackEnchTable = new ItemStack(Blocks.ENCHANTING_TABLE);
 		GameRegistry.addShapelessRecipe(stackDepleted, stackBook,
 				stackGoldBlock, stackEnchTable);
-		if (LevelStorage.experienceRecipesOn) {
-			CraftingManager.getInstance().getRecipeList()
-					.add(new ExperienceRecipe());
+		if (LSConfig.experienceRecipesEnabled) {
+			CraftingManager.getInstance().getRecipeList().add(new ExperienceRecipe());
 		}
 	}
 
@@ -192,7 +188,7 @@ public class ItemXPTome extends Item implements IHasRecipe {
 	}
 
 	public static int calculateDurability(ItemStack stack) {
-		float percent = ((getStoredXP(stack) * 100.0f) / LevelStorage.itemLevelStorageBookSpace) / 100;
+		float percent = ((getStoredXP(stack) * 100.0f) / LSConfig.itemLevelStorageBookSpace) / 100;
 		int durability = stack.getMaxDamage()
 				- (int) (stack.getMaxDamage() * percent);
 		if (durability == 0) {

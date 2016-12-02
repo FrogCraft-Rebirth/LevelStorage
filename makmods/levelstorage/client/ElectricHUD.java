@@ -8,9 +8,9 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -20,13 +20,15 @@ public class ElectricHUD {
 	// According to https://github.com/MinecraftForge/MinecraftForge/issues/960,
 	// ITickHandler is replaced by TickEvent.
 	
+	//Oh wait... this is HUD. Shall use RenderGameOverlayEvent
+	
 	public ElectricHUD() {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@SubscribeEvent
-	public void tickEnd(TickEvent.ClientTickEvent event) {
-		if (event.phase == TickEvent.Phase.END)
+	public void tickEnd(RenderGameOverlayEvent event) {
+		if (event.getType() == RenderGameOverlayEvent.ElementType.ALL)
 			renderHUD();
 	}
 
@@ -98,9 +100,7 @@ public class ElectricHUD {
 			// ACTUAL RENDERING
 			if (percentArmor > 0) {
 				FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-				fr.drawStringWithShadow(
-						color + I18n.format("other.energyHUD")
-								+ " " + percentArmor + "%", 2, 2, 0);
+				fr.drawStringWithShadow(color + I18n.format("other.energyHUD") + " " + percentArmor + "%", 2, 2, 0);
 			}
 		}
 	}

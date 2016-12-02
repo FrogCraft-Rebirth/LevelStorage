@@ -4,14 +4,13 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 
 import ic2.api.recipe.Recipes;
+import makmods.levelstorage.LSConfig;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.api.XpStack;
 import makmods.levelstorage.lib.Reference;
-import makmods.levelstorage.logic.util.CommonHelper;
 import makmods.levelstorage.logic.util.LogHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -33,14 +32,10 @@ public class XpStackRegistry {
 	public static final int ORE_DICT_NOT_FOUND = -1;
 
 	public void initCriticalNodes() {
-		if (LevelStorage.configuration.get(LevelStorage.BALANCE_CATEGORY,
-				"addCopperTinToBronzeCraftingRecipe", true).getBoolean(true)) {
-			ItemStack bronze = OreDictionary.getOres("ingotBronze").get(0)
-					.copy();
+		if (LSConfig.easyBronzeIngotRecipe) {
+			ItemStack bronze = OreDictionary.getOres("ingotBronze").get(0).copy();
 			bronze.stackSize = 4;
-			Recipes.advRecipes.addRecipe(bronze, "cc", "ct",
-					Character.valueOf('c'), "ingotCopper",
-					Character.valueOf('t'), "ingotTin");
+			Recipes.advRecipes.addShapelessRecipe(bronze, "ingotCopper", "ingotCopper", "ingotCopper", "ingotTin");
 		}
 		this.pushToRegistryWithConfig(new XpStack(new ItemStack(Items.REDSTONE),
 				4));
@@ -60,7 +55,7 @@ public class XpStackRegistry {
 		// dummy for debug
 		// this.pushOreToRegistry("ingotGold", 1);
 
-		if (LevelStorage.detectedGT) {
+		if (LevelStorage.DETECT_GT) {
 			this.pushOreToRegistry("dustDiamond", 512);
 			this.pushOreToRegistry("dustTinyDiamond", 128);
 			this.pushOreToRegistry("dustPlatinum", 2048);
@@ -118,8 +113,10 @@ public class XpStackRegistry {
 		this.entries.add(stack);
 	}
 
+	//This method is bad. I will replace the XPRegistry system with a xml system.
+	//For now, I simply disable the whole xpstack config system.
 	public void pushToRegistryWithConfig(XpStack stack) {
-		Property property = LevelStorage.configuration
+		/*Property property = LevelStorage.configuration
 				.get(XP_REGISTRY_CATEGORY,
 						stack.stack.getItem().getUnlocalizedName()
 								.replace("item.", "").replace(".name", "")
@@ -135,7 +132,7 @@ public class XpStackRegistry {
 		FMLLog.info("Adding #" + stack.stack.getItem() + ":"
 				+ stack.stack.getItemDamage() + " to the Xp Registry, value: "
 				+ stack.value);
-		this.entries.add(new XpStack(stack.stack, value));
+		this.entries.add(new XpStack(stack.stack, value));*/
 	}
 
 	public void pushOreToRegistry(String name, int value) {

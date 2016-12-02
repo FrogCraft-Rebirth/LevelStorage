@@ -5,7 +5,6 @@ import ic2.api.recipe.RecipeInputItemStack;
 import ic2.api.recipe.RecipeInputOreDict;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
-import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.item.SimpleItems;
 import makmods.levelstorage.item.SimpleItems.SimpleItemShortcut;
 import makmods.levelstorage.lib.IC2ItemsShortcut;
@@ -13,7 +12,6 @@ import makmods.levelstorage.logic.util.LogHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -127,16 +125,8 @@ public class SimpleRecipeAdder {
 				Character.valueOf('I'), "ingotIridium");
 
 		// Iridium Ore -> Iridium Ingot
-		if (LevelStorage.configuration.get(Configuration.CATEGORY_GENERAL,
-				"addIridiumOreToIngotCompressorRecipe", true).getBoolean(true)) {
-			try {
-				Recipes.compressor.addRecipe(new RecipeInputItemStack(IC2Items.getItem("iridiumOre")),
+		Recipes.compressor.addRecipe(new RecipeInputItemStack(IC2Items.getItem("misc_resource", "iridium_ore")),
 						null, false, SimpleItemShortcut.INGOT_IRIDIUM.getItemStack());
-			} catch (Throwable t) {
-				LogHelper.warning("Failed to add Iridium ore -> ingot recipe. Fallbacking.");
-				t.printStackTrace();
-			}
-		}
 
 		Recipes.advRecipes.addRecipe(
 				OreDictionary.getOres("itemAntimatterTinyPile").get(0).copy(),

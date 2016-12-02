@@ -7,6 +7,7 @@ import ic2.api.item.IElectricItem;
 import ic2.api.item.IMetalArmor;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
+import makmods.levelstorage.LSConfig;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.init.IHasRecipe;
@@ -24,8 +25,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -83,11 +82,7 @@ public class ItemArmorTeslaHelmet extends ItemArmor implements ISpecialArmor,
 	 */
 
 	public void addCraftingRecipe() {
-		Property p = LevelStorage.configuration.get(
-				Configuration.CATEGORY_GENERAL,
-				"enableTeslaHelmetCraftingRecipe", true);
-		p.setComment("Determines whether or not crafting recipe is enabled");
-		if (p.getBoolean(true)) {
+		if (LSConfig.enableTeslaHelmetCraftingRecipe) {
 			Recipes.advRecipes.addRecipe(new ItemStack(
 					LSBlockItemList.itemArmorTeslaHelmet), "tit", "iqi", "lil",
 					Character.valueOf('t'), IC2ItemsShortcut.TESLA_COIL, Character

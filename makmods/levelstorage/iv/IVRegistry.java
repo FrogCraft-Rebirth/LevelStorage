@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import ic2.api.item.IC2Items;
-import makmods.levelstorage.LevelStorage;
+import makmods.levelstorage.LSConfig;
 import makmods.levelstorage.iv.parsers.IRecipeParser;
 import makmods.levelstorage.iv.parsers.IVRecipeParser;
 import makmods.levelstorage.logic.util.LogHelper;
@@ -178,8 +178,7 @@ public class IVRegistry {
 		assign(IC2Items.getItem("crafting", "industrial_diamond"), 8192);
 		assign(IC2Items.getItem("nuclear", "small_uranium_235"), 1024);
 		assign(IC2Items.getItem("nuclear", "uranium_238"), 204);
-		if (LevelStorage.configuration.get(LevelStorage.BALANCE_CATEGORY,
-				"disableBlazeRodToPowderExploit", true).getBoolean(true))
+		if (LSConfig.disableBlazePowderExploit)
 			assign(new ItemStack(Items.BLAZE_POWDER), 307);
 		assign(new ItemStack(Items.FLINT), 4);
 		assign(new ItemStack(Blocks.GRAVEL), 4);
@@ -207,11 +206,11 @@ public class IVRegistry {
 	}
 
 	public void assignFluid(Fluid f, int value) {
-		String name = f.getUnlocalizedName();
+		/*String name = f.getUnlocalizedName();
 		int valueActual = LevelStorage.configuration.get(IV_CATEGORY, name,
 				value).getInt();
 		if (valueActual > 0)
-			fluidEntries.add(new IVFluidEntry(f, valueActual));
+			fluidEntries.add(new IVFluidEntry(f, valueActual));*/
 	}
 
 	public void assign(Object obj, int value) {
@@ -259,7 +258,7 @@ public class IVRegistry {
 	}
 
 	public void assignItemStack(ItemStack stack, int value) {
-		try {
+		/*try {
 			String id = stack.getItem().getRegistryName().toString();
 			int meta = stack.getItemDamage();
 			int valueActual = LevelStorage.configuration.get(IV_CATEGORY, id + ":" + meta, value,
@@ -269,7 +268,7 @@ public class IVRegistry {
 				itemStackEntries.add(new IVItemStackEntry(stack.copy(), value));
 		} catch (Exception e) {
 			System.out.println("Invalid ItemStack detected! " + stack.toString());
-		}
+		}*/
 	}
 
 	public void removeIV(Object obj) {
@@ -314,7 +313,7 @@ public class IVRegistry {
 	}
 
 	public void assignOreDictionary(String name, int value) {
-		int valueActual = LevelStorage.configuration.get(IV_CATEGORY, name,
+		/*int valueActual = LevelStorage.configuration.get(IV_CATEGORY, name,
 				value).getInt();
 		if (valueActual > 0) {
 			List<ItemStack> sts = OreDictionary.getOres(name);
@@ -323,7 +322,7 @@ public class IVRegistry {
 			for (ItemStack st : sts)
 				assignItemStack(st.copy(), value);
 			oreDictEntries.add(new IVOreDictEntry(name, value));
-		}
+		}*/
 	}
 
 	/**

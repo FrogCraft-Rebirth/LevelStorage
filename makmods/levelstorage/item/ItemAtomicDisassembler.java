@@ -9,6 +9,7 @@ import ic2.api.item.IC2Items;
 import ic2.api.item.IElectricItem;
 import ic2.api.recipe.Recipes;
 import makmods.levelstorage.LSBlockItemList;
+import makmods.levelstorage.LSConfig;
 import makmods.levelstorage.LSCreativeTab;
 import makmods.levelstorage.LevelStorage;
 import makmods.levelstorage.api.IChargeable;
@@ -38,7 +39,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.config.Configuration;
 
 public class ItemAtomicDisassembler extends Item implements IElectricItem,
 		IChargeable, IHasRecipe {
@@ -55,9 +55,7 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 		this.setMaxDamage(27);
 		this.setNoRepair();
 		this.setCreativeTab(LSCreativeTab.instance);
-		MAX_LENGTH = LevelStorage.configuration.get(LevelStorage.BALANCE_CATEGORY, "atomicDisassemblerMaxLength", 7,
-						"Maximum tunnel length for Atomic Disassemblers (power of 2, default = 7 = 128)")
-				.getInt(7);
+		MAX_LENGTH = LSConfig.atomicDisassemblerDigLengthExponent;
 		this.setMaxStackSize(1);
 	}
 
@@ -92,8 +90,7 @@ public class ItemAtomicDisassembler extends Item implements IElectricItem,
 	public static boolean DEAL_DAMAGE_TO_OTHERS;
 
 	static {
-		DEAL_DAMAGE = LevelStorage.configuration.get(Configuration.CATEGORY_GENERAL,
-				"atomicDisassemblersEnableDamage", true).getBoolean(true);
+		DEAL_DAMAGE = LSConfig.enableAtomicDisassemblerDamage;
 	}
 
 	public boolean isNumberNegative(int number) {

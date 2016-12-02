@@ -47,12 +47,6 @@ public class LevelStorage {
 	@SidedProxy(clientSide = "makmods.levelstorage.proxy.LSKeyboardClient", serverSide = "makmods.levelstorage.proxy.LSKeyboard")
 	public static LSKeyboard keyboard;
 
-	public static int itemLevelStorageBookSpace;
-	public static Configuration configuration;
-	public static boolean chargerOnlyUUM;
-	public static boolean experienceRecipesOn;
-	public static boolean fancyGraphics;
-	public static boolean recipesHardmode = false;
 	public static final String BALANCE_CATEGORY = "balance";
 	public static final String RECIPES_CATEGORY = "recipes";
 	public static final String PERFORMANCE_CATEGORY = "performance";
@@ -60,14 +54,13 @@ public class LevelStorage {
 	public static final String STORAGE_CATEGORY = "electricitemstorage";
 	public static final String IDS_CATEGORY = "ids";
 	public static Logger logger;
-	public static float powerExplosionAntimatterBomb;
 	private long initTimeMeter;
 
-	public static final boolean detectedGT = Loader.isModLoaded("gregtech");
-	public static final boolean detectedASP = Loader.isModLoaded("adv_solar_panel");
+	public static final boolean DETECT_GT = Loader.isModLoaded("gregtech");
+	public static final boolean DETECT_ASP = Loader.isModLoaded("adv_solar_panel");
 
 	public static boolean isAnySolarModLoaded() {
-		return detectedASP || detectedGT;
+		return DETECT_ASP || DETECT_GT;
 	}
 
 	@EventHandler
@@ -75,24 +68,6 @@ public class LevelStorage {
 		logger = event.getModLog();
 		initTimeMeter = System.currentTimeMillis();
 		LogHelper.info("Pre-Initialization...");
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-		configuration = config;
-		configuration.load();
-		LevelStorage.itemLevelStorageBookSpace = config.get(Configuration.CATEGORY_GENERAL, "bookCapacity", 1 << 14).getInt(); // 1 << 14 == 16384
-		Property p = config.get(LevelStorage.BALANCE_CATEGORY, "chargerOnlyUsesUUM", true);
-		p.setComment("If set to true, chargers will consume UUM and only UUM (they will refuse to receive any energy), if set to false, chargers will receive energy and only energy (no UUM)");
-		LevelStorage.chargerOnlyUUM = p.getBoolean(true);
-
-		Property p2 = config.get(LevelStorage.BALANCE_CATEGORY, "experienceRecipesEnabled", true);
-		p2.setComment("Whether or not experience recipes are enabled");
-		LevelStorage.experienceRecipesOn = p2.getBoolean(true);
-		Property p4 = config.get(LevelStorage.BALANCE_CATEGORY, "hardRecipes", false);
-		p4.setComment("If set to true, armors (and other) will require hard-to-get materials (f.e. full set of armor will require 72 stacks of UUM)");
-		LevelStorage.recipesHardmode = p4.getBoolean(false);
-
-		Property p5 = config.get(LevelStorage.BALANCE_CATEGORY, "explosionPowerAntimatterBomb", false);
-		p5.setComment("Explosion power of Antimatter Bomb, where TNT is 4");
-		LevelStorage.powerExplosionAntimatterBomb = p5.getInt(100);
 		proxy.preInit();
 	}
 

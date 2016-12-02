@@ -3,7 +3,7 @@ package makmods.levelstorage.logic;
 import java.util.ArrayList;
 
 import makmods.levelstorage.LSBlockItemList;
-import makmods.levelstorage.LevelStorage;
+import makmods.levelstorage.LSConfig;
 import makmods.levelstorage.api.XpStack;
 import makmods.levelstorage.item.ItemXPTome;
 import makmods.levelstorage.registry.XpStackRegistry;
@@ -72,7 +72,7 @@ public class ExperienceRecipe implements IRecipe {
 				return null;
 		}
 
-		if ((bookXp + buffXp) >= LevelStorage.itemLevelStorageBookSpace)
+		if ((bookXp + buffXp) >= LSConfig.itemLevelStorageBookSpace)
 			return null;
 
 		int totalXp = bookXp + buffXp;
