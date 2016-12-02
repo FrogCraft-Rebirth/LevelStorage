@@ -12,7 +12,7 @@ public class LSFluids {
 	public BlockFluidIV blockFluidIV;
 
 	private LSFluids() {
-		;
+
 	}
 
 	public void init() {
